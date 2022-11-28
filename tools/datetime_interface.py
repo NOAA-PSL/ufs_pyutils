@@ -169,6 +169,7 @@ def compare_crontab(datestr, cronstr, frmttyp=None):
     if frmttyp is not None:
         dateobj = datetime.datetime.strptime(datestr, frmttyp)
     crontab_match = croniter.croniter.match(cronstr, dateobj)
+
     return crontab_match
 
 # ----
@@ -205,6 +206,7 @@ def current_date(frmttyp):
     # function entry.
     timestamp = datetime.datetime.fromtimestamp(time.time()).\
         strftime('{0}'.format(frmttyp))
+
     return timestamp
 
 # ----
@@ -344,6 +346,7 @@ def datestrcomps(datestr, frmttyp=None):
     date_comps_obj = parser_interface.object_setattr(
         object_in=date_comps_obj, key='comps_list',
         value=vars(date_comps_obj))
+
     return date_comps_obj
 
 # ----
@@ -408,6 +411,7 @@ def datestrfrmt(datestr, offset_seconds=None, frmttyp=None):
             datetime.datetime.strftime(dateobj, default_frmttyp)
     else:
         outdatestr = datetime.datetime.strftime(dateobj, frmttyp)
+
     return outdatestr
 
 # ----
@@ -478,6 +482,7 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
                 date_comps_obj, key=item)
             outdatestr = outdatestr.replace('<{0}>'.format(item),
                                             time_attr)
+
     return outdatestr
 
 # ----
@@ -532,4 +537,5 @@ def elapsed_seconds(start_datestr, start_frmttyp, stop_datestr,
     stop_dateobj = datetime.datetime.strptime(stop_datestr,
                                               stop_frmttyp)
     seconds = float((stop_dateobj - start_dateobj).total_seconds())
+
     return seconds
