@@ -129,10 +129,12 @@ def test_datestrfrmt():
 
     # Define the unit-test attributes.
     offset_seconds = 21600
-    test_dict = {'2000010100': {'frmttyp': '%Y%m%d%H%M%S',
-                                'result': '20000101060000'},
+    test_dict = {'20000101000000': {'frmttyp': '%Y%m%d%H%M%S',
+                                    'result': '20000101060000'
+                                    },
                  '2000-01-01_00:00:00': {'frmttyp': '%Y-%m-%d_%H:%M:%S',
-                                         'result': '2000-01-01_06:00:00'}
+                                         'result': '2000-01-01_06:00:00'
+                                         }
                  }
 
     # Execute the unit-test.
