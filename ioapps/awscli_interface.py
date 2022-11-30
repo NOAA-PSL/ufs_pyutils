@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/awscli_interface.py
+# Module: ioapps/awscli_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -66,12 +66,12 @@ Requirements
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 12 September 2022
+    Henry R. Winterbottom; 29 November 2022
 
 History
 -------
 
-    2022-09-12: Henry Winterbottom - - Initial implementation.
+    2022-11-29: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -79,8 +79,8 @@ History
 
 import subprocess
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 from tools import parser_interface
 
 # ----
@@ -120,7 +120,7 @@ class AWSCLIError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -133,7 +133,7 @@ class AWSCLIError(Error):
 # ----
 
 
-def _check_awscli_env():
+def _check_awscli_env() -> str:
     """
     Description
     -----------
@@ -160,7 +160,10 @@ def _check_awscli_env():
 
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
-    cmd = ['which', 'aws']
+    cmd = ['which',
+           'aws'
+           ]
+
     proc = subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
@@ -168,6 +171,7 @@ def _check_awscli_env():
     # Define the AWS CLI executable path; proceed accordingly.
     if len(out) > 0:
         awscli = out.rstrip().decode('utf-8')
+
     else:
         msg = ('The AWS CLI executable could not be determined for your '
                'system; please check that the appropriate AWS CLI '
@@ -180,9 +184,10 @@ def _check_awscli_env():
 # ----
 
 
-def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
-                aws_exclude=None, aws_include=None, profile=None,
-                errlog=None, outlog=None):
+def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
+                is_wildcards: bool = False, aws_exclude: str = None,
+                aws_include: str = None, profile: str = None,
+                errlog: str = None, outlog: str = None):
     """
     Description
     -----------
@@ -276,6 +281,7 @@ def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
                          'is_dir',
                          'is_wildcards'
                          ]
+
     awss3_kwargs_dict = {'aws_exclude': 'exclude',
                          'aws_include': 'include'
                          }
@@ -295,8 +301,12 @@ def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
                    'aws_exclude and/or aws_include must not be '
                    'NoneType. Aborting!!!')
             raise AWSCLIError(msg=msg)
+
     if not awss3_obj.is_wildcards:
-        for item in ['aws_exclude', 'aws_include']:
+        for item in ['aws_exclude',
+                     'aws_include'
+                     ]:
+
             if parser_interface.object_getattr(
                     object_in=awss3_obj, key=item) is not None:
 
@@ -312,7 +322,11 @@ def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
                     object_in=awss3_obj, key=item, value=None)
 
     # Build the AWS CLI command line string and proceed accordingly.
-    cmd = ['{0}'.format(awscli), 's3', 'cp']
+    cmd = ['{0}'.format(awscli),
+           's3',
+           'cp'
+           ]
+
     if awss3_obj.is_dir:
         cmd.append('--recursive')
 
@@ -357,6 +371,7 @@ def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
                'to {0}.'.format(errlog))
         logger.warn(msg=msg)
         stderr = open(errlog, 'w')
+
     if outlog is None:
         stdout = subprocess.PIPE
     if outlog is not None:
@@ -374,6 +389,7 @@ def put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
         proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
         proc.communicate()
         proc.wait()
+
     except Exception as error:
         msg = ('The AWS CLI application failed with error {0}. '
                'Aborting!!!'.format(error))
