@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/hashlib_interface.py
+# Module: ioapps/hashlib_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -62,11 +62,9 @@ History
 # ----
 
 import hashlib
-import os
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tools import parser_interface
+from utils.error_interface import Error
 
 # ----
 
@@ -79,10 +77,6 @@ __all__ = ['get_hash'
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-logger = Logger()
 
 # ----
 
@@ -104,7 +98,7 @@ class HashLibError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -117,7 +111,7 @@ class HashLibError(Error):
 # ----
 
 
-def get_hash(filepath, hash_level=None):
+def get_hash(filepath: str, hash_level: str = None) -> str:
     """
     Description
     -----------
@@ -161,6 +155,7 @@ def get_hash(filepath, hash_level=None):
     # level/type and proceed accordingly.
     hash_obj = parser_interface.object_getattr(
         object_in=hashlib, key=hash_level.lower())
+
     with open(filepath, 'rb') as f:
         c = f.read()
     hash_index = hash_obj(c).hexdigest()
