@@ -85,8 +85,8 @@ import requests
 import subprocess
 
 from bs4 import BeautifulSoup
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
