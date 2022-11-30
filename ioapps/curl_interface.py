@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/curl_interface.py
+# Module: ioapps/curl_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -68,12 +68,12 @@ Requirements
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 23 August 2022
+    Henry R. Winterbottom; 29 November 2022
 
 History
 -------
 
-    2022-08-23: Henry Winterbottom -- Initial implementation.
+    2022-11-29: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -125,7 +125,7 @@ class CurlError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -138,7 +138,7 @@ class CurlError(Error):
 # ----
 
 
-def _check_curl_env():
+def _check_curl_env() -> str:
     """
     Description
     -----------
@@ -187,7 +187,8 @@ def _check_curl_env():
 # ----
 
 
-def get_webfile(url, path, local_filename=None, ignore_missing=False):
+def get_webfile(url: str, path: str, local_filename: str = None,
+                ignore_missing: bool = False):
     """
     Description
     -----------
@@ -254,7 +255,12 @@ def get_webfile(url, path, local_filename=None, ignore_missing=False):
             msg = ('Writing collected URL path {0} to local path {1}.'.
                    format(url, path))
             stdout = subprocess.PIPE
-            cmd = ['{0}'.format(curl_exec), '-C', '-', '-O', url]
+            cmd = ['{0}'.format(curl_exec),
+                   '-C',
+                   '-',
+                   '-O',
+                   url
+                   ]
 
         if local_filename is not None:
 
@@ -263,7 +269,11 @@ def get_webfile(url, path, local_filename=None, ignore_missing=False):
             msg = ('Writing collected URL path {0} and writing to path {1}.'.
                    format(url, local_filepath))
             stdout = open('{0}'.format(local_filepath), 'wb')
-            cmd = ['{0}'.format(curl_exec), '-o', local_filepath, url]
+            cmd = ['{0}'.format(curl_exec),
+                   '-o',
+                   local_filepath,
+                   url
+                   ]
 
         # Collect the URL path(s).
         logger.info(msg=msg)
@@ -274,8 +284,10 @@ def get_webfile(url, path, local_filename=None, ignore_missing=False):
         # Close the output file; proceed accordingly.
         try:
             stdout.close()
+
         except AttributeError:
             pass
+
         os.chdir(cwd)
 
     except Exception as error:
@@ -292,7 +304,7 @@ def get_webfile(url, path, local_filename=None, ignore_missing=False):
 # ----
 
 
-def get_weblist(url, decode_utf8=False, ext=None):
+def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
     """
     Description
     -----------
