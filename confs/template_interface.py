@@ -2,7 +2,7 @@
 
 # =========================================================================
 
-# Module :: confs/template_interface.py
+# Module confs/template_interface.py
 
 # Author: Henry R. Winterbottom
 

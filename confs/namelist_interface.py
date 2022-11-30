@@ -2,7 +2,7 @@
 
 # =========================================================================
 
-# Module :: confs/namelist_interface.py
+# Module: confs/namelist_interface.py
 
 # Author: Henry R. Winterbottom
 

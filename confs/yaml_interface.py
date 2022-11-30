@@ -2,7 +2,7 @@
 
 # =========================================================================
 
-# Module: app_confs/yaml_interface.py
+# Module: confs/yaml_interface.py
 
 # Author: Henry R. Winterbottom
 
