@@ -186,7 +186,7 @@ def _check_curl_env() -> str:
 
 
 def get_webfile(url: str, path: str, local_filename: str = None,
-                ignore_missing: bool = False):
+                ignore_missing: bool = False) -> None:
     """
     Description
     -----------

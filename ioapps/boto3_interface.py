@@ -180,7 +180,7 @@ class Boto3Error(Error):
 # ----
 
 
-def _aws_credentials(profile_name: str = None) -> (bool, object):
+def _aws_credentials(profile_name: str = None) -> tuple:
     """
     Description
     -----------
@@ -386,7 +386,7 @@ def _s3list(client: object, bucket: str, object_path:
 
 
 def _s3read(client: object, bucket: str, file_name: str,
-            object_name: str):
+            object_name: str) -> None:
     """
     Description
     -----------
@@ -513,7 +513,7 @@ def _s3session(profile_name: str) -> object:
 
 
 def _s3write(client: object, bucket: str, file_name: str,
-             object_name: str):
+             object_name: str) -> None:
     """
     Description
     -----------
@@ -749,7 +749,7 @@ def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
 # ----
 
 
-def s3put(bucket: str, filedict: dict, profile_name: str = None):
+def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
     """
     Description
     -----------

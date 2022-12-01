@@ -185,7 +185,7 @@ def _check_awscli_env() -> str:
 def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
                 is_wildcards: bool = False, aws_exclude: str = None,
                 aws_include: str = None, profile: str = None,
-                errlog: str = None, outlog: str = None):
+                errlog: str = None, outlog: str = None) -> None:
     """
     Description
     -----------

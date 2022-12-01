@@ -448,7 +448,7 @@ def _check_wgrib2_env() -> str:
 # ----
 
 
-def cnvgribg21(in_grib_file: str, out_grib_file: str):
+def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
     """
     Description
     -----------
@@ -544,7 +544,7 @@ def get_timestamp(grib_file: str, grib_var: str = None) -> list:
 
 
 def grbindex(in_grib_file: str, out_gribidx_file: str,
-             is_grib2: bool = False):
+             is_grib2: bool = False) -> None:
     """
     Description
     -----------
@@ -596,7 +596,7 @@ def grbindex(in_grib_file: str, out_gribidx_file: str,
 
 
 def parse_file(in_grib_file: str, parse_str: str, out_grib_file: str,
-               is_grib2: bool = False, tmp_out_path: str = None):
+               is_grib2: bool = False, tmp_out_path: str = None) -> None:
     """
     Description
     -----------
