@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Module: ioapps/tests/test_netcdf4interface.py
+# Module: ioapps/tests/test_netcdf4_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -154,8 +154,8 @@ class TestNetCDF4Methods(TestCase):
         -----------
 
         This method removes the netCDF-formatted file used for the
-        respective netcdf4_interface function unit-tests; it is not an
-        actual unit-test but is simply used to remove the
+        respective netcdf4_interface function unit-tests; this is not
+        an actual unit-test but is simply used to remove the
         netCDF-formatted file following the completion of the actual
         (i.e., valid) unit-tests; this should be the last test that is
         executed by pytest.
@@ -164,8 +164,8 @@ class TestNetCDF4Methods(TestCase):
 
         # Define the list of (the) netCDF-formatted file(s) to be
         # removed.
-        filelist = list()
-        filelist.append(self.ncfile)
+        filelist = [self.ncfile
+                    ]
 
         # Remove the specified netCDF-formatted file(s).
         fileio_interface.removefiles(filelist=filelist)
@@ -217,6 +217,7 @@ class TestNetCDF4Methods(TestCase):
 
         """
 
+        # Read the netCDF variable from the netCDF-formatted file.
         ncvar = netcdf4_interface.ncreadvar(ncfile=self.ncfile,
                                             ncvarname=self.ncvarname,
                                             ncfrmt=self.ncfrmt,
@@ -237,6 +238,8 @@ class TestNetCDF4Methods(TestCase):
 
         """
 
+        # Check that the netCDF variable exists within the
+        # netCDF-formatted file.
         ncvarexist = netcdf4_interface.ncvarexist(ncfile=self.ncfile,
                                                   ncvarname=self.ncvarname,
                                                   ncfrmt=self.ncfrmt)

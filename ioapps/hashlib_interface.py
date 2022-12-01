@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # =========================================================================
 
 # Module: ioapps/hashlib_interface.py
@@ -133,9 +131,9 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
     hash_level: str, optional
 
         A Python string specifying the hash level for the respective
-        hash index; currently supported values are md5, new,
-        pbkdf2_hmac, sha1, sha224, sha256, sha384, and sha512; if
-        NoneType, the md5 hash level is assumed.
+        hash index; currently supported values are md5, sha1, sha224,
+        sha256, sha384, and sha512; if NoneType upon entry, the md5
+        hash level is assumed.
 
     Returns
     -------
@@ -150,6 +148,20 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
     # Define the hash level/type.
     if hash_level is None:
         hash_level = 'md5'
+
+    # Define the supported hash/checksum types; proceed accordingly.
+    hash_types = ['md5',
+                  'sha1',
+                  'sha224',
+                  'sha256',
+                  'sha384',
+                  'sha512'
+                  ]
+
+    if hash_level not in hash_types:
+        msg = ('The checksum/hash level type {0} is not supported. '
+               'Aborting!!!'.format(hash_level))
+        raise HashLibError(msg=msg)
 
     # Define the type of hash library object based on the hash
     # level/type and proceed accordingly.
