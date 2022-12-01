@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # =========================================================================
 
 # Module: ioapps/awscli_interface.py

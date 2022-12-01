@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # =========================================================================
 
 # Module: ioapps/boto3_interface.py
@@ -108,12 +106,12 @@ Requirements
 Author(s)
 ---------
 
-   Henry R. Winterbottom; 22 August 2022
+    Henry R. Winterbottom; 22 August 2022
 
 History
 -------
 
-   2022-08-22: Henry Winterbottom -- Initial implementation.
+    2022-08-22: Henry Winterbottom -- Initial implementation.
 
 """
 
