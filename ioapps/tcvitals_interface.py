@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/tcvitals_interface.py
+# Module: ioapps/tcvitals_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -54,12 +52,12 @@ Functions
 Author(s)
 --------- 
 
-    Henry R. Winterbottom; 26 September 2022
+    Henry R. Winterbottom; 03 December 2022
 
 History
 -------
 
-    2022-09-26: Henry Winterbottom -- Initial implementation.
+    2022-12-02: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -67,10 +65,10 @@ History
 
 import numpy
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tools import constants_interface
 from tools import parser_interface
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -109,7 +107,7 @@ class TCVitalsError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -122,7 +120,7 @@ class TCVitalsError(Error):
 # ----
 
 
-def write_tcvfile(filepath, tcvstr):
+def write_tcvfile(filepath: str, tcvstr: str) -> None:
     """
     Description
     -----------
@@ -153,7 +151,7 @@ def write_tcvfile(filepath, tcvstr):
 # ----
 
 
-def write_tcvstr(tcvit_obj):
+def write_tcvstr(tcvit_obj: object) -> str:
     """
     Description
     -----------
@@ -164,7 +162,7 @@ def write_tcvstr(tcvit_obj):
     Parameters
     ----------
 
-    tcvit_obj: obj
+    tcvit_obj: object
 
         A Python object containing the TC-vitals record attributes;
         the Python object attributes are as follows:
@@ -277,8 +275,15 @@ def write_tcvstr(tcvit_obj):
 
     # Check that all mandatory TC-vitals record attributes are
     # specified; proceed accordingly.
-    mand_attr_list = ['lat', 'lon', 'mslp', 'tcid', 'time_hm', 'time_ymd',
-                      'vmax']
+    mand_attr_list = ['lat',
+                      'lon',
+                      'mslp',
+                      'tcid',
+                      'time_hm',
+                      'time_ymd',
+                      'vmax'
+                      ]
+
     for mand_attr in mand_attr_list:
         if not parser_interface.object_hasattr(
                 object_in=tcvit_obj, key=mand_attr):
@@ -307,10 +312,19 @@ def write_tcvstr(tcvit_obj):
 
     # Define default values for the optional TC-vitals record
     # attributes.
-    opt_attr_dict = {'event_name': 'NAMELESS', 'NE34': -999, 'SE34': -999, 'SW34':
-                     -999, 'NW34': -999, 'poci': -999, 'rmw': -99, 'roci': -999,
-                     'tcv_center': 'XXXX', 'stormdepth': 'X', 'stormdir': -99,
-                     'stormspeed': -99}
+    opt_attr_dict = {'event_name': 'NAMELESS',
+                     'NE34': -999,
+                     'SE34': -999,
+                     'SW34': -999,
+                     'NW34': -999,
+                     'poci': -999,
+                     'rmw': -99,
+                     'roci': -999,
+                     'tcv_center': 'XXXX',
+                     'stormdepth': 'X',
+                     'stormdir': -99,
+                     'stormspeed': -99
+                     }
 
     # Define the optional TC-vitals record attributes in accordance
     # with the values provided upon entry.
