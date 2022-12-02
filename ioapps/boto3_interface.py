@@ -207,7 +207,7 @@ def _aws_credentials(profile_name: str = None) -> tuple:
         provided UNSIGNED credentials to the boto3 client
         configuration.
 
-    session: obj
+    session: object
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name; if profile_name is NoneType
@@ -271,7 +271,7 @@ def _s3client(unsigned: bool = False, session: object = None,
         provided UNSIGNED credentials to the AWS s3 client
         configuration.
 
-    session: obj, optional
+    session: object, optional
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name; if profile_name is NoneType
@@ -287,7 +287,7 @@ def _s3client(unsigned: bool = False, session: object = None,
     Returns
     -------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -333,7 +333,7 @@ def _s3list(client: object, bucket: str, object_path:
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -397,7 +397,7 @@ def _s3read(client: object, bucket: str, file_name: str,
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -456,7 +456,7 @@ def _s3resource(unsigned: bool = False, profile_name: str =
     Returns
     -------
 
-    resource: obj
+    resource: object
 
         A Python boto3 s3 bucket resource object.
 
@@ -497,7 +497,7 @@ def _s3session(profile_name: str) -> object:
     Returns
     -------
 
-    session: obj
+    session: object
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name.
@@ -524,7 +524,7 @@ def _s3write(client: object, bucket: str, file_name: str,
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -654,7 +654,7 @@ def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
     Returns
     -------
 
-    object_memory: obj
+    object_memory: object
 
         A Python tempfile NamedTemporaryFile object containing the
         contents of the s3 bucket and object path specified upon
