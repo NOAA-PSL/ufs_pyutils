@@ -758,7 +758,7 @@ def wgrib2_remap(remap_obj: object, gribfile: str) -> str:
     Parameters
     ----------
 
-    remap_obj: obj
+    remap_obj: object
 
         A Python object containing the WMO GRIB version 2 formatted
         data remapping attributes; currently only 'latlon' remappings
