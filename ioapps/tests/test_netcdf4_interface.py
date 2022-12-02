@@ -177,7 +177,7 @@ class TestNetCDF4Methods(TestCase):
         -----------
 
         This method provides a unit-test for the netcdf4_interface
-        nccheck fnuction.
+        nccheck function.
 
         """
 

@@ -115,9 +115,9 @@ class TestHashLibMethods(TestCase):
         # Define the base-class attributes.
         self.hash_obj = parser_interface.object_define()
 
-        # Define and create local file for which to compute the
+        # Define and create a local file for which to compute the
         # respective checksum/hash levels.
-        dirpath = os.path.join(os.getcwd(), 'tests')
+        dirpath = os.getcwd()
         self.hashlib_file = os.path.join(dirpath, 'hashlib.file')
         with open(self.hashlib_file, 'w') as f:
             f.write('This is a hashlib_interface test file.')
@@ -153,7 +153,7 @@ class TestHashLibMethods(TestCase):
                 object_in=self.hash_obj, key=hash_type, value=hash_index)
 
         # Define the message to accompany any unit-test failures.
-        self.unit_test_msg = ('The unit-test for hashlibinterface function {0} '
+        self.unit_test_msg = ('The unit-test for hashlib_interface function {0} '
                               'failed.')
 
     @pytest.mark.order(100)
@@ -163,7 +163,7 @@ class TestHashLibMethods(TestCase):
         -----------
 
         This method removes the test files used for the respective
-        netcdf4_interface function unit-tests; it is not an actual
+        hashlib_interface function unit-tests; it is not an actual
         unit-test but is simply used to remove the test files file
         following the completion of the actual (i.e., valid)
         unit-tests; this should be the last test that is executed by
@@ -176,7 +176,7 @@ class TestHashLibMethods(TestCase):
                     self.hashlib_stdout
                     ]
 
-        # Remove the specified netCDF-formatted file(s).
+        # Remove the specified files.
         fileio_interface.removefiles(filelist=filelist)
 
     @pytest.mark.order(1)
