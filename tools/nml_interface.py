@@ -331,7 +331,8 @@ class Namelist(object):
                 f.write('! Updated: {0}.\n'.format(timestamp))
 
     def run(self, nml_dict, nml_template, nml_path):
-        """Description
+        """
+        Description
         -----------
 
         This method performs the following tasks:
@@ -431,7 +432,8 @@ class TemplateStringUpdate(object):
         return str_update
 
     def run(self, str_template, str_dict):
-        """Description
+        """
+        Description
         -----------
 
         This method performs the following tasks:
