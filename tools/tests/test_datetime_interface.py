@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ UNIT TEST DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/tests/test_datetime_interface.py
+# Module: tools/tests/test_datetime_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -20,8 +18,8 @@
 # =========================================================================
 
 """
-Tests
------
+Module
+------
 
     test_datetime_interface.py
 
@@ -32,38 +30,23 @@ Description
     that the results for the relevant datetime_interface functions are
     correct.
 
-Functions
----------
+Classes
+-------
 
-    test_datestrcomps()
+    TestDateTimeMethods()
 
-        This method provides a unit test for the
-        datetime_interface.datestrcomps function.
-
-    test_datestrfrmt()
-
-        This method provides a unit test for the
-        datetime_interface.datestrfrmt function.
-
-    test_datestrupdate()
-
-        This method provides a unit test for the
-        datetime_interface.datestrupdate function.
-
-    test_elapsed_seconds()
-
-        This method provides a unit test for the
-        datetime_interface.elapsed_seconds function.
+        This is the base-class object for all datetime_interface
+        unit-tests; it is a sub-class of TestCase.
 
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 01 September 2022
+    Henry R. Winterbottom; 03 Deceember 2022
 
 History
 -------
 
-    2022-06-29: Henry Winterbottom -- Initial implementation.
+    2022-12-03: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -71,6 +54,7 @@ History
 
 from tools import datetime_interface
 from tools import parser_interface
+from unittest import TestCase
 
 # ----
 
@@ -81,129 +65,175 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def test_datestrcomps():
+class TestDateTimeMethods(TestCase):
     """
     Description
     -----------
 
-    This method provides a unit test for the
-    datetime_interface.datestrcomps function.
+    This is the base-class object for all datetime_interface
+    unit-tests; it is a sub-class of TestCase.
 
     """
 
-    # Define the unit-test attributes.
-    datestr = '20000101065803'
-    frmttyp = '%Y%m%d%H%M%S'
-    date_comps_obj = datetime_interface.datestrcomps(
-        datestr=datestr, frmttyp=frmttyp)
-    test_dict = {'year': '2000', 'month': '01', 'day': '01', 'hour': '06',
-                 'minute': '58', 'second': '03', 'month_name_long': 'January',
-                 'month_name_short': 'Jan', 'weekday_long': 'Saturday',
-                 'weekday_short': 'Sat', 'century': '1999', 'century_short':
-                 '19', 'year_short': '00', 'date_string': '2000-01-01_06:58:03',
-                 'cycle': '20000101065803', 'day_of_year': '001', 'julian_day':
-                 2451544.7903125, 'total_seconds_of_day': '25083'}
+    def setUp(self):
+        """
+        Description
+        -----------
 
-    # Execute the unit-test.
-    for key in test_dict.keys():
-        result = parser_interface.dict_key_value(dict_in=test_dict, key=key,
-                                                 force=True, no_split=True)
-        value = parser_interface.object_getattr(
-            object_in=date_comps_obj, key=key)
+        This method defines the base-class attributes for all
+        datetime_interface unit-tests.
 
-        assert(result == value), 'Date string component {0} should be {1}.'.format(
-            key, result)
+        """
+
+        # Define the message to accompany any unit-test failures.
+        self.unit_test_msg = ('The unit-test for datetime_interface function {0} '
+                              'failed.')
+
+    def test_datestrcomps(self):
+        """
+        Description
+        -----------
+
+        This method provides a unit test for the datetime_interface
+        datestrcomps function.
+
+        """
+
+        # Define the date and timestamp string attributes.
+        datestr = '20000101065803'
+        frmttyp = '%Y%m%d%H%M%S'
+        date_comps_obj = datetime_interface.datestrcomps(
+            datestr=datestr, frmttyp=frmttyp)
+        test_dict = {'year': '2000',
+                     'month': '01',
+                     'day': '01',
+                     'hour': '06',
+                     'minute': '58',
+                     'second': '03',
+                     'month_name_long': 'January',
+                     'month_name_short': 'Jan',
+                     'weekday_long': 'Saturday',
+                     'weekday_short': 'Sat',
+                     'century': '1999',
+                     'century_short': '19',
+                     'year_short': '00',
+                     'date_string': '2000-01-01_06:58:03',
+                     'cycle': '20000101065803',
+                     'day_of_year': '001',
+                     'julian_day': 2451544.7903125,
+                     'total_seconds_of_day': '25083'
+                     }
+
+        # Collect the date and timestamp attributes from the local
+        # attribute; compare the values and proceed accordingly.
+        for key in test_dict.keys():
+            result = parser_interface.dict_key_value(dict_in=test_dict, key=key,
+                                                     force=True, no_split=True)
+            value = parser_interface.object_getattr(
+                object_in=date_comps_obj, key=key)
+
+            assert(result == value), (self.unit_test_msg.format('datestrcomps') +
+                                      '; date string component {0} should be {1}.'.format(
+                                          key, result))
+
+    def test_datestrfrmt(self):
+        """
+        Description
+        -----------
+
+        This method provides a unit test for the datetime_interface
+        datestrfrmt function.
+
+        """
+
+        # Define the date and timestamp attributes.
+        offset_seconds = 21600
+        datestr = '2000-01-01_00:00:00'
+        test_dict = {datestr: {'frmttyp': '%Y%m%d%H%M%S',
+                               'result': '20000101060000'
+                               },
+                     datestr: {'frmttyp': '%Y-%m-%d_%H:%M:%S',
+                               'result': '2000-01-01_06:00:00'
+                               },
+                     datestr: {'frmttyp': '%Y%m%d',
+                               'result': '20000101'
+                               }
+                     }
+
+        # Build the date and timestamp strings and check the results;
+        # proceed accordingly.
+        for key in test_dict.keys():
+            datestr = key
+            frmttyp = parser_interface.dict_key_value(dict_in=test_dict[key],
+                                                      key='frmttyp', force=True,
+                                                      no_split=True)
+            result = parser_interface.dict_key_value(dict_in=test_dict[key],
+                                                     key='result', force=True,
+                                                     no_split=True)
+
+            outdatestr = datetime_interface.datestrfrmt(
+                datestr=datestr, offset_seconds=offset_seconds, frmttyp=frmttyp)
+
+            assert(outdatestr == result), (self.unit_test_msg.format('datestrfrmt') +
+                                           '; date string of format {0} should be {1}.'.format(
+                                               frmttyp, result))
+
+    def test_datestrupdate(self):
+        """
+        Description
+        -----------
+
+        This method provides a unit test for the datetime_interface
+        datestrupdate function.
+
+        """
+
+        # Define the date and timestamp string attributes.
+        datestr = '2000-01-01_00:00:00'
+        in_frmttyp = '%Y-%m-%d_%H:%M:%S'
+        out_frmttyp = 'outfile.%Y%m%d%H%M%S.test'
+        offset_seconds = 43200
+
+        # Define the updated date and timestamp string; proceed
+        # accordingly.
+        outdatestr = datetime_interface.datestrupdate(
+            datestr=datestr, in_frmttyp=in_frmttyp, out_frmttyp=out_frmttyp,
+            offset_seconds=offset_seconds)
+        result = 'outfile.20000101120000.test'
+
+        assert(outdatestr == result), (self.unit_test_msg.format('datestrupdate') +
+                                       '; the updated date string should be {0}.'.format(
+                                           result))
+
+    def test_elapsed_seconds(self):
+        """
+        Description
+        -----------
+
+        This method provides a unit test for the datetime_interface
+        elapsed_seconds function.
+
+        """
+
+        # Define the unit-test attributes.
+        start_datestr = '2000-01-01_00:00:00'
+        start_frmttyp = '%Y-%m-%d_%H:%M:%S'
+        stop_datestr = '20001231180000'
+        stop_frmttyp = '%Y%m%d%H%M%S'
+
+        # Define the total number of seconds within the respective
+        # time interval above; proceed accordingly.
+        seconds = datetime_interface.elapsed_seconds(
+            start_datestr=start_datestr, start_frmttyp=start_frmttyp,
+            stop_datestr=stop_datestr, stop_frmttyp=stop_frmttyp)
+        result = 31600800.0
+
+        assert(seconds == result), (self.unit_test_msg.format('elapsed_seconds') +
+                                    '; the total elapsed seconds should be {0}.'.format(
+                                        result))
+
 
 # ----
 
-
-def test_datestrfrmt():
-    """
-    Description
-    -----------
-
-    This method provides a unit test for the
-    datetime_interface.datestrfrmt function.
-
-    """
-
-    # Define the unit-test attributes.
-    offset_seconds = 21600
-    test_dict = {'20000101000000': {'frmttyp': '%Y%m%d%H%M%S',
-                                    'result': '20000101060000'
-                                    },
-                 '2000-01-01_00:00:00': {'frmttyp': '%Y-%m-%d_%H:%M:%S',
-                                         'result': '2000-01-01_06:00:00'
-                                         }
-                 }
-
-    # Execute the unit-test.
-    for key in test_dict.keys():
-        datestr = key
-        frmttyp = parser_interface.dict_key_value(dict_in=test_dict[key],
-                                                  key='frmttyp', force=True,
-                                                  no_split=True)
-        result = parser_interface.dict_key_value(dict_in=test_dict[key],
-                                                 key='result', force=True,
-                                                 no_split=True)
-        outdatestr = datetime_interface.datestrfrmt(
-            datestr=datestr, offset_seconds=offset_seconds, frmttyp=frmttyp)
-
-        assert(outdatestr == result), 'Date string of format {0} should be {1}.'.format(
-            frmttyp, result)
-
-# ----
-
-
-def test_datestrupdate():
-    """
-    Description
-    -----------
-
-    This method provides a unit test for the
-    datetime_interface.datestrupdate function.
-
-    """
-
-    # Define the unit-test attributes.
-    datestr = '2000-01-01_00:00:00'
-    in_frmttyp = '%Y-%m-%d_%H:%M:%S'
-    out_frmttyp = 'outfile.%Y%m%d%H%M%S.test'
-    offset_seconds = 43200
-
-    # Execute the unit-test.
-    outdatestr = datetime_interface.datestrupdate(
-        datestr=datestr, in_frmttyp=in_frmttyp, out_frmttyp=out_frmttyp,
-        offset_seconds=offset_seconds)
-    result = 'outfile.20000101120000.test'
-
-    assert(outdatestr == result), 'Updated date string should be {0}.'.format(
-        result)
-
-# ----
-
-
-def test_elapsed_seconds():
-    """
-    Description
-    -----------
-
-    This method provides a unit test for the
-    datetime_interface.elapsed_seconds function.
-
-    """
-
-    # Define the unit-test attributes.
-    start_datestr = '2000-01-01_00:00:00'
-    start_frmttyp = '%Y-%m-%d_%H:%M:%S'
-    stop_datestr = '20001231180000'
-    stop_frmttyp = '%Y%m%d%H%M%S'
-
-    # Execute the unit-test.
-    seconds = datetime_interface.elapsed_seconds(
-        start_datestr=start_datestr, start_frmttyp=start_frmttyp,
-        stop_datestr=stop_datestr, stop_frmttyp=stop_frmttyp)
-    result = 31600800.0
-
-    assert(seconds == result), 'The total elapsed seconds should be {0}.'.format(
-        result)
+if __name__ == '__main__':
+    unittest.main()

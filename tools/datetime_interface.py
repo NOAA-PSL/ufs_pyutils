@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/datetime_interface.py
+# Module: tools/datetime_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -21,7 +19,7 @@
 
 """
 Module
------- 
+------
 
     datetime_interface.py
 
@@ -29,12 +27,17 @@ Description
 -----------
 
     This module contains functions in order to manipulate date and
-    time strings as required by the system workflow.
+    time strings as required by the caller application.
 
 Functions
 ---------
 
-    compare_crontab(datestr, cronstr, frmttyp=None)
+    _get_dateobj(datestr, frmttyp)
+
+        This method builds/defines and returns the Python datetime
+        object relative to the attributes provided upon entry.
+
+    compare_crontab(datestr, cronstr, frmttyp)
 
         This function compares the user-specified date to the a
         crontab formatted value and returns a boolean value specifying
@@ -44,17 +47,60 @@ Functions
     current_date(frmttyp)
 
         This function returns the current time (at invocation of this
-        function) formatted according to the user specifications.
+        function) formatted according to the parameter values
+        specified upon entry.
 
     datestrcomps(datestr, frmttyp=None)
 
         This function returns a Python object containing the user
-        specified date string component values.
+        specified date string component values; the following
+        attributes are returned:
 
-    datestrfrmt(datestr, offset_seconds=None, frmttyp=None) 
+        year (year)
+
+        month of year (month)
+
+        day of month (day)
+
+        hour of day (hour)
+
+        minute of hour (minute)
+
+        second of minute (second)
+
+        full month name (month_name_long)
+
+        abbreviated month name (month_name_short)
+
+        full day name (weekday_long)
+
+        abbreviated day name (weekday_short)
+
+        century (century)
+
+        2-digit century (e.g., 2015 is 20; century_short)
+
+        2-digit year (e.g., year without the century value;
+        year_short)
+
+        date string (date_string; formatted as %Y-%m-%d_%H:%M:%S,
+        assuming the UNIX POSIX convention)
+
+        cycle string (cycle_string; formatted as %Y%m%d%H, assuming
+        the UNIX POSIX convention)
+
+        Julian date (julian_day)
+
+        The HH:MM:SS as the total elapsed seconds, formatted as
+        5-digit integer (total_seconds_of_day)
+
+        The day of the year (day_of_year); begins from day 1 of
+        respective year.
+
+    datestrfrmt(datestr, frmttyp, offset_seconds=None)
 
         This function ingests a date string of format (assuming UNIX
-        convention) yyyy-mm-dd_HH:MM:SS; optional argument
+        POSIX convention) yyyy-mm-dd_HH:MM:SS; optional argument
         'offset_seconds' defines a new datestr relative to the user
         provided datestr and the number of seconds.
 
@@ -81,14 +127,14 @@ Requirements
 - croniter; https://github.com/kiorky/croniter
 
 Author(s)
---------- 
+---------
 
-   Henry R. Winterbottom; 07 August 2022
+   Henry R. Winterbottom; 03 December 2022
 
 History
 -------
 
-   2022-08-07: Henry Winterbottom -- Initial implementation.
+   2022-12-03: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -118,10 +164,48 @@ __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
 
+
+# ----
+
+def _get_dateobj(datestr: str, frmttyp: str) -> object:
+    """
+    Description
+    -----------
+
+    This method builds/defines and returns the Python datetime object
+    relative to the attributes provided upon entry.
+
+    Parameters
+    ----------
+
+    datestr: str
+
+        A Python string containing a date string.
+
+    frmttyp: str
+
+        A Python string specifying the format of the timestamps
+        string; this assumes UNIX POSIX convention date attribute
+        characters.
+
+    Returns
+    -------
+
+    dateobj: object
+
+        A Python datetime object defined relative to the attributes
+        provided upon entry.
+
+    """
+
+    dateobj = datetime.datetime.strptime(datestr, frmttyp)
+
+    return dateobj
+
 # ----
 
 
-def compare_crontab(datestr, cronstr, frmttyp=None):
+def compare_crontab(datestr: str, cronstr: str, frmttyp: str) -> bool:
     """
     Description
     -----------
@@ -134,7 +218,7 @@ def compare_crontab(datestr, cronstr, frmttyp=None):
     Parameters
     ----------
 
-    datestr: str 
+    datestr: str
 
         A Python string containing a date string.
 
@@ -143,13 +227,10 @@ def compare_crontab(datestr, cronstr, frmttyp=None):
         A Python string specifying a crontab formatted date string for
         which to perform an action.
 
-    Keywords
-    --------
-
-    frmttyp: str, optional
+    frmttyp: str
 
         A Python string specifying the format of the timestamps string;
-        this assumes UNIX convention date attribute characters.
+        this assumes UNIX POSIX convention date attribute characters.
 
     Returns
     -------
@@ -164,10 +245,7 @@ def compare_crontab(datestr, cronstr, frmttyp=None):
 
     # Compare the date string and crontab formatted datastring and
     # determine whether they match.
-    if frmttyp is None:
-        dateobj = datetime.datetime.strptime(datestr, '%Y-%m-%d_%H:%M:%S')
-    if frmttyp is not None:
-        dateobj = datetime.datetime.strptime(datestr, frmttyp)
+    dateobj = _get_dateobj(datestr, frmttyp)
     crontab_match = croniter.croniter.match(cronstr, dateobj)
 
     return crontab_match
@@ -175,13 +253,13 @@ def compare_crontab(datestr, cronstr, frmttyp=None):
 # ----
 
 
-def current_date(frmttyp):
-    """
-    Description
+def current_date(frmttyp: str) -> str:
+    """Description
     -----------
 
     This function returns the current time (at invocation of this
-    function) formatted according to the user specifications.
+    function) formatted according to the parameter values specified
+    upon entry.
 
     Parameters
     ----------
@@ -189,7 +267,7 @@ def current_date(frmttyp):
     frmttyp: str
 
         A Python string specifying the format of the timestamps
-        string; this assumes UNIX convention date attribute
+        string; this assumes UNIX POSIX convention date attribute
         characters.
 
     Returns
@@ -212,7 +290,7 @@ def current_date(frmttyp):
 # ----
 
 
-def datestrcomps(datestr, frmttyp=None):
+def datestrcomps(datestr: str, frmttyp: str) -> object:
     """
     Description
     -----------
@@ -248,10 +326,10 @@ def datestrcomps(datestr, frmttyp=None):
     2-digit year (e.g., year without the century value; year_short)
 
     date string (date_string; formatted as %Y-%m-%d_%H:%M:%S, assuming
-    the UNIX convention)
+    the UNIX POSIX convention)
 
     cycle string (cycle_string; formatted as %Y%m%d%H, assuming the
-    UNIX convention)
+    UNIX POSIX convention)
 
     Julian date (julian_day)
 
@@ -264,19 +342,14 @@ def datestrcomps(datestr, frmttyp=None):
     Parameters
     ----------
 
-    datestr: str 
+    datestr: str
 
         A Python string containing a date string.
 
-    Keywords
-    --------
-
-    frmttyp: str, optional
+    frmttyp: str
 
         A Python string specifying the format for the input date
-        string (datestr); if NoneType, a format of
-        yyyy-mm-dd_HH:MM:SS, assuming the UNIX POSIX convention, is
-        implied.
+        string (datestr).
 
     Returns
     -------
@@ -288,21 +361,30 @@ def datestrcomps(datestr, frmttyp=None):
 
     """
 
-    # Initialize the Python datetime object.
+    # Initialize the Python datetime objects.
     def date_comps_obj(): return None
-    if frmttyp is None:
-        dateobj = datetime.datetime.strptime(datestr, '%Y-%m-%d_%H:%M:%S')
-    if frmttyp is not None:
-        dateobj = datetime.datetime.strptime(datestr, frmttyp)
+    dateobj = _get_dateobj(datestr, frmttyp)
 
     # Loop through timestamp attributes and append values to local
     # list.
-    date_comps_dict = {'year': '%Y', 'month': '%m', 'day': '%d', 'hour': '%H',
-                       'minute': '%M', 'second': '%S', 'month_name_long': '%B',
-                       'month_name_short': '%b', 'century_short': '%G', 'year_short':
-                       '%y', 'century': '%G', 'weekday_long': '%A', 'weekday_short':
-                       '%a', 'date_string': '%Y-%m-%d_%H:%M:%S', 'cycle': '%Y%m%d%H%M%S',
-                       'day_of_year': '%j'}
+    date_comps_dict = {'year': '%Y',
+                       'month': '%m',
+                       'day': '%d',
+                       'hour': '%H',
+                       'minute': '%M',
+                       'second': '%S',
+                       'month_name_long': '%B',
+                       'month_name_short': '%b',
+                       'century_short': '%G',
+                       'year_short': '%y',
+                       'century': '%G',
+                       'weekday_long': '%A',
+                       'weekday_short': '%a',
+                       'date_string': '%Y-%m-%d_%H:%M:%S',
+                       'cycle': '%Y%m%d%H%M%S',
+                       'day_of_year': '%j'
+                       }
+
     for key in date_comps_dict.keys():
         value = datetime.datetime.strftime(dateobj, date_comps_dict[key])
         if key.lower() == 'century_short':
@@ -352,23 +434,34 @@ def datestrcomps(datestr, frmttyp=None):
 # ----
 
 
-def datestrfrmt(datestr, offset_seconds=None, frmttyp=None):
+def datestrfrmt(datestr: str, frmttyp: str,
+                offset_seconds: int = None) -> str:
     """
-    Description
+    "Description
     -----------
 
-    This function ingests a date string of format (assuming UNIX
-    convention) yyyy-mm-dd_HH:MM:SS; optional argument
-    'offset_seconds' defines a new datestr relative to the user
-    provided datestr and the number of seconds.
+    This function ingests a date string and computes and returns a
+    (newly/different) formatted date string; the format of the
+    respective date string is defined by the frmttyp parameter
+    specified upon entry; an optional keyword offset_seconds defines a
+    datestr relative to the value for parameter datestr and the the
+    specified number of seconds; both positive and negative values for
+    offset_seconds is supported.
 
     Parameters
     ----------
 
     datestr: str
 
-        A Python string containing a date string of, assuming the UNIX
-        convention yyyy-mm-dd_HH:MM:SS.
+        A Python string containing a date string; the input date
+        string is assumed to have format % Y-%m-%d_ % H: % M: % S assuming
+        the UNIX POSIX convention.
+
+    frmttyp: str
+
+        A Python string specifying the format of the timestamps
+        string; this assumes UNIX POSIX convention date attribute
+        characters.
 
     Keywords
     --------
@@ -376,15 +469,8 @@ def datestrfrmt(datestr, offset_seconds=None, frmttyp=None):
     offset_seconds: int, optional
 
         A Python integer defining the total number of offset-seconds
-        relative to the datestr variable (see above) for the output
+        relative to the datestr variable(see above) for the output
         time-stamp/date-string; the default is NoneType.
-
-    frmttyp: str, optional
-
-        A Python string specifying the format of the timestamps
-        string; this assumes UNIX convention date attribute
-        characters; if NoneType, the returned value will be formatted
-        as (assuming the UNIX convention) %Y-%m-%d_%H:%M:%S.
 
     Returns
     -------
@@ -398,17 +484,15 @@ def datestrfrmt(datestr, offset_seconds=None, frmttyp=None):
 
     # Define the specified format for the respective date and
     # timestamp provided upon entry.
-    default_frmttyp = '%Y-%m-%d_%H:%M:%S'
-    try:
-        dateobj = datetime.datetime.strptime(datestr, '%Y%m%d%H')
-    except ValueError:
-        dateobj = datetime.datetime.strptime(datestr,
-                                             default_frmttyp)
+    dateobj = _get_dateobj(datestr, '%Y-%m-%d_%H:%M:%S')
+
     if offset_seconds is not None:
         dateobj = dateobj+datetime.timedelta(0, offset_seconds)
+
     if frmttyp is None:
         outdatestr =\
             datetime.datetime.strftime(dateobj, default_frmttyp)
+
     else:
         outdatestr = datetime.datetime.strftime(dateobj, frmttyp)
 
@@ -417,7 +501,8 @@ def datestrfrmt(datestr, offset_seconds=None, frmttyp=None):
 # ----
 
 
-def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
+def datestrupdate(datestr: str, in_frmttyp: str, out_frmttyp: str,
+                  offset_seconds: int = None) -> str:
     """
     Description
     -----------
@@ -426,8 +511,8 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
     'offset_seconds' to define a new datestr relative to the user
     provided datestr and the number of seconds and the input and
     output date string formats; this function also permits non-POSIX
-    standard time attributes, as determined by datestrcomps (above)
-    and user specified template values (denoted between < > in the
+    standard time attributes, as determined by datestrcomps(above)
+    and user specified template values(denoted between < > in the
     out_frmttyp parameter).
 
     Parameters
@@ -440,13 +525,13 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
 
     in_frmttyp: str
 
-        A Python string specifying the UNIX convention for the datestr
-        variable upon input.
+        A Python string specifying the UNIX POSIX convention for the
+        datestr variable upon input.
 
     out_frmttyp: str
 
-        A Python string specifying the UNIX convention for the datestr
-        variable upon output.
+        A Python string specifying the UNIX POSIX convention for the
+        datestr variable upon output.
 
     Keywords
     --------
@@ -454,7 +539,7 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
     offset_seconds: int, optional
 
         A Python integer defining the total number of offset-seconds
-        relative to the datestr variable (see above) for the output
+        relative to the datestr variable(see above) for the output
         time-stamp/date-string; the default is NoneType.
 
     Returns
@@ -469,13 +554,15 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
 
     # Update the date and timestamp in accordance with the specified
     # arguments.
-    dateobj = datetime.datetime.strptime(datestr, in_frmttyp)
+    dateobj = _get_dateobj(datestr, in_frmttyp)
+
     if offset_seconds is not None:
         dateobj = dateobj + datetime.timedelta(0, offset_seconds)
     outdatestr = datetime.datetime.strftime(dateobj, out_frmttyp)
     date_comps_obj = datestrcomps(datestr=datestr, frmttyp=in_frmttyp)
     comps_list = parser_interface.object_getattr(
         object_in=date_comps_obj, key='comps_list')
+
     for item in comps_list:
         if '<{0}>'.format(item) in outdatestr:
             time_attr = parser_interface.object_getattr(
@@ -488,8 +575,8 @@ def datestrupdate(datestr, in_frmttyp, out_frmttyp, offset_seconds=None):
 # ----
 
 
-def elapsed_seconds(start_datestr, start_frmttyp, stop_datestr,
-                    stop_frmttyp):
+def elapsed_seconds(start_datestr: str, start_frmttyp: str, stop_datestr: str,
+                    stop_frmttyp: str) -> float:
     """
     Description
     -----------
@@ -503,21 +590,21 @@ def elapsed_seconds(start_datestr, start_frmttyp, stop_datestr,
     start_datestr: str
 
         A Python string containing a date string of format
-        start_frmttyp (below).
+        start_frmttyp(below).
 
     start_frmttyp: str
 
-       A Python string specifying the UNIX convention for the
+       A Python string specifying the UNIX POSIX convention for the
        start_datestr variable.
 
     stop_datestr: str
 
         A Python string containing a date string of format
-        stop_frmttyp (below).
+        stop_frmttyp(below).
 
     stop_frmttyp: str
 
-        A Python string specifying the UNIX convention for the
+        A Python string specifying the UNIX POSIX convention for the
         stop_datestr variable.
 
     Returns
@@ -532,10 +619,9 @@ def elapsed_seconds(start_datestr, start_frmttyp, stop_datestr,
 
     # Compute the total number of seconds between the specified
     # datestrings upon entry.
-    start_dateobj = datetime.datetime.strptime(start_datestr,
-                                               start_frmttyp)
-    stop_dateobj = datetime.datetime.strptime(stop_datestr,
-                                              stop_frmttyp)
+    start_dateobj = _get_dateobj(start_datestr, start_frmttyp)
+    stop_dateobj = _get_dateobj(stop_datestr, stop_frmttyp)
+
     seconds = float((stop_dateobj - start_dateobj).total_seconds())
 
     return seconds
