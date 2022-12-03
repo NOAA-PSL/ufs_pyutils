@@ -180,8 +180,9 @@ def write_tcvstr(tcvit_obj: object) -> str:
         position in the Western Hemisphere; input values range is
         -180.0 to 180.0 degrees; units are degrees.
 
-        mslp: a Python string specifying minimum sea-level pressure
-        intensity; units are hectoPascals (e.g., millibars).
+        mslp: a Python float valued variable specifying minimum
+        sea-level pressure intensity; units are hectoPascals (e.g.,
+        millibars).
 
         tcid: a Python string variable specifying the TC identifier
         (e.g, 01L, for the first TC in the North Atlantic basin); this
@@ -197,8 +198,8 @@ def write_tcvstr(tcvit_obj: object) -> str:
         POSIX UNIX time-stamp convention %H%M; this string has a
         4-character maximum length.
 
-        vmax: a Python string specifying maximum wind speed intensity;
-        units are meters per second.
+        vmax: a Python float valued variable specifying maximum wind
+        speed intensity; units are meters per second.
 
         Optional Attributes
         -------------------
