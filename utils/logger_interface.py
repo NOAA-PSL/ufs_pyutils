@@ -21,7 +21,7 @@
 
 """
 Module
-------  
+------
 
     logger_interface.py
 
@@ -53,8 +53,8 @@ History
 # ----
 
 import logging
-import types
 import sys
+import types
 
 # ----
 
@@ -66,7 +66,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 
 class Logger(object):
-    """ 
+    """
     Description
     -----------
 
@@ -75,7 +75,7 @@ class Logger(object):
     """
 
     def __init__(self):
-        """ 
+        """
         Description
         -----------
 
@@ -87,7 +87,7 @@ class Logger(object):
         self.colors()
 
         # Define the logging object attributes.
-        log_format = '%(filename)s : %(lineno)s :: %(asctime)s %(message)s'
+        log_format = '%(asctime)s %(message)s'
         date_format = '%Y-%m-%d %H:%M:%S'
         self.logger = logging
         self.logger.basicConfig(stream=sys.stdout, level=logging.INFO,
