@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/constants_interface.py
+# Module: tools/constants_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -38,8 +36,12 @@ Globals
 
         Conversion value for transforming knots to meters per second.
 
+    mps2kts: float
+
+        Conversion value for transforming meters per second to knots.
+
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 07 August 2022
 
@@ -52,6 +54,10 @@ History
 
 # ----
 
+import numpy
+
+# ----
+
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
@@ -59,4 +65,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 # Conversion value for transforming knots to meters per second.
-kts2mps = 0.514444
+kts2mps = numpy.float64(0.514444)
+
+# Conversion value for transforming meters per second to knots.
+mps2kts = numpy.float64(1.0/kts2mps)

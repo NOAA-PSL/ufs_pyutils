@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/produtil/error_interface.py
+# Module: utils/error_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -33,25 +33,26 @@ Description
 Classes
 -------
 
-    Error()
+    Error(msg)
 
-        This is the base-class for all Python Exception instances.
+        This is the base-class for all exceptions; it is a sub-class
+        of Exceptions.
 
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 07 January 2022
+    Henry R. Winterbottom; 29 November 2022
 
 History
 -------
 
-    2022-01-07: Henry Winterbottom -- Initial implementation.
+    2022-11-29: Henry Winterbottom -- Initial implementation.
 
 """
 
 # ----
 
-from produtil.logger_interface import Logger
+from utils.logger_interface import Logger
 
 # ----
 
@@ -80,7 +81,7 @@ class Error(Exception):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -88,6 +89,8 @@ class Error(Exception):
         Creates a new Error object.
 
         """
+
+        # Define the base-class attributes.
         logger = Logger()
         logger.error(msg=msg)
         super(Error, self).__init__()

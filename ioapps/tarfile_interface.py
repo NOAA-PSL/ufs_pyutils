@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/tarfile_interface.py
+# Module: ioapps/tarfile_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -58,24 +56,23 @@ Functions
 Author(s)
 --------- 
 
-   Henry R. Winterbottom; 25 September 2022
+    Henry R. Winterbottom; 25 September 2022
 
 History
 -------
 
-   2022-09-25: Henry Winterbottom -- Initial implementation.
+    2022-09-25: Henry Winterbottom -- Initial implementation.
 
 """
 
 # ----
 
-import numpy
 import os
 import tarfile
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tools import parser_interface
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -114,7 +111,7 @@ class TarFileError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -127,7 +124,7 @@ class TarFileError(Error):
 # ----
 
 
-def read_tarfile(path, tarball_path, mode=None, filelist=None):
+def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
     """
     Description
     -----------
@@ -162,6 +159,18 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None):
         A Python list of member files within the tarball archive to be
         extracted.
 
+    Raises
+    ------
+
+    TarballError:
+
+        * raised if an exception is encountered while extracting files
+          from the tarball file path specified upon entry.
+
+        * raised if an execption is encountered while extracting a
+          specified file from the tarball file path specified upon
+          entry.
+
     """
 
     # Move to the working directory within which to extract the files
@@ -176,6 +185,7 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None):
     logger.info(msg=msg)
     if mode is None:
         mode = 'r'
+
     tarball = tarfile.open(tarball_path, mode)
 
     # If filelist is NoneType upon entry, extract the entire archive;
@@ -223,7 +233,7 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None):
 
 
 def write_tarfile(path, tarball_path, filelist=None, filedict=None,
-                  ref_local=False, gzip=False, compresslevel=1):
+                  ref_local=False, gzip=False, compresslevel=1) -> None:
     """
     Description
     -----------
@@ -277,9 +287,23 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
         A Python integer value specifying the compression level for
         the archive; the default is minimal compression.
 
+    Raises
+    ------
+
+    TarFileError:
+
+        * raised if an exception is encountered while validating the
+          parameter values provided upon entry.
+
     """
 
     # Check that the attributes provided upon entry are valid.
+    if (filelist is None) and (filedict is None):
+        msg = ('Neither the filelist or filedict keyword parameters have '
+               'been specified upon entry; this may cause this method '
+               'to (not) produce the expected results.')
+        logger.warn(msg=msg)
+
     if (filelist is not None) and (filedict is not None):
         msg = ('The write_tarfile method does not support file name '
                'lists (filelist) and file and archive file mapping '
@@ -289,7 +313,9 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
     # Define the tarball archive attributes accordingly.
     if gzip:
         mode = 'w:gz'
-        kwargs = {'compresslevel': compresslevel}
+        kwargs = {'compresslevel': compresslevel
+                  }
+
     else:
         mode = 'w'
         kwargs = dict()
@@ -337,6 +363,7 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
                 kwargs = {'arcname': './%s' % arcname}
             if not ref_local:
                 kwargs = {'arcname': arcname}
+
             tarball.add(filename, **kwargs)
 
     # Close the open tarball archive.

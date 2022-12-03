@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/url_interface.py
+# Module: ioapps/url_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -62,12 +60,12 @@ Requirements
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 20 October 2022
+    Henry R. Winterbottom; 02 December 2022
 
 History
 -------
 
-    2022-10-20: Henry Winterbottom -- Initial implementation.
+    2022-12-02: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -77,8 +75,8 @@ import os
 import urllib
 
 from bs4 import BeautifulSoup
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -117,7 +115,7 @@ class URLError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -130,7 +128,8 @@ class URLError(Error):
 # ----
 
 
-def get_weblist(url, ext=None, include_dirname=False):
+def get_weblist(url: str, ext: str = None,
+                include_dirname: bool = False) -> list:
     """
     Description
     -----------
@@ -186,6 +185,7 @@ def get_weblist(url, ext=None, include_dirname=False):
         with urllib.request.urlopen(url=request) as response:
             url_contents = response.read()
         soup = BeautifulSoup(url_contents, 'html.parser')
+
     except Exception as error:
         msg = ('Retrieving the URL path {0} failed with error {1}. '
                'Aborting!!!'.format(url, error))
@@ -205,6 +205,7 @@ def get_weblist(url, ext=None, include_dirname=False):
             if include_dirname:
                 filename = os.path.join(os.path.dirname(
                     url), webfile)
+
             if not include_dirname:
                 filename = webfile
             weblist.append(filename)
@@ -219,7 +220,8 @@ def get_weblist(url, ext=None, include_dirname=False):
 # ----
 
 
-def read_webfile(url, ignore_missing=False, split=None, return_string=False):
+def read_webfile(url: str, ignore_missing: bool = False, split: str = None,
+                 return_string: bool = False) -> list:
     """
     Description
     -----------
@@ -286,6 +288,7 @@ def read_webfile(url, ignore_missing=False, split=None, return_string=False):
     # accordingly.
     try:
         request = urllib.request.Request(url=url)
+
     except Exception as error:
         msg = ('Retrieving the URL path {0} failed with error {1}. '
                'Aborting!!!'.format(url, error))
@@ -304,6 +307,7 @@ def read_webfile(url, ignore_missing=False, split=None, return_string=False):
                 contents = response.read()
             if return_string:
                 contents = str(contents)
+
             if split is not None:
                 contents = str(contents).split(split)
 
@@ -316,6 +320,7 @@ def read_webfile(url, ignore_missing=False, split=None, return_string=False):
                        'collection of URL path contents will not be '
                        'performed.'.format(url, url_error))
                 logger.warn(msg=msg)
+
             if not ignore_missing:
                 msg = ('Opening URL path {0} failed with error {1}. '
                        'Aborting!!!'.format(url, url_error))

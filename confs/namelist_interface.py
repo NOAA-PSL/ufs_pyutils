@@ -1,8 +1,8 @@
+#!/usr/bin/env python3
+
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/nml_interface.py
+# Module: confs/namelist_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -23,26 +23,29 @@
 Module
 ------ 
 
-    nml_interface.py
+    namelist_interface.py
 
 Description
 -----------
 
-    This module contains methods to parse namelist-type template files
-    and create an external file containing the user specified values.
+    This module contains methods to parse FORTRAN 90 namelist-type
+    template files and create an external file containing the user
+    specified values.
 
 Classes
 -------
 
-    Namelist(log_messages=False,no_string_quotes=False,remove_comments=False,
-             strip_dblequotes=False)
+    Namelist(log_messages=False, no_string_quotes=False,
+             remove_comments=False, strip_dblequotes=False)
 
-        This is the base-class object for all namelist-type template
-        file parsing and external namelist-type file creation.
+        This is the base-class object for all FORTRAN 90 namelist-type
+        template file parsing and external FORTRAN 90 namelist-type
+        file creation.
 
-    TemplateStringUpdate()
+    NamelistError(msg)
 
-        This is the base-class object for all template string parsing.
+        This is the base-class for all exceptions; it is a sub-class
+        of Error.
 
     YAMLTemplate()
 
@@ -54,12 +57,12 @@ Classes
 Author(s)
 --------- 
 
-   Henry R. Winterbottom; 07 August 2022
+    Henry R. Winterbottom; 29 November 2022
 
 History
 -------
 
-   2022-08-07: Henry Winterbottom -- Initial implementation.
+    2022-11-29: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -70,6 +73,7 @@ import re
 from tools import datetime_interface
 from tools import fileio_interface
 from tools import parser_interface
+from utils.error_interface import Error
 
 # ----
 
@@ -85,8 +89,9 @@ class Namelist(object):
     Description
     -----------
 
-    This is the base-class object for all namelist-type template file
-    parsing and external namelist-type file creation.
+    This is the base-class object for all FORTRAN 90 namelist-type
+    template file parsing and external FORTRAN 90 namelist-type file
+    creation.
 
     Keywords
     --------
@@ -128,8 +133,12 @@ class Namelist(object):
         """
 
         # Define the base-class attributes.
-        nml_attr_list = ['log_messages', 'no_string_quotes',
-                         'remove_comments', 'strip_dblequotes']
+        nml_attr_list = ['log_messages',
+                         'no_string_quotes',
+                         'remove_comments',
+                         'strip_dblequotes'
+                         ]
+
         for item in nml_attr_list:
             self = tools.parser_interface.object_setattr(
                 object_in=self, key=item, value=eval(item))
@@ -162,15 +171,20 @@ class Namelist(object):
         """
 
         # Check the input string upon entry and proceed accordingly.
-        char_chks = ['e']
+        char_chks = ['e'
+                     ]
+
         if any(item in string for item in char_chks):
             try:
                 float(string)
                 float_valid = True
+
             except ValueError:
                 float_valid = False
+
         else:
             float_valid = None
+
         return float_valid
 
     def dblequotes_strip(self, nml_path):
@@ -180,7 +194,7 @@ class Namelist(object):
 
         This method will strip string embedded between double quotes
         (i.e., " ") and update the respective lines/strings within the
-        namelist-type output file path.
+        FORTRAN 90 namelist-type output file path.
 
         Parameters
         ----------
@@ -188,16 +202,18 @@ class Namelist(object):
         nml_path: str
 
             A Python string specifying the path to the formatted
-            namelist-type output file.
+            FORTRAN 90 namelist-type output file.
 
         """
 
         # Remove any occurances of double quotation marks.
         with open(nml_path, 'r') as f:
             data = f.read()
+
         filelist = list()
         filelist.append(nml_path)
-        tools.fileio_interface.removefiles(filelist=filelist)
+        fileio_interface.removefiles(filelist=filelist)
+
         with open(nml_path, 'w') as f:
             for line in data.split('\n'):
                 line = re.sub('["]', '', line)
@@ -209,7 +225,8 @@ class Namelist(object):
         -----------
 
         This method parses a Python dictionary and replaces all
-        variables within a user specified namelist-type template file.
+        variables within a user specified FORTRAN 90 namelist-type
+        template file.
 
         Parameters
         ----------
@@ -222,13 +239,13 @@ class Namelist(object):
 
         nml_template: str
 
-            A Python string specifying the namelist-type template file
-            to be parsed.
+            A Python string specifying the FORTRAN 90 namelist-type
+            template file to be parsed.
 
         nml_path: str
 
             A Python string specifying the path to the formatted
-            namelist-type output file.
+            FORTRAN 90 namelist-type output file.
 
         """
 
@@ -259,6 +276,7 @@ class Namelist(object):
                                     try:
                                         nml_line = nml_line.replace(
                                             '{0}'.format(check_key), '{0}'.format(float(value)))
+
                                     except ValueError:
                                         nml_line = nml_line.replace(
                                             '{0}'.format(check_key), '"{0}"'.format(value))
@@ -278,6 +296,7 @@ class Namelist(object):
                                         try:
                                             value = value + \
                                                 '{0},'.format(float(item))
+
                                         except ValueError:
                                             value = value + \
                                                 '"{0}",'.format(item)
@@ -285,11 +304,14 @@ class Namelist(object):
                                         try:
                                             int(item)
                                             value = value + '{0},'.format(item)
+
                                         except ValueError:
                                             value = value + \
                                                 '"{0}",'.format(item)
+
                                 nml_line = nml_line.replace(
                                     '{0}'.format(check_key), '{0}'.format(value))
+
                             else:
 
                                 # Handle strings containing quotations accordingly.
@@ -321,6 +343,7 @@ class Namelist(object):
                     if self.remove_comments:
                         if ('!' not in nml_line) and (nml_line is not str()):
                             f.write('{0}\n'.format(nml_line))
+
                     else:
                         f.write('{0}\n'.format(nml_line))
 
@@ -362,194 +385,47 @@ class Namelist(object):
         """
 
         # Build the namelist file and proceed accordingly.
-        self.write(nml_dict=nml_dict, nml_template=nml_template,
-                   nml_path=nml_path)
-        if self.strip_dblequotes:
-            self.dblequotes_strip(nml_path=nml_path)
+        try:
+            self.write(nml_dict=nml_dict, nml_template=nml_template,
+                       nml_path=nml_path)
+
+            if self.strip_dblequotes:
+                self.dblequotes_strip(nml_path=nml_path)
+
+        except Exception as error:
+
+            msg = ('Creation of FORTRAN 90 namelist file {0} failed with '
+                   'error parsing failed with error {1}. Aborting!!!'
+                   .format(nml_path, error))
+            raise TemplateInterfaceError(msg=msg)
 
 # ----
 
 
-class TemplateStringUpdate(object):
+class NamelistError(Error):
     """
     Description
     -----------
 
-    This is the base-class object for all template string parsing.
+    This is the base-class for all exceptions; it is a sub-class of
+    Error.
+
+    Parameters
+    ----------
+
+    msg: str
+
+        A Python string containing a message to accompany the
+        exception.
 
     """
 
-    def __init__(self):
+    def __init__(self, msg):
         """
         Description
         -----------
 
-        Creates a new TemplateStringUpdate object.
+        Creates a new NamelistError object.
 
         """
-
-    def write(self, str_template, str_dict):
-        """
-        Description
-        -----------
-
-        This method parses a Python dictionary and replaces all
-        variables within a user specified template string.
-
-        Parameters
-        ----------
-
-        str_dict: dict
-
-            A Python dictionary containing key and values pairs
-            corresponding to the available variables within the
-            user-specified template string.
-
-        str_template: str
-
-            A Python string specifying the template string to be
-            parsed.
-
-        Returns
-        -------
-
-        str_update: str
-
-            A Python string containing the updated string in
-            accordance with the template attribute.
-
-        """
-
-        # Define the updated string relative to the template
-        # attribute.
-        str_update = str_template
-        for key in str_dict.keys():
-            check_key = '<{0}>'.format(key)
-            if check_key in str_template:
-                value = str_dict[key]
-                str_update = str_update.replace(
-                    '{0}'.format(check_key), '{0}'.format(value))
-        return str_update
-
-    def run(self, str_template, str_dict):
-        """
-        Description
-        -----------
-
-        This method performs the following tasks:
-
-        (1) Parses a Python dictionary and replaces all variables
-            within a user-specified template string.
-
-        Parameters
-        ----------
-
-        str_dict: dict
-
-            A Python dictionary containing key and values pairs
-            corresponding to the available variables within the
-            user-specified template string.
-
-        str_template: str
-
-            A Python string specifying the template string to be
-            parsed.
-
-        """
-
-        # Update all template strings accordingly.
-        str_update = self.write(str_template=str_template,
-                                str_dict=str_dict)
-        return str_update
-
-# ----
-
-
-class YAMLTemplate(object):
-    """
-    Description
-    -----------
-
-    This is the base-class object for YAML-formatted template file
-    updates and the creation of a YAML-formatted file based on the
-    template and the user-specified template variable key and value
-    pairs.
-
-    """
-
-    def __init__(self):
-        """ 
-        Description
-        -----------
-
-        Creates a new YAMLTemplate object.
-
-        """
-
-    def write(self, nml_path, nml_template, nml_dict):
-        """
-        Description
-        -----------
-
-        This method ingests a YAML template file and parses a Python
-        dictionary containing key and value pairs for template
-        variables to be replaced; the updated template to then written
-        to the user-specified path.
-
-        Parameters
-        ----------
-
-        nml_dict: dict
-
-            A Python dictionary containing key and values pairs
-            corresponding to the template variables within the
-            user-specified YAML-formatted template file.
-
-        nml_template: str
-
-            A Python string specifying the template variables to be
-            sought and updated.
-
-        nml_path: str
-
-            A Python string specifying the path to the YAML-formatted
-            output file derived from the template.
-
-        """
-
-        # Read the template file.
-        template_matches = ['<', '>']
-        with open(nml_template, 'r') as f:
-            template = f.read().split('\n')
-
-        # Open and write the namelist file while formatting the
-        # template values specified upon entry accordingly.
-        with open(nml_path, 'w') as f:
-            for item in template:
-                for key in nml_dict.keys():
-                    if key in item:
-                        item = item.replace(
-                            '<{0}>'.format(key), str(nml_dict[key]))
-                if not any(x in item for x in template_matches):
-                    f.write('{0}\n'.format(item))
-
-    def run(self, nml_path, nml_template, nml_dict):
-        """
-        Description
-        -----------
-
-        This method performs the following tasks:
-
-        (1) Parse a YAML-formatted template file and replaces the
-            templated variables (defined by < template variable >)
-            using the key and value pairs within the user-specified
-            Python dictionary.
-
-        (2) Writes the updated template to the user-specified path.
-
-        """
-
-        # Parse the YAML-formatted template file and proceed
-        # accordingly.
-        self.write(nml_path=nml_path, nml_template=nml_template,
-                   nml_dict=nml_dict)
+        super(NamelistError, self).__init__(msg=msg)

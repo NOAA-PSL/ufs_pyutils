@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/boto3_interface.py
+# Module: ioapps/boto3_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -108,12 +106,12 @@ Requirements
 Author(s)
 ---------
 
-   Henry R. Winterbottom; 22 August 2022
+    Henry R. Winterbottom; 22 August 2022
 
 History
 -------
 
-   2022-08-22: Henry Winterbottom -- Initial implementation.
+    2022-08-22: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -124,11 +122,11 @@ import os
 
 from botocore import UNSIGNED
 from botocore.config import Config
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tempfile import NamedTemporaryFile
 from tools import fileio_interface
 from tools import parser_interface
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -169,7 +167,7 @@ class Boto3Error(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -182,7 +180,7 @@ class Boto3Error(Error):
 # ----
 
 
-def _aws_credentials(profile_name=None):
+def _aws_credentials(profile_name: str = None) -> tuple:
     """
     Description
     -----------
@@ -209,7 +207,7 @@ def _aws_credentials(profile_name=None):
         provided UNSIGNED credentials to the boto3 client
         configuration.
 
-    session: obj
+    session: object
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name; if profile_name is NoneType
@@ -256,7 +254,8 @@ def _aws_credentials(profile_name=None):
 # ----
 
 
-def _s3client(unsigned=False, session=None, profile_name=None):
+def _s3client(unsigned: bool = False, session: object = None,
+              profile_name: str = None) -> object:
     """
     Description
     -----------
@@ -272,7 +271,7 @@ def _s3client(unsigned=False, session=None, profile_name=None):
         provided UNSIGNED credentials to the AWS s3 client
         configuration.
 
-    session: obj, optional
+    session: object, optional
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name; if profile_name is NoneType
@@ -288,7 +287,7 @@ def _s3client(unsigned=False, session=None, profile_name=None):
     Returns
     -------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -322,7 +321,8 @@ def _s3client(unsigned=False, session=None, profile_name=None):
 # ----
 
 
-def _s3list(client, bucket, object_path=None):
+def _s3list(client: object, bucket: str, object_path:
+            str = None) -> list:
     """
     Description
     -----------
@@ -333,7 +333,7 @@ def _s3list(client, bucket, object_path=None):
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -385,7 +385,8 @@ def _s3list(client, bucket, object_path=None):
 # ----
 
 
-def _s3read(client, bucket, file_name, object_name):
+def _s3read(client: object, bucket: str, file_name: str,
+            object_name: str) -> None:
     """
     Description
     -----------
@@ -396,7 +397,7 @@ def _s3read(client, bucket, file_name, object_name):
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -428,7 +429,8 @@ def _s3read(client, bucket, file_name, object_name):
 # ----
 
 
-def _s3resource(unsigned=False, profile_name=None):
+def _s3resource(unsigned: bool = False, profile_name: str =
+                None) -> object:
     """
     Description
     -----------
@@ -454,7 +456,7 @@ def _s3resource(unsigned=False, profile_name=None):
     Returns
     -------
 
-    resource: obj
+    resource: object
 
         A Python boto3 s3 bucket resource object.
 
@@ -475,7 +477,7 @@ def _s3resource(unsigned=False, profile_name=None):
 # ----
 
 
-def _s3session(profile_name):
+def _s3session(profile_name: str) -> object:
     """
     Description
     -----------
@@ -495,7 +497,7 @@ def _s3session(profile_name):
     Returns
     -------
 
-    session: obj
+    session: object
 
         A Python boto3 Session object for the respective entry value
         of the parameter profile_name.
@@ -510,7 +512,8 @@ def _s3session(profile_name):
 # ----
 
 
-def _s3write(client, bucket, file_name, object_name):
+def _s3write(client: object, bucket: str, file_name: str,
+             object_name: str) -> None:
     """
     Description
     -----------
@@ -521,7 +524,7 @@ def _s3write(client, bucket, file_name, object_name):
     Parameters
     ----------
 
-    client: obj
+    client: object
 
         A Python boto3 s3 bucket client object.
 
@@ -548,7 +551,8 @@ def _s3write(client, bucket, file_name, object_name):
 # ----
 
 
-def s3filelist(bucket, object_path=None, profile_name=None):
+def s3filelist(bucket: str, object_path: str = None,
+               profile_name: str = None) -> list:
     """
     Description
     -----------
@@ -602,8 +606,8 @@ def s3filelist(bucket, object_path=None, profile_name=None):
 # ----
 
 
-def s3get(bucket, filedict=None, into_mem=False, object_path=None,
-          profile_name=None):
+def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
+          object_path: str = None, profile_name: str = None) -> object:
     """
     Description
     -----------
@@ -650,7 +654,7 @@ def s3get(bucket, filedict=None, into_mem=False, object_path=None,
     Returns
     -------
 
-    object_memory: obj
+    object_memory: object
 
         A Python tempfile NamedTemporaryFile object containing the
         contents of the s3 bucket and object path specified upon
@@ -742,11 +746,10 @@ def s3get(bucket, filedict=None, into_mem=False, object_path=None,
 
     return object_memory
 
-
 # ----
 
 
-def s3put(bucket, filedict, profile_name=None):
+def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
     """
     Description
     -----------

@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/sqlite3_interface.py
+# Module: ush/ioapps/sqlite3_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -111,10 +109,10 @@ History
 
 import sqlite3
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tools import fileio_interface
 from tools import parser_interface
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -157,7 +155,7 @@ class SQLite3Error(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -170,7 +168,7 @@ class SQLite3Error(Error):
 # ----
 
 
-def _database_close(connect):
+def _database_close(connect: object) -> None:
     """
     Description
     -----------
@@ -180,7 +178,7 @@ def _database_close(connect):
     Parameters
     ----------
 
-    connect: obj
+    connect: object
 
         A Python object SQLite3 library API connection object.
 
@@ -192,7 +190,7 @@ def _database_close(connect):
 # ----
 
 
-def _database_commit(connect):
+def _database_commit(connect: object) -> None:
     """
     Description
     -----------
@@ -202,7 +200,7 @@ def _database_commit(connect):
     Parameters
     ----------
 
-    connect: obj
+    connect: object
 
         A Python object SQLite3 API connection object.
 
@@ -214,7 +212,7 @@ def _database_commit(connect):
 # ----
 
 
-def _database_connect(path):
+def _database_connect(path: str) -> tuple:
     """
     Description
     -----------
@@ -234,11 +232,11 @@ def _database_connect(path):
     Returns
     -------
 
-    connect: obj
+    connect: object
 
         A Python object SQLite3 API connection object.
 
-    cursor : obj
+    cursor : object
 
         A Python object SQLite3 API cursor object.
 
@@ -268,7 +266,8 @@ def _database_connect(path):
 # ----
 
 
-def _database_execute(cursor, exec_str, is_read=False):
+def _database_execute(cursor: object, exec_str: str,
+                      is_read: bool = False) -> dict:
     """
     Description
     -----------
@@ -278,7 +277,7 @@ def _database_execute(cursor, exec_str, is_read=False):
     Parameters
     ----------
 
-    cursor : obj
+    cursor : object
 
         A Python object SQLite3 API cursor object.
 
@@ -340,7 +339,7 @@ def _database_execute(cursor, exec_str, is_read=False):
 # ----
 
 
-def _database_exist(path):
+def _database_exist(path: str) -> bool:
     """
     Description
     -----------
@@ -370,6 +369,7 @@ def _database_exist(path):
         msg = ('Database file {0} exists and will be updated.'
                .format(path))
         logger.info(msg=msg)
+
     if not exist:
         msg = ('The database file {0} does not exist.'
                .format(path))
@@ -380,7 +380,7 @@ def _database_exist(path):
 # ----
 
 
-def create_table(path, table_name, table_dict):
+def create_table(path: str, table_name: str, table_dict: dict) -> None:
     """
     Description
     -----------
@@ -436,11 +436,13 @@ def create_table(path, table_name, table_dict):
                 column_type = parser_interface.dict_key_value(
                     dict_in=table_dict, key=column_name, force=True,
                     no_split=True)
+
                 if column_type is None:
                     msg = ('The data type for column {0} could not be determined '
                            'from the specified table attributes. Aborting!!!'
                            .format(column_name))
                     raise SQLite3Error(msg=msg)
+
                 column_info.append('{0} {1}'.format(column_name, column_type))
 
             # Write the database table to the SQLite3 database file
@@ -487,7 +489,7 @@ def create_table(path, table_name, table_dict):
 # ----
 
 
-def delete_row(path, table_name, rmcond):
+def delete_row(path: str, table_name: str, rmcond: str) -> None:
     """
     Description
     -----------
@@ -552,7 +554,7 @@ def delete_row(path, table_name, rmcond):
 # ----
 
 
-def read_columns(path, table_name):
+def read_columns(path: str, table_name: str) -> list:
     """
     Description
     -----------
@@ -618,7 +620,7 @@ def read_columns(path, table_name):
 # ----
 
 
-def read_table(path, table_name):
+def read_table(path: str, table_name: str) -> dict:
     """
     Description
     -----------
@@ -696,7 +698,7 @@ def read_table(path, table_name):
 # ----
 
 
-def read_tablenames(path, format_list=False):
+def read_tablenames(path: str, format_list: bool = False) -> list:
     """
     Description
     -----------
@@ -764,7 +766,7 @@ def read_tablenames(path, format_list=False):
 # ----
 
 
-def write_table(path, table_name, row_dict):
+def write_table(path: str, table_name: str, row_dict: dict) -> None:
     """
     Description
     -----------
@@ -809,6 +811,7 @@ def write_table(path, table_name, row_dict):
                 dict_in=row_dict, key=column_name, force=True,
                 no_split=True)
             column_values.append(column_value)
+
         column_names_string = ','.join(column_names)
         column_values_string = ','.join(
             [str(value) for value in column_values])

@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/ioapps/wget_interface.py
+# Module: ioapps/wget_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -62,12 +60,12 @@ Functions
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 22 July 2022
+    Henry R. Winterbottom; 02 December 2022
 
 History
 -------
 
-    2022-07-22: Henry Winterbottom -- Initial implementation.
+    2022-12-02: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -77,9 +75,9 @@ import os
 import subprocess
 
 from bs4 import BeautifulSoup
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
 from tools import fileio_interface
+from utils.error_interface import Error
+from utils.logger_interface import Logger
 
 # ----
 
@@ -117,7 +115,7 @@ class WgetError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -130,7 +128,7 @@ class WgetError(Error):
 # ----
 
 
-def _check_wget_env():
+def _check_wget_env() -> str:
     """
     Description
     -----------
@@ -179,7 +177,7 @@ def _check_wget_env():
 # ----
 
 
-def get_webfile(url, path, ignore_missing=False):
+def get_webfile(url: str, path: str, ignore_missing: bool = False):
     """
     Description
     -----------
@@ -232,8 +230,12 @@ def get_webfile(url, path, ignore_missing=False):
         msg = ('Writing collected URL path {0} to local path {1}.'
                .format(url, path))
         logger.info(msg=msg)
-        cmd = ['{0}'.format(wget_exec), '{0}'.format(url),
-               '-O', '{0}'.format(path)]
+        cmd = ['{0}'.format(wget_exec),
+               '{0}'.format(url),
+               '-O',
+               '{0}'.format(path)
+               ]
+
         proc = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
@@ -245,6 +247,7 @@ def get_webfile(url, path, ignore_missing=False):
         # missing.
         if ignore_missing:
             pass
+
         if not ignore_missing:
             msg = ('Collecting of internet path {0} failed with error {1}. '
                    'Aborting!!!'.format(url, error))
@@ -253,8 +256,8 @@ def get_webfile(url, path, ignore_missing=False):
 # ----
 
 
-def get_weblist(url, path, matchstr=None, remove_webfile=True,
-                ext=None):
+def get_weblist(url: str, path: str, matchstr: str = None,
+                remove_webfile: bool = True, ext: str = None) -> list:
     """
     Description
     -----------
@@ -332,8 +335,12 @@ def get_weblist(url, path, matchstr=None, remove_webfile=True,
         logger.info(msg=msg)
 
         # Attempt to download the URL path.
-        cmd = ['{0}'.format(wget_exec), '{0}'.format(url), '-O',
-               '{0}'.format(webpage)]
+        cmd = ['{0}'.format(wget_exec),
+               '{0}'.format(url),
+               '-O',
+               '{0}'.format(webpage)
+               ]
+
         proc = subprocess.Popen(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (out, err) = proc.communicate()
@@ -347,6 +354,7 @@ def get_weblist(url, path, matchstr=None, remove_webfile=True,
         soup = BeautifulSoup(webdata, 'html.parser')
         if ext is None:
             ext = str()
+
         webfiles = (node.get('href') for node in soup.find_all(
             'a') if node.get('href').endswith(ext))
         weblist = list()
