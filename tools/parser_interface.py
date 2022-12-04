@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/parser_interface.py
+# Module: tools/parser_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -21,7 +19,7 @@
 
 """
 Module
------- 
+------
 
     parser_interface.py
 
@@ -183,6 +181,7 @@ import os
 import sys
 import types
 
+from typing import Union
 from utils.error_interface import Error
 
 # ----
@@ -238,7 +237,7 @@ class ParserInterfaceError(Error):
 
     """
 
-    def __init__(self, msg):
+    def __init__(self, msg: str):
         """
         Description
         -----------
@@ -251,7 +250,7 @@ class ParserInterfaceError(Error):
 # ----
 
 
-def dict_formatter(in_dict):
+def dict_formatter(in_dict: dict) -> dict:
     """
     Description
     -----------
@@ -330,16 +329,18 @@ def dict_formatter(in_dict):
 
                 # Update the output dictionary key and value pair.
                 new_dct[key] = value
+
         return new_dct
 
     # Define the formatted output dictionary.
     out_dict = sorted_by_keys(dct=in_dict)
+
     return out_dict
 
 # ----
 
 
-def dict_key_remove(dict_in, key):
+def dict_key_remove(dict_in: dict, key: str) -> dict:
     """
     Description
     -----------
@@ -376,13 +377,16 @@ def dict_key_remove(dict_in, key):
         del dict_in[key]
     except KeyError:
         pass
+
     return dict_in
 
 # ----
 
 
-def dict_key_value(dict_in, key, force=False, max_value=False, min_value=False,
-                   index_value=None, no_split=False):
+def dict_key_value(dict_in: dict, key: str, force: bool = False,
+                   max_value: bool = False, min_value: bool = False,
+                   index_value: int = None,
+                   no_split: bool = False) -> Union[list, str]:
     """
     Description
     -----------
@@ -404,6 +408,9 @@ def dict_key_value(dict_in, key, force=False, max_value=False, min_value=False,
 
         A Python string indicating the dictionary key within the
         Python dictionary (see above).
+
+    Keywords
+    --------
 
     force: str, optional
 
@@ -461,12 +468,14 @@ def dict_key_value(dict_in, key, force=False, max_value=False, min_value=False,
                'values. Please check that only one threshold value is '
                'is to be sought from the list. Aborting!!!')
         raise ParserInterfaceError(msg=msg)
+
     if index_value is not None:
         if max_value:
             msg = ('The user has selected both a single value (as per '
                    'the specified index) and the maximum list value. '
                    'Please check which criteria to fulfill. Aborting!!!')
             raise ParserInterfaceError(msg=msg)
+
         if min_value:
             msg = ('The user has selected both a single value (as per '
                    'the specified index) and the minimum list value. '
@@ -485,8 +494,10 @@ def dict_key_value(dict_in, key, force=False, max_value=False, min_value=False,
                 value = min(value)
             if index_value is not None:
                 value = value[index_value]
+
         except AttributeError:
             value = dict_in[key]
+
     except KeyError:
         if not force:
             msg = ('Key {0} could not be found in user provided dictionary. '
@@ -494,12 +505,13 @@ def dict_key_value(dict_in, key, force=False, max_value=False, min_value=False,
             raise ParserInterfaceError(msg=msg)
         if force:
             value = None
+
     return value
 
 # ----
 
 
-def enviro_get(envvar):
+def enviro_get(envvar: str) -> Union[bool, float, int, str]:
     """
     Description
     -----------
@@ -518,7 +530,7 @@ def enviro_get(envvar):
     Returns
     -------
 
-    envvarval: any type
+    envvarval: bool, float, int, or str
 
         A Python type that contains the query for the environment
         variable.
@@ -531,12 +543,13 @@ def enviro_get(envvar):
         envvarval = os.environ.get(envvar)
     else:
         envvarval = None
+
     return envvarval
 
 # ----
 
 
-def enviro_set(envvar, value):
+def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
     """
     Description
     -----------
@@ -551,7 +564,7 @@ def enviro_set(envvar, value):
 
         A Python string specifying the environment variable name.
 
-    value: any type
+    value: bool, float, int, or str
 
         A Python value specifying the value of the environment
         variable.
@@ -564,7 +577,7 @@ def enviro_set(envvar, value):
 # ----
 
 
-def find_commonprefix(strings_list):
+def find_commonprefix(strings_list: list) -> str:
     """
     Description
     -----------
@@ -594,12 +607,13 @@ def find_commonprefix(strings_list):
     common_prefix = None
     if strings_list:
         common_prefix = os.path.commonprefix(strings_list)
+
     return common_prefix
 
 # ----
 
 
-def list_get_type(in_list, dtype):
+def list_get_type(in_list: list, dtype: str) -> list:
     """
     Description
     -----------
@@ -636,14 +650,17 @@ def list_get_type(in_list, dtype):
         for item in in_list:
             if type(item) is dtype:
                 var_list.append(item)
+
     except TypeError:
         var_list.append(numpy.nan)
+
     return var_list
 
 # ----
 
 
-def object_append(object_in, object_key, dict_in):
+def object_append(object_in: object, object_key: str,
+                  dict_in: dict) -> object:
     """
     Description
     -----------
@@ -654,7 +671,7 @@ def object_append(object_in, object_key, dict_in):
     Parameters
     ----------
 
-    object_in: obj
+    object_in: object
 
         A Python object to be appended.
 
@@ -671,7 +688,7 @@ def object_append(object_in, object_key, dict_in):
     Returns
     -------
 
-    object_out: obj 
+    object_out: object
 
         An appended Python object containing the input Python
         dictionary key and value pairs relative to the user-specified
@@ -692,12 +709,13 @@ def object_append(object_in, object_key, dict_in):
     # Build the output Python object.
     object_out = object_setattr(object_in=object_out, key=object_key,
                                 value=object_dict)
+
     return object_out
 
 # ----
 
 
-def object_compare(obj1, obj2):
+def object_compare(obj1: object, obj2: object) -> bool:
     """
     Description
     -----------
@@ -707,11 +725,11 @@ def object_compare(obj1, obj2):
     Parameters
     ----------
 
-    obj1: obj
+    obj1: object
 
         A Python object against which to compare with another object.
 
-    obj2: obj
+    obj2: object
 
         A Python object to compare to obj1 (above). 
 
@@ -727,12 +745,13 @@ def object_compare(obj1, obj2):
 
     # Compare the Python objects provided upon entry.
     compare = (obj1 == obj2)
+
     return compare
 
 # ----
 
 
-def object_deepcopy(object_in):
+def object_deepcopy(object_in: object) -> object:
     """
     Description
     -----------
@@ -743,14 +762,14 @@ def object_deepcopy(object_in):
     Parameters
     ----------
 
-    object_in: obj
+    object_in: object
 
         A Python object for which to create a deep copy.
 
     Returns
     -------
 
-    object_out: obj
+    object_out: object
 
         A Python object which is a deep copy of the user specified
         input object (e.g., object_in).
@@ -760,13 +779,14 @@ def object_deepcopy(object_in):
     # Create and return a deep copy of the Python object provided upon
     # entry.
     object_out = copy.deepcopy(object_in)
+
     return object_out
 
 
 # ----
 
 
-def object_define():
+def object_define() -> object:
     """ 
     Description
     -----------
@@ -776,7 +796,7 @@ def object_define():
     Returns
     -------
 
-    empty_obj: obj
+    empty_obj: object
 
         An empty Python object.
 
@@ -784,12 +804,15 @@ def object_define():
 
     # Initialize an empty Python object/namespace.
     empty_obj = types.SimpleNamespace()
+
     return empty_obj
 
 # ----
 
 
-def object_getattr(object_in, key, force=False):
+def object_getattr(object_in: object, key: str,
+                   force: bool = False) -> Union[bool, dict, float,
+                                                 int, str, list]:
     """
     Description
     -----------
@@ -810,6 +833,9 @@ def object_getattr(object_in, key, force=False):
 
         A Python string value specifying the attribute to seek.
 
+    Keywords
+    --------
+
     force: bool, optional
 
         A Python boolean variable; if True and in the absence of the
@@ -819,7 +845,7 @@ def object_getattr(object_in, key, force=False):
     Returns
     -------
 
-    value: any type
+    value: bool, dict, float, int, str, or list
 
         The result of the respective attribute search.
 
@@ -843,16 +869,19 @@ def object_getattr(object_in, key, force=False):
     if not hasattr(object_in, key):
         if force:
             value = None
+
         if not force:
             msg = ('The object {0} does not contain attribute {1}. '
                    'Aborting!!!'.format(object_in, key))
             raise ParserInterfaceError(msg=msg)
+
     return value
 
 # ----
 
 
-def match_list(in_list, match_string, exact=False):
+def match_list(in_list: list, match_string: str,
+               exact: bool = False) -> tuple:
     """
     Description
     -----------
@@ -876,6 +905,9 @@ def match_list(in_list, match_string, exact=False):
 
         A Python string for which to search for matches within the
         ingested list.
+
+    Keywords
+    --------
 
     exact: bool, optional
 
@@ -918,7 +950,9 @@ def match_list(in_list, match_string, exact=False):
                 match_str.append(string)
         if len(match_str) > 0:
             match_chk = True
+
         return (match_chk, match_str)
+
     if exact:
         match_str = None
         for string in lower_list:
@@ -936,12 +970,13 @@ def match_list(in_list, match_string, exact=False):
                 match_chk = True
                 match_str = string
                 break
+
         return (match_chk, match_str)
 
 # ----
 
 
-def object_hasattr(object_in, key):
+def object_hasattr(object_in: object, key: str) -> bool:
     """
     Description
     -----------
@@ -953,7 +988,7 @@ def object_hasattr(object_in, key):
     Parameters
     ----------
 
-    object_in: obj 
+    object_in: object
 
         A Python object within which to inquire about attributes.
 
@@ -975,12 +1010,15 @@ def object_hasattr(object_in, key):
     # Check whether the Python object specified upon entry contains
     # the key specified upon entry.
     chk_attr = hasattr(object_in, key)
+
     return chk_attr
 
 # ----
 
 
-def object_setattr(object_in, key, value):
+def object_setattr(object_in: object, key: str,
+                   value: Union[bool, dict, float, int,
+                                numpy.array, str]) -> object:
     """
     Description
     -----------
@@ -991,7 +1029,7 @@ def object_setattr(object_in, key, value):
     Parameters
     ----------
 
-    object_in: obj
+    object_in: object
 
         A Python object within which to search for attributes.
 
@@ -999,7 +1037,7 @@ def object_setattr(object_in, key, value):
 
         A Python string value specifying the attribute to define.
 
-    value: any type
+    value: bool, dict, float, int, numpy.array, or str
 
         A Python variable value specifying the value to accompany the
         Python object attribute (key).
@@ -1007,7 +1045,7 @@ def object_setattr(object_in, key, value):
     Returns
     -------
 
-    object_out: obj 
+    object_out: object
 
        A Python object containing the user specified key and value
        pair (e.g., attribute).
@@ -1018,12 +1056,13 @@ def object_setattr(object_in, key, value):
     # attribute using the key and value pair specified upon entry.
     object_out = object_in
     setattr(object_out, key, value)
+
     return object_out
 
 # ----
 
 
-def object_todict(object_in):
+def object_todict(object_in: object) -> dict:
     """
     Description
     -----------
@@ -1034,7 +1073,7 @@ def object_todict(object_in):
     Parameters
     ----------
 
-    object_in: obj
+    object_in: object
 
         A Python object containing specified content.
 
@@ -1051,12 +1090,13 @@ def object_todict(object_in):
     # Build a Python dictionary containing the contents of the Python
     # object specified upon entry.
     dict_out = [name for name in dir(object_in)]
+
     return dict_out
 
 # ----
 
 
-def sanitize_list(list_in, list_id):
+def sanitize_list(list_in: list, list_id: str) -> list:
     """
     Description
     -----------
@@ -1093,14 +1133,16 @@ def sanitize_list(list_in, list_id):
             j = list_out[i]
             list_out.pop(i)
             list_out.append(j)
+
         except ValueError:
             pass
+
     return list_out
 
 # ----
 
 
-def singletrue(bool_list):
+def singletrue(bool_list: list) -> bool:
     """
     Description
     -----------
@@ -1136,12 +1178,13 @@ def singletrue(bool_list):
     has_true = any(iterator)
     has_another_true = any(iterator)
     check = (has_true and not has_another_true)
+
     return check
 
 # ----
 
 
-def string_parser(in_list, remove_comma=False):
+def string_parser(in_list: list, remove_comma: bool = False) -> list:
     """
     Description
     -----------
@@ -1155,6 +1198,9 @@ def string_parser(in_list, remove_comma=False):
     in_list: list
 
         A Python list of variable values to be formatted.
+
+    Keywords
+    --------
 
     remove_comma: bool, optional
 
@@ -1178,11 +1224,13 @@ def string_parser(in_list, remove_comma=False):
                     test_value = test_value.encode('ascii', 'ignore')
             except NameError:
                 pass
+
             if isinstance(test_value, bool):
                 if test_value:
                     value = True
                     if not test_value:
                         value = False
+
             if isinstance(test_value, str):
                 try:
                     dummy = float(test_value)
@@ -1190,6 +1238,7 @@ def string_parser(in_list, remove_comma=False):
                         value = float(test_value)
                     else:
                         value = int(test_value)
+
                 except ValueError:
                     if test_value.lower() == 'none':
                         value = None
@@ -1199,26 +1248,33 @@ def string_parser(in_list, remove_comma=False):
                         value = False
                     else:
                         value = str(test_value)
+
             try:
                 value = value.rsplit()[0]
+
             except AttributeError:
                 pass
+
             out_list.append(value)
+
     except TypeError:
         value = None
         out_list.append(value)
+
     if remove_comma:
         new_list = list()
         for item in out_list:
             if item != ',':
                 new_list.append(item)
         out_list = new_list
+
     return out_list
 
 # ----
 
 
-def true_or_false(argval):
+def true_or_false(argval:
+                  Union[bool, dict, float, int, str]) -> Union[bool, None]:
     """
     Description
     -----------
@@ -1230,14 +1286,14 @@ def true_or_false(argval):
     Parameters
     ----------
 
-    argval: any type 
+    argval: bool, diict, float, int, or str
 
         A value corresponding to an argument.
 
     Returns
     -------
 
-    pytype: bool
+    pytype: bool or None
 
         A Python boolean-type value if the argument is a boolean
         variable; otherwise, NoneType.
@@ -1248,16 +1304,19 @@ def true_or_false(argval):
     ua = str(argval).upper()
     if 'TRUE'.startswith(ua):
         pytype = True
+
     elif 'FALSE'.startswith(ua):
         pytype = False
+
     else:
         pytype = None
+
     return pytype
 
 # ----
 
 
-def unique_list(in_list):
+def unique_list(in_list: list) -> list:
     """
     Description
     -----------
@@ -1283,7 +1342,9 @@ def unique_list(in_list):
     out_list = list()
     out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not
                                                 in out_list)
+
     out_list = list()
     for key in sorted(out_dict.keys()):
         out_list.append(key.replace(' ', ''))
+
     return out_list
