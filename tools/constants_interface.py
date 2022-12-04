@@ -54,7 +54,7 @@ History
 
 # ----
 
-import numpy
+from astropy import units
 
 # ----
 
@@ -64,8 +64,11 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 # ----
 
-# Conversion value for transforming knots to meters per second.
-kts2mps = numpy.float64(0.514444)
+# Conversion value for transforming nautical miles per hour (knots) to
+# meters per second.
+kts2mps = (units.imperial.kn).to(
+    units.meter/units.second) * (units.meter/units.second)
 
-# Conversion value for transforming meters per second to knots.
-mps2kts = numpy.float64(1.0/kts2mps)
+# Conversion value for transforming meters per second to nautical
+# miles per hour (knots).
+mps2kts = (units.meter/units.second).to(units.imperial.kn) * units.imperial.kn

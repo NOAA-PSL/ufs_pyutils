@@ -309,7 +309,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
         return tcvstr
 
     # Convert the wind speed units from knots to meters-per-second.
-    tcvobj.vmax = (tcvobj.vmax*constants_interface.kts2mps)
+    tcvobj.vmax = (tcvobj.vmax*constants_interface.kts2mps).value
 
     # Define default values for the optional TC-vitals record
     # attributes.
