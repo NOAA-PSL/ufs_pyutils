@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Module: tools/noaahpss_interface.py
+# Module: ioapps/noaahpss_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -759,7 +759,7 @@ def write_tarball(path: str, tarball_path: str, tarball_idx_path: str,
             # accordingly.
             (_, _, gigabytes_path, _) = \
                 fileio_interface.filesize(path=filename)
-            
+
             if gigabytes_path >= htar_max_gigabyte:
                 msg = ('File {0} has file size {1} TB which exceeds '
                        'the htar maximum file size {2} TB and will not '

@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Module: ush/ioapps/sqlite3_interface.py
+# Module: ioapps/sqlite3_interface.py
 
 # Author: Henry R. Winterbottom
 
