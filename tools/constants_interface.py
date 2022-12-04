@@ -26,8 +26,8 @@ Module
 Description
 -----------
 
-    This module contains constant values to convert between various
-    variable value units.
+    This module defines conversion values for transformations between
+    compatiable unit systems.
 
 Globals
 -------
