@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/fileio_interface.py
+# Module: tools/fileio_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -148,12 +146,12 @@ Requirements
 Author(s)
 --------- 
 
-   Henry R. Winterbottom; 02 July 2020
+    Henry R. Winterbottom; 03 December 2022
 
 History
 -------
 
-   2020-07-02: Henry Winterbottom -- Initial implementation.
+    2022-12-03: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -224,7 +222,7 @@ class RNRYAMLLoader(yaml.SafeLoader):
 # ----
 
 
-def concatenate(filelist, concatfile):
+def concatenate(filelist: list, concatfile: str) -> None:
     """
     Description
     -----------
@@ -260,7 +258,7 @@ def concatenate(filelist, concatfile):
 # ----
 
 
-def copyfile(srcfile, dstfile):
+def copyfile(srcfile: str, dstfile: str) -> None:
     """
     Description
     -----------
@@ -289,13 +287,19 @@ def copyfile(srcfile, dstfile):
     # directory path; proceed accordingly.
     if os.path.isfile(dstfile):
         os.remove(dstfile)
+
     if os.path.isdir(dstfile):
         path = dstfile
         rmdir(path)
 
     # Copy the specified source file to the corresponding destination
     # file using the respective platform copy method.
-    cmd = ['cp', '-rRfL', srcfile, dstfile]
+    cmd = ['cp',
+           '-rRfL',
+           srcfile,
+           dstfile
+           ]
+
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
@@ -303,7 +307,7 @@ def copyfile(srcfile, dstfile):
 # ----
 
 
-def dircontents(path):
+def dircontents(path: str) -> list:
     """
     Description
     -----------
@@ -336,7 +340,7 @@ def dircontents(path):
 # ----
 
 
-def fileexist(path):
+def fileexist(path: str) -> bool:
     """
     Description
     -----------
@@ -371,7 +375,7 @@ def fileexist(path):
 # ----
 
 
-def filepermission(path, permission):
+def filepermission(path: str, permission: int) -> None:
     """
     Description
     -----------
@@ -397,7 +401,7 @@ def filepermission(path, permission):
 # ----
 
 
-def filesize(path):
+def filesize(path: str) -> tuple:
     """
     Description
     -----------
@@ -447,7 +451,7 @@ def filesize(path):
 # ----
 
 
-def makedirs(path, force=False):
+def makedirs(path: str, force: bool = False) -> None:
     """
     Description
     -----------
@@ -479,6 +483,7 @@ def makedirs(path, force=False):
     if os.path.isdir(path):
         if force:
             rmdir(path)
+
     try:
         os.makedirs(path)
     except OSError:
@@ -487,7 +492,7 @@ def makedirs(path, force=False):
 # ----
 
 
-def read_json(json_file):
+def read_json(json_file: str) -> dict:
     """
     Description
     -----------
@@ -524,7 +529,7 @@ def read_json(json_file):
 # ----
 
 
-def read_yaml(yaml_file, return_obj=False):
+def read_yaml(yaml_file: str, return_obj: bool = False) -> tuple:
     """
     Description
     -----------
@@ -562,7 +567,7 @@ def read_yaml(yaml_file, return_obj=False):
         the YAML-formatted file; returned if return_obj is False upon
         entry.
 
-    yaml_obj: obj
+    yaml_obj: object
 
         A Python object containing all attributes injested from the
         YAML-formatted file; returned if return_obj is True upon
@@ -599,7 +604,7 @@ def read_yaml(yaml_file, return_obj=False):
 # ----
 
 
-def removefiles(filelist):
+def removefiles(filelist: list) -> None:
     """
     Description
     -----------
@@ -625,7 +630,7 @@ def removefiles(filelist):
 # ----
 
 
-def rename(srcfile, dstfile):
+def rename(srcfile: str, dstfile: str) -> None:
     """
     Description
     -----------
@@ -659,7 +664,7 @@ def rename(srcfile, dstfile):
 # ----
 
 
-def rmdir(path):
+def rmdir(path: str) -> None:
     """
     Description
     -----------
@@ -681,13 +686,14 @@ def rmdir(path):
     # upon entry; proceed accordingly.
     if os.path.isdir(path):
         shutil.rmtree(path)
+
     if not os.path.isdir(path):
         pass
 
 # ----
 
 
-def symlink(srcfile, dstfile):
+def symlink(srcfile: str, dstfile: str) -> None:
     """
     Description
     -----------
@@ -716,6 +722,7 @@ def symlink(srcfile, dstfile):
     # proceed accordingly.
     if os.path.isfile(dstfile):
         os.remove(dstfile)
+
     try:
         os.symlink(srcfile, dstfile)
     except OSError:
@@ -724,7 +731,7 @@ def symlink(srcfile, dstfile):
 # ----
 
 
-def touch(path):
+def touch(path: str):
     """
     Description
     -----------
@@ -737,7 +744,7 @@ def touch(path):
     path: str
 
         A Python string specifying the file path for which to apply
-        the POSIX UNIX touch application.
+        the UNIX touch application.
 
     """
 
@@ -748,7 +755,7 @@ def touch(path):
 # ----
 
 
-def write_jinja2(jinja2_file, in_dict):
+def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
     """
     Description
     -----------
@@ -786,7 +793,7 @@ def write_jinja2(jinja2_file, in_dict):
 # ----
 
 
-def write_json(json_file, in_dict, indent=4):
+def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
     """
     Description
     -----------
@@ -825,7 +832,8 @@ def write_json(json_file, in_dict, indent=4):
 # ----
 
 
-def write_yaml(yaml_file, in_dict, default_flow_style=False):
+def write_yaml(yaml_file: str, in_dict: dict,
+               default_flow_style: bool = False) -> None:
     """
     Description
     -----------

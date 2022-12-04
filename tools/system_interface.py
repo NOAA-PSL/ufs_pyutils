@@ -1,8 +1,6 @@
 # =========================================================================
 
-# $$$ MODULE DOCUMENTATION BLOCK
-
-# UFS-RNR :: ush/tools/system_interface.py
+# Module: tools/system_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -46,12 +44,12 @@ Functions
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 13 October 2022
+    Henry R. Winterbottom; 03 December 2022
 
 History
 -------
 
-    2022-10-13: Henry Winterbottom -- Initial implementation.
+    2022-12-03: Henry Winterbottom -- Initial implementation.
 
 """
 
@@ -60,8 +58,7 @@ History
 import inspect
 import sys
 
-from produtil.error_interface import Error
-from produtil.logger_interface import Logger
+from utils.logger_interface import Logger
 
 # ----
 
@@ -82,7 +79,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def _get_stack():
+def _get_stack() -> list:
     """
     Description
     -----------
@@ -92,10 +89,9 @@ def _get_stack():
     Returns
     -------
 
-    stack: obj
+    stack: list
 
-        A Python object containing the calling application stack
-        frame.
+        A Python list containing the calling application stack frame.
 
     """
 
@@ -107,7 +103,7 @@ def _get_stack():
 # ----
 
 
-def task_exit():
+def task_exit() -> None:
     """
     Description
     -----------
@@ -127,4 +123,5 @@ def task_exit():
     msg = ('Task exit called from file {0} line number {1}.'
            .format(module, lineno))
     logger.warn(msg=msg)
+
     sys.exit(0)
