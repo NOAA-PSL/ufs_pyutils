@@ -34,11 +34,13 @@ Globals
 
     kts2mps: float
 
-        Conversion value for transforming knots to meters per second.
+        Conversion value for transforming nautical miles per hour
+        (knots) to meters per second.
 
     mps2kts: float
 
-        Conversion value for transforming meters per second to knots.
+        Conversion value for transforming meters per second to
+        nautical miles per hour (knots).
 
 Author(s)
 ---------
