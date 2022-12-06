@@ -133,23 +133,12 @@ Functions
         This function ingests a Python object and returns a Python
         dictionary containing the contents of the respective object.
 
-    sanitize_list(list_in, list_id):
-
-        This function modifies/rearranges items in a list in accordance
-        with the user specifications.
-
-    single_true(bool_list)
-
-        This function ingests a list of boolean (e.g., logical)
-        variables (bool_list) and returns True if a single true value
-        is in the boolean list or False otherwise.
-
     string_parser(in_list)
 
         This function ingests a Python list of variables and returns
         Python list of appropriately formatted values.
 
-    true_or_false(argval) 
+    true_or_false(argval)
 
         This function checks whether an argument is a Boolean-type
         value; if so, this function defines the appropriate Python
@@ -161,7 +150,7 @@ Functions
         and returns a list of only unique values.
 
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 21 August 2022
 
@@ -171,6 +160,13 @@ History
     2022-08-21: Henry Winterbottom -- Initial implementation.
 
 """
+
+# ----
+
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-lines
+# pylint: disable=wrong-import-order
 
 # ----
 
@@ -203,8 +199,6 @@ __all__ = ['dict_formatter',
            'object_hasattr',
            'object_setattr',
            'object_todict',
-           'sanitize_list',
-           'single_true',
            'string_parser',
            'true_or_false',
            'unique_list'
@@ -245,7 +239,7 @@ class ParserInterfaceError(Error):
         Creates a new ParserInterfaceError object.
 
         """
-        super(ParserInterfaceError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 # ----
 
@@ -261,7 +255,7 @@ def dict_formatter(in_dict: dict) -> dict:
     Parameters
     ----------
 
-    in_dict: dict 
+    in_dict: dict
 
         A standalone Python dictionary to be formatted.
 
@@ -282,9 +276,9 @@ def dict_formatter(in_dict: dict) -> dict:
 
             # Check the Python version and proceed accordingly.
             if sys.version_info < (3, 0, 0):
-                if isinstance(value, unicode):
+                if isinstance(value, str):
                     value = value.encode('ascii', 'ignore')
-                if isinstance(key, unicode):
+                if isinstance(key, str):
                     key = key.encode('ascii', 'ignore')
 
             # Write the key and value pair for the output dictionary.
@@ -294,9 +288,9 @@ def dict_formatter(in_dict: dict) -> dict:
 
                 # Check the Python version and proceed accordingly.
                 if sys.version_info < (3, 0, 0):
-                    if isinstance(key, unicode):
+                    if isinstance(key, str):
                         key = key.encode('ascii', 'ignore')
-                    if isinstance(value, unicode):
+                    if isinstance(value, str):
                         value = value.encode('ascii', 'ignore')
                 test_value = value
 
@@ -498,11 +492,12 @@ def dict_key_value(dict_in: dict, key: str, force: bool = False,
         except AttributeError:
             value = dict_in[key]
 
-    except KeyError:
+    except KeyError as error:
         if not force:
             msg = (f'Key {key} could not be found in user provided dictionary. '
                    'Aborting!!!')
-            raise ParserInterfaceError(msg=msg)
+            raise ParserInterfaceError(msg=msg) from error
+
         if force:
             value = None
 
@@ -645,10 +640,10 @@ def list_get_type(in_list: list, dtype: str) -> list:
 
     # Find all items within the list specified upon entry of a
     # specified data type upon entry.
-    var_list = list()
+    var_list = []
     try:
         for item in in_list:
-            if type(item) is dtype:
+            if isinstance(item, dtype):
                 var_list.append(item)
 
     except TypeError:
@@ -731,7 +726,7 @@ def object_compare(obj1: object, obj2: object) -> bool:
 
     obj2: object
 
-        A Python object to compare to obj1 (above). 
+        A Python object to compare to obj1 (above).
 
     Returns
     -------
@@ -787,7 +782,7 @@ def object_deepcopy(object_in: object) -> object:
 
 
 def object_define() -> object:
-    """ 
+    """
     Description
     -----------
 
@@ -881,18 +876,17 @@ def object_getattr(object_in: object, key: str,
 
 
 def match_list(in_list: list, match_string: str,
-               exact: bool = False) -> tuple:
+               exact: bool = False) -> (bool, str):
     """
     Description
     -----------
 
     This function ingests a Python list and a Python string and
     matches, either exact or partial, are sought for the string within
-    the provided list and a tuple of values is returned; if
-    exact='True', a Python string is returned if a match is found
-    (i.e., match_chk=True) or 'None' if no match is found; if
-    exact='False', a list of Python strings if matches are found
-    (i.e., match_chk=True).
+    the provided; if exact=True upon entry, the matching Python string
+    is returned if a match is found otherwise NoneType is returned; if
+    exact=False upon entry, a list of matching Python strings is
+    returned.
 
     Parameters
     ----------
@@ -926,33 +920,22 @@ def match_list(in_list: list, match_string: str,
 
     match_str: str
 
-        A Python string (if exact=True) or a Python list of strings
-        (if exact=False) containing all matches to the input match
-        string; if no matches can be found, either NoneType (if
-        exact=True) or an empty list (if exact=False) is returned.
+        A Python string (if exact=True upon entry) or a Python list of
+        strings (if exact=False upon entry) containing all matches to
+        the input match string; if no matches can be found, either
+        NoneType (if exact=True upon entry) or an empty list (if
+        exact=False upon entry) is returned.
 
     """
+
+    # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
     mixed_list = [word for word in in_list if not word.islower() and
                   not word.isupper()]
     match_chk = False
-    if not exact:
-        match_str = list()
-        for string in lower_list:
-            if match_string.lower() in string.lower():
-                match_str.append(string)
-        for string in upper_list:
-            if match_string.lower() in string.lower():
-                match_str.append(string)
-        for string in mixed_list:
-            if match_string.lower() in string.lower():
-                match_str.append(string)
-        if len(match_str) > 0:
-            match_chk = True
 
-        return (match_chk, match_str)
-
+    # If appropriate, seek exact matches; proceed accordingly.
     if exact:
         match_str = None
         for string in lower_list:
@@ -971,7 +954,22 @@ def match_list(in_list: list, match_string: str,
                 match_str = string
                 break
 
-        return (match_chk, match_str)
+    # If appropriate, seek non-exact matches; proceed accordingly.
+    if not exact:
+        match_str = []
+        for string in lower_list:
+            if match_string.lower() in string.lower():
+                match_str.append(string)
+        for string in upper_list:
+            if match_string.lower() in string.lower():
+                match_str.append(string)
+        for string in mixed_list:
+            if match_string.lower() in string.lower():
+                match_str.append(string)
+        if len(match_str) > 0:
+            match_chk = True
+
+    return (match_chk, match_str)
 
 # ----
 
@@ -992,7 +990,7 @@ def object_hasattr(object_in: object, key: str) -> bool:
 
         A Python object within which to inquire about attributes.
 
-    key: str 
+    key: str
 
         A Python string value specifying the attribute to inquire
         about.
@@ -1000,7 +998,7 @@ def object_hasattr(object_in: object, key: str) -> bool:
     Returns
     -------
 
-    chk_attr: bool 
+    chk_attr: bool
 
         A Python boolean value containing the result of the attribute
         inquiry.
@@ -1089,55 +1087,9 @@ def object_todict(object_in: object) -> dict:
 
     # Build a Python dictionary containing the contents of the Python
     # object specified upon entry.
-    dict_out = [name for name in dir(object_in)]
+    dict_out = list(dir(object_in))
 
     return dict_out
-
-# ----
-
-
-def sanitize_list(list_in: list, list_id: str) -> list:
-    """
-    Description
-    -----------
-
-    This function modifies/rearranges items in a list in accordance
-    with the user specifications.
-
-    Parameters
-    ----------
-
-    list_in: list
-
-        A Python list (possibly) containing the user specified item.
-
-    list_id: str
-
-        A Python string specifying the user item.
-
-    Returns
-    -------
-
-    list_out: list
-
-        A Python list modified/rearranged in accordance with the user
-        specifications.
-
-    """
-
-    # Initialize the output list and proceed accordingly.
-    list_out = list_in
-    for item in list_out:
-        try:
-            i = list_out.index(list_id)
-            j = list_out[i]
-            list_out.pop(i)
-            list_out.append(j)
-
-        except ValueError:
-            pass
-
-    return list_out
 
 # ----
 
@@ -1215,12 +1167,12 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
         A Python list of appropriately formatted variable values.
 
     """
-    out_list = list()
+    out_list = []
     try:
         for value in in_list:
             test_value = value
             try:
-                if isinstance(test_value, unicode):
+                if isinstance(test_value, str):
                     test_value = test_value.encode('ascii', 'ignore')
             except NameError:
                 pass
@@ -1262,7 +1214,7 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
         out_list.append(value)
 
     if remove_comma:
-        new_list = list()
+        new_list = []
         for item in out_list:
             if item != ',':
                 new_list.append(item)
@@ -1286,7 +1238,7 @@ def true_or_false(argval:
     Parameters
     ----------
 
-    argval: bool, diict, float, int, or str
+    argval: bool, dict, float, int, or str
 
         A value corresponding to an argument.
 
@@ -1301,11 +1253,11 @@ def true_or_false(argval:
     """
 
     # Check the arguments provided upon entry and proceed accordingly.
-    ua = str(argval).upper()
-    if 'TRUE'.startswith(ua):
+    string = str(argval).upper()
+    if 'TRUE'.startswith(string):
         pytype = True
 
-    elif 'FALSE'.startswith(ua):
+    elif 'FALSE'.startswith(string):
         pytype = False
 
     else:
@@ -1339,11 +1291,11 @@ def unique_list(in_list: list) -> list:
         A Python list containing only uniquely-valued strings.
 
     """
-    out_list = list()
+    out_list = []
     out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not
                                                 in out_list)
 
-    out_list = list()
+    out_list = []
     for key in sorted(out_dict.keys()):
         out_list.append(key.replace(' ', ''))
 
