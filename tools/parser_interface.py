@@ -500,8 +500,8 @@ def dict_key_value(dict_in: dict, key: str, force: bool = False,
 
     except KeyError:
         if not force:
-            msg = ('Key {0} could not be found in user provided dictionary. '
-                   'Aborting!!!'.format(key))
+            msg = (f'Key {key} could not be found in user provided dictionary. '
+                   'Aborting!!!')
             raise ParserInterfaceError(msg=msg)
         if force:
             value = None
@@ -871,8 +871,8 @@ def object_getattr(object_in: object, key: str,
             value = None
 
         if not force:
-            msg = ('The object {0} does not contain attribute {1}. '
-                   'Aborting!!!'.format(object_in, key))
+            msg = (f'The object {object_in} does not contain attribute '
+                   '{key}. Aborting!!!')
             raise ParserInterfaceError(msg=msg)
 
     return value
