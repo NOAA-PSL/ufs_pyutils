@@ -55,6 +55,10 @@ History
 
 # ----
 
+# pylint: disable=unused-variable
+
+# ----
+
 import inspect
 import sys
 
