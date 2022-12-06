@@ -1,9 +1,7 @@
 name: Pylint
 
-on: 
-  push:
-    branches:
-      - 'feature/tools_pep_compliance'
+on: [push]
+
 jobs:
   build:
     runs-on: ubuntu-latest
