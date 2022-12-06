@@ -91,4 +91,4 @@ class Error(Exception):
         # Define the base-class attributes.
         logger = Logger()
         logger.error(msg=msg)
-        super(Error, self).__init__()
+        super().__init__()
