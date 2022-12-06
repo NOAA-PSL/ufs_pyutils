@@ -52,6 +52,13 @@ History
 
 # ----
 
+# pylint: disable=consider-iterating-dictionary
+# pylint: disable=consider-using-dict-items
+# pylint: disable=undefined-variable
+# pylint: disable=wrong-import-order
+
+# ----
+
 from tools import datetime_interface
 from tools import parser_interface
 from unittest import TestCase
@@ -133,8 +140,7 @@ class TestDateTimeMethods(TestCase):
                 object_in=date_comps_obj, key=key)
 
             assert(result == value), (self.unit_test_msg.format('datestrcomps') +
-                                      '; date string component {0} should be {1}.'.format(
-                                          key, result))
+                                      f'; date string component {key} should be {result}.')
 
     def test_datestrfrmt(self):
         """
@@ -175,8 +181,7 @@ class TestDateTimeMethods(TestCase):
                 datestr=datestr, offset_seconds=offset_seconds, frmttyp=frmttyp)
 
             assert(outdatestr == result), (self.unit_test_msg.format('datestrfrmt') +
-                                           '; date string of format {0} should be {1}.'.format(
-                                               frmttyp, result))
+                                           f'; date string of format {frmttyp} should be {result}.')
 
     def test_datestrupdate(self):
         """
@@ -202,8 +207,7 @@ class TestDateTimeMethods(TestCase):
         result = 'outfile.20000101120000.test'
 
         assert(outdatestr == result), (self.unit_test_msg.format('datestrupdate') +
-                                       '; the updated date string should be {0}.'.format(
-                                           result))
+                                       f'; the updated date string should be {result}.')
 
     def test_elapsed_seconds(self):
         """
@@ -229,8 +233,7 @@ class TestDateTimeMethods(TestCase):
         result = 31600800.0
 
         assert(seconds == result), (self.unit_test_msg.format('elapsed_seconds') +
-                                    '; the total elapsed seconds should be {0}.'.format(
-                                        result))
+                                    f'; the total elapsed seconds should be {result}.')
 
 
 # ----
