@@ -283,7 +283,7 @@ def current_date(frmttyp: str) -> str:
     # Determine the timestamp corresponding to the current time upon
     # function entry.
     timestamp = datetime.datetime.fromtimestamp(time.time()).\
-        strftime('{0}'.format(frmttyp))
+        strftime(f'{frmttyp}')
 
     return timestamp
 
@@ -389,7 +389,7 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
         value = datetime.datetime.strftime(dateobj, date_comps_dict[key])
         if key.lower() == 'century_short':
             century_list = [int(d) for d in str(value)]
-            value = '{0}{1}'.format(century_list[0], century_list[1])
+            value = (f'{century_list[0]}{century_list[1]}')
         date_comps_obj = parser_interface.object_setattr(
             object_in=date_comps_obj, key=key, value=value)
 
@@ -564,11 +564,10 @@ def datestrupdate(datestr: str, in_frmttyp: str, out_frmttyp: str,
         object_in=date_comps_obj, key='comps_list')
 
     for item in comps_list:
-        if '<{0}>'.format(item) in outdatestr:
+        if (f'<{item}>') in outdatestr:
             time_attr = parser_interface.object_getattr(
                 date_comps_obj, key=item)
-            outdatestr = outdatestr.replace('<{0}>'.format(item),
-                                            time_attr)
+            outdatestr = outdatestr.replace(f'<{item}>', time_attr)
 
     return outdatestr
 
