@@ -19,7 +19,7 @@
 
 """
 Module
------- 
+------
 
     fileio_interface.py
 
@@ -95,7 +95,7 @@ Functions
         YAML) formatted file and returns a Python dictionary
         containing all attributes of the file.
 
-    removefiles(filelist) 
+    removefiles(filelist)
 
         This function ingests a list of filenames. The function then
         checks whether the respective filename exists and if so it
@@ -144,7 +144,7 @@ Requirements
 - pyyaml; https://pyyaml.org/
 
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 03 December 2022
 
@@ -157,16 +157,25 @@ History
 
 # ----
 
+# pylint: disable=consider-using-f-string
+# pylint: disable=consider-using-with
+# pylint: disable=broad-except
+# pylint: disable=too-many-ancestors
+# pylint: disable=unspecified-encoding
+# pylint: disable=wrong-import-order
+
+# ----
+
 import json
-import numpy
 import os
 import re
 import shutil
 import subprocess
-import types
+import numpy
 import yaml
 
 from tools import parser_interface
+from typing import Union
 
 # ----
 
@@ -196,6 +205,7 @@ __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
 
+
 # ----
 
 
@@ -215,7 +225,15 @@ class RNRYAMLLoader(yaml.SafeLoader):
     #   how-to-replace-environment-variable-value-in-yaml-file-to-be-parsed-using-python
     envvar_matcher = re.compile(r'.*\$\{([^}^{]+)\}.*')
 
-    def envvar_constructor(loader, node):
+    def envvar_constructor(self, node):
+        """
+        Description
+        -----------
+
+        This function is the environment variable template
+        constructor.
+
+        """
 
         return os.path.expandvars(node.value)
 
@@ -302,7 +320,7 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
+    proc.communicate()
 
 # ----
 
@@ -318,7 +336,7 @@ def dircontents(path: str) -> list:
     Parameters
     ----------
 
-    path: str 
+    path: str
 
         A Python string defining the path to the directory to be
         parsed.
@@ -463,7 +481,7 @@ def makedirs(path: str, force: bool = False) -> None:
     Parameters
     ----------
 
-    path: str 
+    path: str
 
         A Python string defining the path to the directory to be
         constructed.
@@ -529,7 +547,8 @@ def read_json(json_file: str) -> dict:
 # ----
 
 
-def read_yaml(yaml_file: str, return_obj: bool = False) -> tuple:
+def read_yaml(yaml_file: str, return_obj: bool =
+              False) -> Union[dict, object]:
     """
     Description
     -----------
@@ -586,20 +605,22 @@ def read_yaml(yaml_file: str, return_obj: bool = False) -> tuple:
         yaml_dict = yaml.load(stream, Loader=RNRYAMLLoader)
 
     # Define the Python data type to be returned; proceed accordingly.
+    yaml_return = None
     if return_obj:
-        (attr_list, yaml_obj) = (list(), parser_interface.object_define())
+        (attr_list, yaml_obj) = ([], parser_interface.object_define())
         for key in yaml_dict.keys():
             attr_list.append(key)
             value = parser_interface.dict_key_value(
                 dict_in=yaml_dict, key=key, no_split=True)
             yaml_obj = parser_interface.object_setattr(
                 object_in=yaml_obj, key=key, value=value)
-
-        return yaml_obj
+        yaml_return = yaml_obj
 
     if not return_obj:
 
-        return yaml_dict
+        yaml_return = yaml_dict
+
+    return yaml_return
 
 # ----
 
@@ -658,6 +679,7 @@ def rename(srcfile: str, dstfile: str) -> None:
     # the destination file path specified upon entry.
     try:
         shutil.move(srcfile, dstfile)
+
     except Exception:
         pass
 
@@ -780,15 +802,17 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
 
     # Open and write the dictionary contents to the specified
     # Jinja2-formatted file path.
-    with open(jinja2_file, 'w') as f:
-        f.write('#!Jinja2\n')
+    with open(jinja2_file, 'w') as file:
+        file.write('#!Jinja2\n')
         for key in in_dict.keys():
             value = in_dict[key]
-            if type(value) is str:
-                string = 'set %s = "%s"' % (key, value)
+
+            if isinstance(value, str):
+                string = f'set {key} = "{value}"'
             else:
-                string = 'set %s = %s' % (key, value)
-            f.write('{%% %s %%}\n' % string)
+                string = f'set {key} = {value}'
+
+            file.write('{%% %s %%}\n' % string)
 
 # ----
 
@@ -826,8 +850,8 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
 
     # Open and write the dictionary contents to the specified
     # JSON-formatted file path.
-    with open(json_file, 'w') as f:
-        json.dump(in_dict, f, indent=indent)
+    with open(json_file, 'w') as file:
+        json.dump(in_dict, file, indent=indent)
 
 # ----
 
@@ -866,5 +890,5 @@ def write_yaml(yaml_file: str, in_dict: dict,
 
     # Open and write the dictionary contents to the specified
     # YAML-formatted file path.
-    with open(yaml_file, 'w') as f:
-        yaml.dump(in_dict, f, default_flow_style=default_flow_style)
+    with open(yaml_file, 'w') as file:
+        yaml.dump(in_dict, file, default_flow_style=default_flow_style)

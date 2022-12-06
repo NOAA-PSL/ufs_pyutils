@@ -140,10 +140,10 @@ History
 
 # ----
 
-import croniter
 import datetime
-import sqlite3
 import time
+import sqlite3
+import croniter
 
 from tools import parser_interface
 
@@ -362,7 +362,8 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
     """
 
     # Initialize the Python datetime objects.
-    def date_comps_obj(): return None
+    def date_comps_obj():
+        return None
     dateobj = _get_dateobj(datestr, frmttyp)
 
     # Loop through timestamp attributes and append values to local
@@ -385,8 +386,8 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
                        'day_of_year': '%j'
                        }
 
-    for key in date_comps_dict.keys():
-        value = datetime.datetime.strftime(dateobj, date_comps_dict[key])
+    for (key, item) in date_comps_dict.items():
+        value = datetime.datetime.strftime(dateobj, item)
         if key.lower() == 'century_short':
             century_list = [int(d) for d in str(value)]
             value = (f'{century_list[0]}{century_list[1]}')
@@ -407,24 +408,22 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
 
     # Collect the Julian attribute using SQLite3 and proceed
     # accordingly.
-    value = list(connect.execute('select julianday("{0}")'.
-                                 format(datestr)))[0][0]
+    value = list(connect.execute(f'select julianday("{datestr}")'))[0][0]
     date_comps_obj = parser_interface.object_setattr(
         object_in=date_comps_obj, key='julian_day', value=value)
-    x = time.strptime(datestr, '%Y-%m-%d %H:%M:%S')
+    timedate = time.strptime(datestr, '%Y-%m-%d %H:%M:%S')
 
     # Collect the total number of seconds of the day corresponding to
     # the respective timestamp provided upon entry.
-    value = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min,
-                               seconds=x.tm_sec).total_seconds()
-    value = '{:05d}'.format(int(value))
+    value = datetime.timedelta(hours=timedate.tm_hour, minutes=timedate.tm_min,
+                               seconds=timedate.tm_sec).total_seconds()
+    value = f'{int(value):05d}'  # .format(int(value))
     date_comps_obj = parser_interface.object_setattr(
         object_in=date_comps_obj, key='total_seconds_of_day',
         value=value)
 
     # Add the date and time component list corresponding to the
     # respective timestamp provided upon entry.
-    comps_list = vars(date_comps_obj)
     date_comps_obj = parser_interface.object_setattr(
         object_in=date_comps_obj, key='comps_list',
         value=vars(date_comps_obj))
@@ -489,12 +488,7 @@ def datestrfrmt(datestr: str, frmttyp: str,
     if offset_seconds is not None:
         dateobj = dateobj+datetime.timedelta(0, offset_seconds)
 
-    if frmttyp is None:
-        outdatestr =\
-            datetime.datetime.strftime(dateobj, default_frmttyp)
-
-    else:
-        outdatestr = datetime.datetime.strftime(dateobj, frmttyp)
+    outdatestr = datetime.datetime.strftime(dateobj, frmttyp)
 
     return outdatestr
 
@@ -564,7 +558,7 @@ def datestrupdate(datestr: str, in_frmttyp: str, out_frmttyp: str,
         object_in=date_comps_obj, key='comps_list')
 
     for item in comps_list:
-        if (f'<{item}>') in outdatestr:
+        if f'<{item}>' in outdatestr:
             time_attr = parser_interface.object_getattr(
                 date_comps_obj, key=item)
             outdatestr = outdatestr.replace(f'<{item}>', time_attr)
