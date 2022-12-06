@@ -50,9 +50,15 @@ History
 
 # ----
 
+# pylint: disable=unused-variable
+
+# ----
+
 import logging
 import sys
 import types
+
+from ast import literal_eval
 
 # ----
 
@@ -63,7 +69,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Logger(object):
+class Logger():
     """
     Description
     -----------
@@ -103,10 +109,17 @@ class Logger(object):
 
         # Assign the terminal colors for the respective logger message
         # types.
-        def cyan(text): return '\033[0;36m' + text + '\033[0m'
-        def green(text): return '\033[0;32m' + text + '\033[0m'
-        def red(text): return '\033[0;31m' + text + '\033[0m'
-        def yellow(text): return '\033[0;33m' + text + '\033[0m'
+        def cyan(text):
+            return '\033[0;36m' + text + '\033[0m'
+
+        def green(text):
+            return '\033[0;32m' + text + '\033[0m'
+
+        def red(text):
+            return '\033[0;31m' + text + '\033[0m'
+
+        def yellow(text):
+            return '\033[0;33m' + text + '\033[0m'
 
         colors_list = ['cyan',
                        'green',
@@ -116,7 +129,7 @@ class Logger(object):
 
         self.colors_obj = types.SimpleNamespace()
         for item in colors_list:
-            setattr(self.colors_obj, item, eval(item))
+            setattr(self.colors_obj, item, literal_eval(item))
 
     def debug(self, msg: str):
         """
