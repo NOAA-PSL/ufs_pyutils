@@ -1,0 +1,145 @@
+# =========================================================================
+
+# Docker Recipe File: Docker/el7-miniconda.ufs_pyutils.docker
+
+# Email: henry.winterbottom@noaa.gov
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the respective public license published by the
+# Free Software Foundation and included with the repository within
+# which this application is contained.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# =========================================================================
+
+# Description
+# -----------
+
+#    This Docker recipe file builds a Docker image containing the
+#    Centos 7 base-Linux platform required to build the Python 3.5+
+#    software stack for the respective ufs_pyutils applications.
+
+#    In addition to the Python 3.5+ software stack, both the GO
+#    programming language and Singularity are also compiled within
+#    this container.
+
+# Docker Instructions
+# -------------------
+
+#    The Docker container image should be built as follows.
+
+#    user@host:$ docker build -f el7-miniconda.ufs_pyutils.docker --tag el7-miniconda.ufs_pyutils:<TAG> .
+
+#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+
+#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+
+#    where <TAG> is the tag identifier/name for the respective image
+#    and <DOCKER LOGIN> is the user Docker Hub login name.
+
+# Singularity Instructions
+# ------------------------
+
+#    To build the respective Singularity image file (i.e., container),
+#    do as follows.
+
+#    user@host:$ singularity build ufs_pyutils_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/ufs_pyutils:<TAG>
+
+#    In order to execute and application within the Singularity
+#    container, do as follows.
+
+#    user@host:$ singularity exec ufs_pyutils_<TAG>.sif <X> <Y>
+
+#    where <X> is an executable or application within the Singularity
+#    container (e.g., Python) and <Y> is an application exist on the
+#    local host disk (i.e., a Python script/application).
+
+# Author(s)
+# ---------
+
+#    Henry R. Winterbottom; 06 December 2022 
+
+# History
+# -------
+
+#    2022-12-07: Henry R. Winterbottom -- Initial implementation.
+
+# Base Image Attributes
+# ---------------------
+
+#    Linux Image and Tag: centos:7
+
+# Latest Container Image Downloads
+# --------------------------------
+
+#    Docker Hub: docker pull noaaufsrnr/el7-miniconda.ufs_pyutils:<TAG>
+
+#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ufs_pyutils:<TAG>
+
+#----
+
+# Define the container base information.
+FROM centos:7
+MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)" 
+
+#----
+
+# Build the Linux platform.
+RUN yum groupinstall -y 'Development Tools' && \
+    yum install -y git && \
+    yum install -y wget && \
+    yum install -y libseccomp-devel && \
+    yum install -y glib2-devel && \
+    yum install -y squashfs-tools && \
+    yum install -y cryptsetup && \
+    yum install -y runc && \
+    yum install -y which && \
+    yum install -y vim && \
+    yum install -y glibc-devel.i686 && \
+    yum install -y libstdc++-devel.i686 && \
+    rm -rf /var/lib/apt/lists/*
+
+#----
+
+# Collect and build the GO programming language.
+RUN export VERSION=1.19.3 OS=linux ARCH=386 && \
+    wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+    tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz && \
+    echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc && \
+    rm -rf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+
+#----
+
+# Collect and build the Singularity application.
+RUN git clone --recurse-submodules https://github.com/sylabs/singularity.git && \
+    cd singularity && \
+    source /root/.bashrc && \
+    ./mconfig --without-suid --without-conmon --without-seccomp && \
+    export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH} && \
+    make -C builddir && \
+    make -C builddir install
+
+#----
+
+# Download and install Miniconda.
+RUN wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh && \
+    sh Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /miniconda && \
+    rm Miniconda3-py39_4.10.3-Linux-x86_64.sh
+
+# Patch the Miniconda install for the respective application.
+RUN /miniconda/bin/pip install netcdf4 && \
+    /miniconda/bin/conda install numpy && \
+    /miniconda/bin/pip install astropy && \
+    /miniconda/bin/pip install bs4 && \
+    /miniconda/bin/pip install croniter && \
+    /miniconda/bin/conda install -c anaconda pyyaml && \
+    /miniconda/bin/conda install -c anaconda boto3 && \
+    /miniconda/bin/conda clean --tarballs
+
+#----
+
+# Define the container environment.
+ENV PATH="/miniconda/bin:${PATH}"
