@@ -1,7 +1,0 @@
-lolcow:
-     container: ./tests/lolcow_latest.sif
-     path: ./
-     script: ./lolcow_latest.sh
-     app_path: Null
-     
-

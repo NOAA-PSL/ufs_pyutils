@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # =========================================================================
 
 # Module: utils/logger_interface.py
@@ -139,7 +137,7 @@ class Logger(object):
         """
 
         # Print the DEBUG level message to the user terminal.
-        self.logger.info(self.colors_obj.yellow('DEBUG: {0}'.format(msg)))
+        self.logger.info(self.colors_obj.yellow(f'DEBUG: {msg}'))
 
     def error(self, msg: str):
         """
@@ -160,7 +158,7 @@ class Logger(object):
         """
 
         # Print the ERROR level message to the user terminal.
-        self.logger.error(self.colors_obj.red('ERROR: {0}'.format(msg)))
+        self.logger.error(self.colors_obj.red(f'ERROR: {msg}'))
 
     def info(self, msg: str):
         """
@@ -181,7 +179,7 @@ class Logger(object):
         """
 
         # Print the INFO level message to the user terminal.
-        self.logger.info(self.colors_obj.cyan('INFO: {0}'.format(msg)))
+        self.logger.info(self.colors_obj.cyan(f'INFO: {msg}'))
 
     def warn(self, msg: str):
         """
@@ -202,4 +200,4 @@ class Logger(object):
         """
 
         # Print the WARNING level message to the user terminal.
-        self.logger.warning(self.colors_obj.green('WARNING: {0}'.format(msg)))
+        self.logger.warning(self.colors_obj.green(f'WARNING: {msg}'))
