@@ -28,10 +28,10 @@ jobs:
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
 
-    - name: Checkout
-      uses: actions/checkout@v2
-      with:
-           path: $GITHUB_WORKSPACE/ufs_pyutils
+    - name: Clone ufs_pyutils
+      run: |
+        cd $GITHUB_WORKSPACE
+        git clone https://github.com/HenryWinterbottom-NOAA/ufs_pyutils.git
 
     - name: Run ioapps unit-tests
       run: |
