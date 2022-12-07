@@ -37,7 +37,7 @@ jobs:
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd $GITHUB_WORKSPACE/ufs_pyutils/ioapps
-        pytest
+        pwd
         
         #cd $GITHUB_WORKSPACE/ufs_pyutils/ufs_pyutils/ioapps
         #ls 
