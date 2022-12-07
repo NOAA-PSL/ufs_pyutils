@@ -28,8 +28,6 @@ jobs:
         pip install pytest-order
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
-#        pip install pytest-ordering
-
 
     - name: Checkout
       uses: actions/checkout@v2
@@ -41,13 +39,9 @@ jobs:
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd $GITHUB_WORKSPACE/ufs_pyutils/ioapps
         pytest
-        
-        #cd $GITHUB_WORKSPACE/ufs_pyutils/ufs_pyutils/ioapps
-        #ls 
-        #pytest 
            
-#    - name: Run tools unit-tests
-#      run: |
-#        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
-#        cd ufs_pyutils/tools
-#        pytest 
+    - name: Run tools unit-tests
+      run: |
+        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
+        cd ufs_pyutils/tools
+        pytest 
