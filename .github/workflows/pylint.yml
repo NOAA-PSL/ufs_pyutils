@@ -36,6 +36,7 @@ jobs:
     - name: Run ioapps unit-tests
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE"
+        echo $GITHUB_WORKSPACE
         cd ufs_pyutils/ioapps
         pwd
         ls
