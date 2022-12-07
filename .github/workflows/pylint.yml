@@ -37,10 +37,12 @@ jobs:
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd ufs_pyutils/ioapps
-        pytest 
+        pwd
+        ls
+        #pytest 
            
-    - name: Run tools unit-tests
-      run: |
-        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
-        cd ufs_pyutils/tools
-        pytest 
+#    - name: Run tools unit-tests
+#      run: |
+#        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
+#        cd ufs_pyutils/tools
+#        pytest 
