@@ -31,7 +31,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
       with:
-           path: ufs_pyutils
+           path: $GITHUB_WORKSPACE
 
     - name: Run ioapps unit-tests
       run: |
