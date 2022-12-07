@@ -101,6 +101,7 @@ class TestNetCDF4Methods(TestCase):
             [parser_interface.object_define() for i in range(2)]
         self.ncfile = os.path.join(os.getcwd(), 'tests',
                                    'ncwrite.nc')
+        print('I AM IN PATH %s' % self.ncfile)
         self.ncfrmt = 'NETCDF4_CLASSIC'
 
         # Build the Python object containing the netCDF-formatted file
