@@ -32,10 +32,15 @@ jobs:
       uses: actions/checkout@v2
       with:
            path: ufs_pyutils
-         
+
+    - name: Run ioapps unit-tests
+      run: |
+        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
+        cd ufs_pyutils/ioapps
+        pytest 
+           
     - name: Run tools unit-tests
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd ufs_pyutils/tools
-        ls
         pytest 
