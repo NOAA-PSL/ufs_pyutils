@@ -6,10 +6,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: Run ufs_pyutils unit tests.
-    
-#    strategy:
-#      matrix:
-#        python-version: ["3.8"]
         
     steps:
 
