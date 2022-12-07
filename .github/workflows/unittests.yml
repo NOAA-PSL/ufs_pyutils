@@ -1,4 +1,4 @@
-name: Unit Tests for Package ufs_pyutils
+name: Unit Tests
 
 on: [push, pull_request]
 
@@ -7,9 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Run ufs_pyutils unit tests.
     
-    strategy:
-      matrix:
-        python-version: ["3.8"]
+#    strategy:
+#      matrix:
+#        python-version: ["3.8"]
         
     steps:
 
