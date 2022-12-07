@@ -1,3 +1,5 @@
+[![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml/badge.svg?branch=develop)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml)
+
 # Disclaimer
 
 The United States Department of Commerce (DOC) GitHub project code is

@@ -1,11 +1,11 @@
-name: Unit Tests
+name: Unit Tests for Package ufs_pyutils
 
 on: [push, pull_request]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Run unit tests with Python
+    name: Run ufs_pyutils unit tests.
     
     strategy:
       matrix:
@@ -23,24 +23,23 @@ jobs:
         pip install astropy
         pip install bs4
         pip install croniter
-        pip install pylint
         pip install pytest==7.2.0
         pip install pytest-order
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
 
-    - name: Checkout
+    - name: Checkout ufs_pyutils.
       uses: actions/checkout@v2
       with:
         path: ufs_pyutils
 
-    - name: Run ioapps unit-tests
+    - name: Run ioapps package unit-tests.
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd $GITHUB_WORKSPACE/ufs_pyutils/ioapps
         pytest
            
-    - name: Run tools unit-tests
+    - name: Run tools package unit-tests.
       run: |
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd ufs_pyutils/tools
