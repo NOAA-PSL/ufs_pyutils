@@ -25,10 +25,11 @@ jobs:
         pip install croniter
         pip install pylint
         pip install pytest==7.2.0
-        pip install pytest-ordering
         pip install pytest-order
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
+#        pip install pytest-ordering
+
 
     - name: Checkout
       uses: actions/checkout@v2
