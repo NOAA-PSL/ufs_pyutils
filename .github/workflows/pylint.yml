@@ -35,5 +35,7 @@ jobs:
          
     - name: Run tools unit-tests
       run: |
-        ls $GITHUB_WORKSPACE
-
+        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
+        cd ufs_pyutils/tools
+        ls
+        pytest 
