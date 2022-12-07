@@ -1,4 +1,4 @@
-[![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml/badge.svg?branch=develop)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml)
+![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml/badge.svg?branch=develop)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml)
 
 # Disclaimer
 
