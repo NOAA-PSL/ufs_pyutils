@@ -31,7 +31,7 @@ jobs:
     - name: Clone ufs_pyutils
       run: |
         cd $GITHUB_WORKSPACE
-        git clone https://github.com/HenryWinterbottom-NOAA/ufs_pyutils.git
+        git clone git@github.com:HenryWinterbottom-NOAA/ufs_pyutils.git
 
     - name: Run ioapps unit-tests
       run: |
