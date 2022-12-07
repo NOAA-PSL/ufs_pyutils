@@ -1,24 +1,22 @@
-name: Pylint
+name: Unit Tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: centos:7
+    runs-on: ubuntu-latest
+    name: Run unit tests with Python
+    
     strategy:
       matrix:
         python-version: ["3.8"]
+        
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: set pythonpath
+
+    - name: Build and install Python dependencies
       run: |
-            echo "PYTHONPATH=mlprepare" >> $GITHUB_ENV
-    - name: Install dependencies
-      run: |
+        wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+        sh Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p /miniconda
         python -m pip install --upgrade pip
         pip install netcdf4
         conda install numpy
@@ -26,8 +24,16 @@ jobs:
         pip install bs4
         pip install croniter
         pip install pylint
+        pip install pytest
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
-    - name: Analysing the code with pylint
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+           path: ufs_pyutils
+         
+    - name: Run tools unit-tests
       run: |
-        pylint $(git ls-files '*.py')
+        cd $GITHUB_WORKSPACE/tools
+        pytest 
