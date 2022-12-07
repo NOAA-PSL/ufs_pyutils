@@ -35,5 +35,5 @@ jobs:
          
     - name: Run tools unit-tests
       run: |
-        cd $GITHUB_WORKSPACE/tools
-        pytest 
+        ls $GITHUB_WORKSPACE
+
