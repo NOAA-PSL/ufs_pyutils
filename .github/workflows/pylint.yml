@@ -24,7 +24,7 @@ jobs:
         pip install bs4
         pip install croniter
         pip install pylint
-        pip install pytest
+        pip install pytest==7.2.0
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
 
