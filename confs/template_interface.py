@@ -67,7 +67,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Template():
+class Template:
     """
     Description
     -----------
@@ -122,13 +122,13 @@ class Template():
         str_update = str_template
 
         for key in str_dict.keys():
-            check_key = f'<{key}>'
+            check_key = f"<{key}>"
 
             if check_key in str_template:
                 value = parser_interface.dict_key_value(
-                    dict_in=str_dict, key=key, no_split=True)
-                str_update = str_update.replace(
-                    f'{check_key}', f'{value}')
+                    dict_in=str_dict, key=key, no_split=True
+                )
+                str_update = str_update.replace(f"{check_key}", f"{value}")
 
         return str_update
 
@@ -176,16 +176,18 @@ class Template():
 
         # Update all template strings accordingly.
         try:
-            str_update = self.write(str_template=str_template,
-                                    str_dict=str_dict)
+            str_update = self.write(str_template=str_template, str_dict=str_dict)
 
         except Exception as error:
 
-            msg = (f'Template string {str_template} parsing failed with error '
-                   '{error}. Aborting!!!')
+            msg = (
+                f"Template string {str_template} parsing failed with error "
+                "{error}. Aborting!!!"
+            )
             raise TemplateError(msg=msg) from error
 
         return str_update
+
 
 # ----
 

@@ -83,7 +83,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Namelist():
+class Namelist:
     """
     Description
     -----------
@@ -292,10 +292,7 @@ class Namelist():
 
                             # Handle boolean type values accordingly.
                             if (value.lower() == "t") or (value.lower() == "f"):
-                                nml_line = nml_line.replace(
-                                    f"{check_key}",
-                                    f"{value}"
-                                )
+                                nml_line = nml_line.replace(f"{check_key}", f"{value}")
                                 break
 
                             # Handle string type values accordingly.
@@ -305,54 +302,40 @@ class Namelist():
                                     float_valid = self.check_float(string=item)
                                     if float_valid:
                                         try:
-                                            value = value + \
-                                                "{0},".format(float(item))
+                                            value = value + "{0},".format(float(item))
 
                                         except ValueError:
-                                            value = value + \
-                                                f'"{item}",'
+                                            value = value + f'"{item}",'
                                     else:
                                         try:
                                             int(item)
                                             value = value + f"{item},"
 
                                         except ValueError:
-                                            value = value + \
-                                                f'"{item}",'
+                                            value = value + f'"{item}",'
 
-                                nml_line = nml_line.replace(
-                                    f"{check_key}",
-                                    f"{value}"
-                                )
+                                nml_line = nml_line.replace(f"{check_key}", f"{value}")
 
                             else:
 
                                 # Handle strings containing quotations accordingly.
                                 if self.no_string_quotes:
                                     nml_line = nml_line.replace(
-                                        f"{check_key}",
-                                        f"{value}"
+                                        f"{check_key}", f"{value}"
                                     )
                                 else:
                                     nml_line = nml_line.replace(
-                                        f"{check_key}",
-                                        f'"{value}"'
+                                        f"{check_key}", f'"{value}"'
                                     )
 
                         # Handle boolean type values accordingly.
                         elif isinstance(test_value, bool):
                             if value:
-                                nml_line = nml_line.replace(
-                                    f"{check_key}", "T"
-                                )
+                                nml_line = nml_line.replace(f"{check_key}", "T")
                             else:
-                                nml_line = nml_line.replace(
-                                    f"{check_key}", "F"
-                                )
+                                nml_line = nml_line.replace(f"{check_key}", "F")
                         else:
-                            nml_line = nml_line.replace(
-                                f"{check_key}", f"{value}"
-                            )
+                            nml_line = nml_line.replace(f"{check_key}", f"{value}")
 
                 # Write to the output namelist file accordingly.
                 if all(idc in nml_line for idc in idchars):
@@ -369,9 +352,7 @@ class Namelist():
 
             # Add logging message to the end of the file.
             if self.log_messages:
-                timestamp = datetime_interface.current_date(
-                    frmttyp="%Y-%m-%d %H:%M:%S"
-                )
+                timestamp = datetime_interface.current_date(frmttyp="%Y-%m-%d %H:%M:%S")
                 file.write(f"! Updated: {timestamp}.\n")
 
     def run(self, nml_dict: dict, nml_template: str, nml_path: str) -> None:
@@ -407,8 +388,7 @@ class Namelist():
 
         # Build the namelist file and proceed accordingly.
         try:
-            self.write(nml_dict=nml_dict,
-                       nml_template=nml_template, nml_path=nml_path)
+            self.write(nml_dict=nml_dict, nml_template=nml_template, nml_path=nml_path)
 
             if self.strip_dblequotes:
                 self.dblequotes_strip(nml_path=nml_path)
