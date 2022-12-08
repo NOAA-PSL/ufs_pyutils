@@ -1,5 +1,7 @@
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml/badge.svg?branch=develop)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yml)
 
+[![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yml)
+
 # Disclaimer
 
 The United States Department of Commerce (DOC) GitHub project code is
