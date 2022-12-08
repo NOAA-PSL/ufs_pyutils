@@ -67,8 +67,7 @@ from utils.error_interface import Error
 # ----
 
 # Define all available functions.
-__all__ = ['get_hash'
-           ]
+__all__ = ["get_hash"]
 
 # ----
 
@@ -105,6 +104,7 @@ class HashLibError(Error):
 
         """
         super(HashLibError, self).__init__(msg=msg)
+
 
 # ----
 
@@ -147,28 +147,25 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
 
     # Define the hash level/type.
     if hash_level is None:
-        hash_level = 'md5'
+        hash_level = "md5"
 
     # Define the supported hash/checksum types; proceed accordingly.
-    hash_types = ['md5',
-                  'sha1',
-                  'sha224',
-                  'sha256',
-                  'sha384',
-                  'sha512'
-                  ]
+    hash_types = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"]
 
     if hash_level not in hash_types:
-        msg = ('The checksum/hash level type {0} is not supported. '
-               'Aborting!!!'.format(hash_level))
+        msg = (
+            "The checksum/hash level type {0} is not supported. "
+            "Aborting!!!".format(hash_level)
+        )
         raise HashLibError(msg=msg)
 
     # Define the type of hash library object based on the hash
     # level/type and proceed accordingly.
     hash_obj = parser_interface.object_getattr(
-        object_in=hashlib, key=hash_level.lower())
+        object_in=hashlib, key=hash_level.lower()
+    )
 
-    with open(filepath, 'rb') as f:
+    with open(filepath, "rb") as f:
         c = f.read()
     hash_index = hash_obj(c).hexdigest()
 

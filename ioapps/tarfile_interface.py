@@ -77,9 +77,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ['read_tarfile',
-           'write_tarfile'
-           ]
+__all__ = ["read_tarfile", "write_tarfile"]
 
 # ----
 
@@ -120,6 +118,7 @@ class TarFileError(Error):
 
         """
         super(TarFileError, self).__init__(msg=msg)
+
 
 # ----
 
@@ -175,16 +174,17 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
     # Move to the working directory within which to extract the files
     # within the tarball archive.
-    msg = ('The contents of tarball path {0} will be extracted to '
-           'path {1}.'.format(tarball_path, path))
+    msg = "The contents of tarball path {0} will be extracted to " "path {1}.".format(
+        tarball_path, path
+    )
     logger.warn(msg=msg)
     os.chdir(path)
 
     # Open the existing tarball.
-    msg = ('Opening tarball file {0}.'.format(tarball_path))
+    msg = "Opening tarball file {0}.".format(tarball_path)
     logger.info(msg=msg)
     if mode is None:
-        mode = 'r'
+        mode = "r"
 
     tarball = tarfile.open(tarball_path, mode)
 
@@ -194,15 +194,15 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
         # Extract all files in the tarball; proceed accordingly.
         try:
-            msg = ('Extracting all files from tarball path {0}.'
-                   .format(tarball_path))
+            msg = "Extracting all files from tarball path {0}.".format(tarball_path)
             logger.info(msg=msg)
             tarball.extractall()
 
         except Exception as error:
-            msg = ('The extraction of all files from tarball path {0} '
-                   'failed with error {1}. Aborting!!!' .format(tarball_path,
-                                                                error))
+            msg = (
+                "The extraction of all files from tarball path {0} "
+                "failed with error {1}. Aborting!!!".format(tarball_path, error)
+            )
             raise TarFileError(msg=msg)
 
     # Extract only the files specified within the filelist attribute
@@ -210,19 +210,22 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
     if filelist is not None:
         for filename in filelist:
             try:
-                msg = ('Determining tarball object path for file {0}.'
-                       .format(filename))
+                msg = "Determining tarball object path for file {0}.".format(filename)
                 logger.info(msg=msg)
                 tarball_obj = tarball.getmember(filename)
-                msg = ('Extracting file {0} from tarball path {1}.'
-                       .format(filename, tarball_path))
+                msg = "Extracting file {0} from tarball path {1}.".format(
+                    filename, tarball_path
+                )
                 logger.info(msg=msg)
                 tarball.extract(tarball_obj)
 
             except Exception as error:
-                msg = ('The extraction of file {0} from tarball path {1} '
-                       'failed with error {2}. Aborting!!!'
-                       .format(filename, tarball_path, error))
+                msg = (
+                    "The extraction of file {0} from tarball path {1} "
+                    "failed with error {2}. Aborting!!!".format(
+                        filename, tarball_path, error
+                    )
+                )
                 raise TarFileError(msg=msg)
 
     # Close the open tarball archive.
@@ -232,8 +235,15 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 # ----
 
 
-def write_tarfile(path, tarball_path, filelist=None, filedict=None,
-                  ref_local=False, gzip=False, compresslevel=1) -> None:
+def write_tarfile(
+    path,
+    tarball_path,
+    filelist=None,
+    filedict=None,
+    ref_local=False,
+    gzip=False,
+    compresslevel=1,
+) -> None:
     """
     Description
     -----------
@@ -299,25 +309,28 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
 
     # Check that the attributes provided upon entry are valid.
     if (filelist is None) and (filedict is None):
-        msg = ('Neither the filelist or filedict keyword parameters have '
-               'been specified upon entry; this may cause this method '
-               'to (not) produce the expected results.')
+        msg = (
+            "Neither the filelist or filedict keyword parameters have "
+            "been specified upon entry; this may cause this method "
+            "to (not) produce the expected results."
+        )
         logger.warn(msg=msg)
 
     if (filelist is not None) and (filedict is not None):
-        msg = ('The write_tarfile method does not support file name '
-               'lists (filelist) and file and archive file mapping '
-               'names (filedict) simultaneously. Aborting!!!')
+        msg = (
+            "The write_tarfile method does not support file name "
+            "lists (filelist) and file and archive file mapping "
+            "names (filedict) simultaneously. Aborting!!!"
+        )
         raise TarFileError(msg=msg)
 
     # Define the tarball archive attributes accordingly.
     if gzip:
-        mode = 'w:gz'
-        kwargs = {'compresslevel': compresslevel
-                  }
+        mode = "w:gz"
+        kwargs = {"compresslevel": compresslevel}
 
     else:
-        mode = 'w'
+        mode = "w"
         kwargs = dict()
 
     # Open the tarball archive and proceed accordingly.
@@ -331,14 +344,13 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
         # Write the respective file names to the tarball archive path;
         # proceed accordingly.
         for filename in filelist:
-            msg = ('Adding file {0} to tarball file {1}.'
-                   .format(filename, tarball_path))
+            msg = "Adding file {0} to tarball file {1}.".format(filename, tarball_path)
             logger.info(msg=msg)
 
             # Define the tarball archive member file name attributes;
             # proceed accordingly.
             if ref_local:
-                tarball.add('./{0}'.format(filename))
+                tarball.add("./{0}".format(filename))
             if not ref_local:
                 tarball.add(filename)
 
@@ -352,17 +364,19 @@ def write_tarfile(path, tarball_path, filelist=None, filedict=None,
 
             # Define the tarball archive member file name.
             arcname = parser_interface.dict_key_value(
-                dict_in=filedict, key=filename, no_split=True)
-            msg = ('Adding file {0} to tarball file {1} as {2}.'
-                   .format(filename, tarball_path, arcname))
+                dict_in=filedict, key=filename, no_split=True
+            )
+            msg = "Adding file {0} to tarball file {1} as {2}.".format(
+                filename, tarball_path, arcname
+            )
             logger.info(msg=msg)
 
             # Define the tarball archive member file name attributes;
             # proceed accordingly.
             if ref_local:
-                kwargs = {'arcname': './%s' % arcname}
+                kwargs = {"arcname": "./%s" % arcname}
             if not ref_local:
-                kwargs = {'arcname': arcname}
+                kwargs = {"arcname": arcname}
 
             tarball.add(filename, **kwargs)
 

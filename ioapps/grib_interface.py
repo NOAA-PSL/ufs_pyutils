@@ -152,13 +152,14 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 # ----
 
-__all__ = ['cnvgribg21',
-           'get_timestamp',
-           'grbindex',
-           'parse_file',
-           'read_file',
-           'wgrib_remap'
-           ]
+__all__ = [
+    "cnvgribg21",
+    "get_timestamp",
+    "grbindex",
+    "parse_file",
+    "read_file",
+    "wgrib_remap",
+]
 
 # ----
 
@@ -191,6 +192,7 @@ class GRIBError(Exception):
         """
         super(GRIBError, self).__init__(msg=msg)
 
+
 # ----
 
 
@@ -222,24 +224,24 @@ def _check_cnvgrib_env() -> str:
 
     # Define the cnvgrib executable path for the respective platform;
     # throw a GRIBError exception if it cannot be determined.
-    cmd = ['which',
-           'cnvgrib'
-           ]
+    cmd = ["which", "cnvgrib"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     if len(out) > 0:
-        cnvgrib = out.rstrip().decode('utf-8')
+        cnvgrib = out.rstrip().decode("utf-8")
     else:
-        msg = ('\n\nThe cnvgrib executable could not be determined for your '
-               'system; please check that the appropriate GRIB '
-               'libaries/modules are loaded prior to calling this function. '
-               'Aborting!!!')
+        msg = (
+            "\n\nThe cnvgrib executable could not be determined for your "
+            "system; please check that the appropriate GRIB "
+            "libaries/modules are loaded prior to calling this function. "
+            "Aborting!!!"
+        )
         raise GRIBError(msg=msg)
 
     return cnvgrib
+
 
 # ----
 
@@ -274,24 +276,24 @@ def _check_grbindex_env() -> str:
 
     # Define the grbindex executable path for the respective platform;
     # throw a GRIBError exception if it cannot be determined.
-    cmd = ['which',
-           'grbindex'
-           ]
+    cmd = ["which", "grbindex"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     if len(out) > 0:
-        grbindex = out.rstrip().decode('utf-8')
+        grbindex = out.rstrip().decode("utf-8")
     else:
-        msg = ('\n\nThe grbindex executable could not be determined for '
-               'your system; please check that the appropriate GRIB '
-               'libaries/modules are loaded prior to calling this function. '
-               'Aborting!!!')
+        msg = (
+            "\n\nThe grbindex executable could not be determined for "
+            "your system; please check that the appropriate GRIB "
+            "libaries/modules are loaded prior to calling this function. "
+            "Aborting!!!"
+        )
         raise GRIBError(msg=msg)
 
     return grbindex
+
 
 # ----
 
@@ -327,24 +329,24 @@ def _check_grb2index_env() -> str:
     # Define the grb2index executable path for the respective
     # platform; throw a GRIBError exception if it cannot be
     # determined.
-    cmd = ['which',
-           'grb2index'
-           ]
+    cmd = ["which", "grb2index"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     if len(out) > 0:
-        grb2index = out.rstrip().decode('utf-8')
+        grb2index = out.rstrip().decode("utf-8")
     else:
-        msg = ('\n\nThe grb2index executable could not be determined for '
-               'your system; please check that the appropriate GRIB 2 '
-               'libaries/modules are loaded prior to calling this script. '
-               'Aborting!!!')
+        msg = (
+            "\n\nThe grb2index executable could not be determined for "
+            "your system; please check that the appropriate GRIB 2 "
+            "libaries/modules are loaded prior to calling this script. "
+            "Aborting!!!"
+        )
         raise GRIBError(msg=msg)
 
     return grb2index
+
 
 # ----
 
@@ -377,24 +379,24 @@ def _check_wgrib_env() -> str:
 
     # Define the wgrib executable path for the respective platform;
     # throw a GRIBError exception if it cannot be determined.
-    cmd = ['which',
-           'wgrib'
-           ]
+    cmd = ["which", "wgrib"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     if len(out) > 0:
-        wgrib = out.rstrip().decode('utf-8')
+        wgrib = out.rstrip().decode("utf-8")
     else:
-        msg = ('\n\nThe wgrib executable could not be determined for '
-               'your system; please check that the appropriate wgrib '
-               'libaries/modules are loaded prior to calling this script. '
-               'Aborting!!!')
+        msg = (
+            "\n\nThe wgrib executable could not be determined for "
+            "your system; please check that the appropriate wgrib "
+            "libaries/modules are loaded prior to calling this script. "
+            "Aborting!!!"
+        )
         raise GRIBError(msg=msg)
 
     return wgrib
+
 
 # ----
 
@@ -427,23 +429,23 @@ def _check_wgrib2_env() -> str:
 
     # Define the wgrib2 executable path for the respective platform;
     # throw a GRIBError exception if it cannot be determined.
-    cmd = ['which',
-           'wgrib2'
-           ]
+    cmd = ["which", "wgrib2"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     if len(out) > 0:
-        wgrib = out.rstrip().decode('utf-8')
+        wgrib = out.rstrip().decode("utf-8")
     else:
-        msg = ('\n\nThe wgrib2 executable could not be determined for your system; '
-               'please check that the appropriate wgrib libaries/modules are '
-               'loaded prior to calling this script. Aborting!!!')
+        msg = (
+            "\n\nThe wgrib2 executable could not be determined for your system; "
+            "please check that the appropriate wgrib libaries/modules are "
+            "loaded prior to calling this script. Aborting!!!"
+        )
         raise GRIBError(msg=msg)
 
     return wgrib
+
 
 # ----
 
@@ -474,16 +476,12 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
     # Convert the GRIB-formatted input file to the output file path
     # specified upon entry.
     cnvgrib = _check_cnvgrib_env()
-    cmd = ['{0}'.format(cnvgrib),
-           '-g21',
-           in_grib_file,
-           out_grib_file
-           ]
+    cmd = ["{0}".format(cnvgrib), "-g21", in_grib_file, out_grib_file]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (grbindex_out, grbindex_err) = proc.communicate()
     proc.wait()
+
 
 # ----
 
@@ -531,20 +529,20 @@ def get_timestamp(grib_file: str, grib_var: str = None) -> list:
     timestamp_list = list()
     for item in wgrib_out.rsplit():
         if grib_var is None:
-            timestamp = item.split(':')[2].split('d=')[1]
+            timestamp = item.split(":")[2].split("d=")[1]
         if grib_var is not None:
             if grib_var.lower() in item.lower():
-                timestamp = item.split(':')[2].split('d=')[1]
+                timestamp = item.split(":")[2].split("d=")[1]
         timestamp_list.append(timestamp)
     timestamp_list = list(set(timestamp_list))
 
     return timestamp_list
 
+
 # ----
 
 
-def grbindex(in_grib_file: str, out_gribidx_file: str,
-             is_grib2: bool = False) -> None:
+def grbindex(in_grib_file: str, out_gribidx_file: str, is_grib2: bool = False) -> None:
     """
     Description
     -----------
@@ -582,21 +580,27 @@ def grbindex(in_grib_file: str, out_gribidx_file: str,
         grbindex_exe = _check_grb2index_env()
     if not is_grib2:
         grbindex_exe = _check_grbindex_env()
-    cmd = ['{0}'.format(grbindex_exe),
-           '{0}'.format(in_grib_file),
-           '{0}'.format(out_gribidx_file)
-           ]
+    cmd = [
+        "{0}".format(grbindex_exe),
+        "{0}".format(in_grib_file),
+        "{0}".format(out_gribidx_file),
+    ]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (grbindex_out, grbindex_err) = proc.communicate()
     proc.wait()
+
 
 # ----
 
 
-def parse_file(in_grib_file: str, parse_str: str, out_grib_file: str,
-               is_grib2: bool = False, tmp_out_path: str = None) -> None:
+def parse_file(
+    in_grib_file: str,
+    parse_str: str,
+    out_grib_file: str,
+    is_grib2: bool = False,
+    tmp_out_path: str = None,
+) -> None:
     """
     Description
     -----------
@@ -650,15 +654,11 @@ def parse_file(in_grib_file: str, parse_str: str, out_grib_file: str,
     # GRIB-formatted file format upon entry.
     if is_grib2:
         wgrib = _check_wgrib2_env()
-        cmd_base = [wgrib,
-                    in_grib_file,
-                    '-match'
-                    ]
+        cmd_base = [wgrib, in_grib_file, "-match"]
 
     if not is_grib2:
         wgrib = _check_wgrib_env()
-        cmd_base = [wgrib
-                    ]
+        cmd_base = [wgrib]
 
     if tmp_out_path is None:
         out_path = os.path.dirname(out_grib_file)
@@ -667,25 +667,25 @@ def parse_file(in_grib_file: str, parse_str: str, out_grib_file: str,
 
     # Parse the input GRIB-formatted file accordingly.
     if is_grib2:
-        cmd = ['{0}'.format(parse_str),
-               '-grib',
-               out_grib_file
-               ]
+        cmd = ["{0}".format(parse_str), "-grib", out_grib_file]
 
         cmd = cmd_base + cmd
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (wgrib_out, wgrib_err) = proc.communicate()
         proc.wait()
 
     if not is_grib2:
-        cmd = ['{0} {1} | {2} | {3} -i {4} -grib -o {5}'.
-               format(wgrib, in_grib_file, parse_str, wgrib, in_grib_file,
-                      out_grib_file)]
-        proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        cmd = [
+            "{0} {1} | {2} | {3} -i {4} -grib -o {5}".format(
+                wgrib, in_grib_file, parse_str, wgrib, in_grib_file, out_grib_file
+            )
+        ]
+        proc = subprocess.Popen(
+            cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        )
         (wgrib_out, wgrib_err) = proc.communicate()
         proc.wait()
+
 
 # ----
 
@@ -728,19 +728,18 @@ def read_file(grib_file: str, is_4yr: bool = True) -> list:
     # Collect and return the records contained within the
     # GRIB-formatted file on entry.
     wgrib = _check_wgrib_env()
-    cmd = ['{0}'.format(wgrib)
-           ]
+    cmd = ["{0}".format(wgrib)]
 
     if is_4yr:
-        cmd.append('-4yr')
+        cmd.append("-4yr")
     cmd.append(grib_file)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (wgrib_out, wgrib_err) = proc.communicate()
-    wgrib_out = wgrib_out.decode('utf-8')
+    wgrib_out = wgrib_out.decode("utf-8")
 
     return wgrib_out
+
 
 # ----
 
@@ -782,31 +781,26 @@ def wgrib2_remap(remap_obj: object, gribfile: str) -> str:
 
     # Parse the GRIB-formatted (version 2) file and project (i.e.,
     # remap) to the grid projection specified on entry.
-    gribremap_file = gribfile + '.remap'
+    gribremap_file = gribfile + ".remap"
     wgrib = _check_wgrib2_env()
-    cmd_base = [wgrib,
-                gribfile
-                ]
+    cmd_base = [wgrib, gribfile]
 
-    if remap_obj.new_grid.lower() == 'latlon':
+    if remap_obj.new_grid.lower() == "latlon":
         if remap_obj.new_grid_winds is not None:
-            cmd = ['-new_grid_winds',
-                   '{0}'.format(remap_obj.new_grid_winds)]
+            cmd = ["-new_grid_winds", "{0}".format(remap_obj.new_grid_winds)]
 
             cmd_base = cmd_base + cmd
 
-        cmd = ['-new_grid',
-               '{0}'.format(remap_obj.new_grid),
-               '{0}:{1}:{2}'.format(
-                   remap_obj.lon0, remap_obj.nlons, remap_obj.dlon),
-               '{0}:{1}:{2}'.format(remap_obj.lat0, remap_obj.nlats,
-                                    remap_obj.dlat),
-               '{0}'.format(gribremap_file)
-               ]
+        cmd = [
+            "-new_grid",
+            "{0}".format(remap_obj.new_grid),
+            "{0}:{1}:{2}".format(remap_obj.lon0, remap_obj.nlons, remap_obj.dlon),
+            "{0}:{1}:{2}".format(remap_obj.lat0, remap_obj.nlats, remap_obj.dlat),
+            "{0}".format(gribremap_file),
+        ]
 
         cmd = cmd_base + cmd
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (wgrib_out, wgrib_err) = proc.communicate()
     proc.wait()
 

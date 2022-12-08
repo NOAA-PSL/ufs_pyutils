@@ -1,0 +1,86 @@
+# =========================================================================
+
+# YAML: .github/workflows/pycodestyle.yaml
+
+# Author: Henry R. Winterbottom
+
+# Email: henry.winterbottom@noaa.gov
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the respective public license published by the
+# Free Software Foundation and included with the repository within
+# which this application is contained.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# =========================================================================
+
+# Description
+# -----------
+
+#    This file contains a Github actions/workflow to build a Miniconda
+#    environment, install pycodestyle, and check the Python coding
+#    standards for the valid files. This workflow action is invoked
+#    when a Github pull request is opened, a release is published, and
+#    at 0000 UTC every day.
+
+# Author(s)
+# ---------
+
+#    Henry R. Winterbottom; 07 December 2022
+
+# History
+# -------
+
+#    2022-12-7: Henry Winterbottom -- Initial implementation.
+
+#----
+
+# Define the name of the Github actions/workflow.
+name: Python Coding Standards
+
+# Define the Github triggers for which to launch the respective Github
+# action/workflow.
+on:
+  pull_request:
+    types: [opened]
+
+  release:
+    types: [published]
+
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+
+  # Define the container image.
+  build:
+    runs-on: ubuntu-latest
+    name: Run Python coding standards check.
+
+    steps:
+
+    # Build the Python environment via Miniconda and install the
+    # necessary packages and dependencies.
+    - name: Build and install Python dependencies
+      run: |
+        wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+        sh Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p miniconda
+        python -m pip install --upgrade pip
+        pip install pycodestyle
+
+    # Clone the ufs_pyutils repository branch.
+    - name: Checkout ufs_pyutils.
+      uses: actions/checkout@v2
+      with:
+        path: ufs_pyutils
+
+    # Execute the pycodestyle application.
+    - name: Run pycodestyle application.
+      run: |
+        cd $GITHUB_WORKSPACE/ufs_pyutils
+        pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle .
+     
+

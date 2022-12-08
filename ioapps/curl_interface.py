@@ -89,9 +89,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ['get_webfile',
-           'get_weblist'
-           ]
+__all__ = ["get_webfile", "get_weblist"]
 
 # ----
 
@@ -133,6 +131,7 @@ class CurlError(Error):
         """
         super(CurlError, self).__init__(msg=msg)
 
+
 # ----
 
 
@@ -166,27 +165,30 @@ def _check_curl_env() -> str:
 
     # Check the run-time environment in order to determine the curl
     # application executable path.
-    cmd = ['which', 'curl']
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cmd = ["which", "curl"]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Define the curl application executable path; proceed
     # accordingly.
     if len(out) > 0:
-        curl_exec = out.rstrip().decode('utf-8')
+        curl_exec = out.rstrip().decode("utf-8")
     else:
-        msg = ('The curl application executable could not be determined '
-               'from the run-time environment. Aborting!!!')
+        msg = (
+            "The curl application executable could not be determined "
+            "from the run-time environment. Aborting!!!"
+        )
         raise CurlError(msg=msg)
 
     return curl_exec
 
+
 # ----
 
 
-def get_webfile(url: str, path: str, local_filename: str = None,
-                ignore_missing: bool = False) -> None:
+def get_webfile(
+    url: str, path: str, local_filename: str = None, ignore_missing: bool = False
+) -> None:
     """
     Description
     -----------
@@ -237,7 +239,7 @@ def get_webfile(url: str, path: str, local_filename: str = None,
     curl_exec = _check_curl_env()
 
     # Collect the internet-based file and proceed accordingly.
-    msg = ('Collecting URL path {0}.'.format(url))
+    msg = "Collecting URL path {0}.".format(url)
     logger.info(msg=msg)
     try:
 
@@ -250,28 +252,19 @@ def get_webfile(url: str, path: str, local_filename: str = None,
 
             # Define the standard output stream and the curl
             # application executable command line arguments.
-            msg = ('Writing collected URL path {0} to local path {1}.'.
-                   format(url, path))
+            msg = "Writing collected URL path {0} to local path {1}.".format(url, path)
             stdout = subprocess.PIPE
-            cmd = ['{0}'.format(curl_exec),
-                   '-C',
-                   '-',
-                   '-O',
-                   url
-                   ]
+            cmd = ["{0}".format(curl_exec), "-C", "-", "-O", url]
 
         if local_filename is not None:
 
             # Open the output file and proceed accordingly.
             local_filepath = os.path.join(cwd, local_filename)
-            msg = ('Writing collected URL path {0} and writing to path {1}.'.
-                   format(url, local_filepath))
-            stdout = open('{0}'.format(local_filepath), 'wb')
-            cmd = ['{0}'.format(curl_exec),
-                   '-o',
-                   local_filepath,
-                   url
-                   ]
+            msg = "Writing collected URL path {0} and writing to path {1}.".format(
+                url, local_filepath
+            )
+            stdout = open("{0}".format(local_filepath), "wb")
+            cmd = ["{0}".format(curl_exec), "-o", local_filepath, url]
 
         # Collect the URL path(s).
         logger.info(msg=msg)
@@ -295,9 +288,12 @@ def get_webfile(url: str, path: str, local_filename: str = None,
         if ignore_missing:
             pass
         if not ignore_missing:
-            msg = ('Collecting of internet path {0} failed with error {1}. '
-                   'Aborting!!!'.format(url, error))
+            msg = (
+                "Collecting of internet path {0} failed with error {1}. "
+                "Aborting!!!".format(url, error)
+            )
             raise CurlError(msg=msg)
+
 
 # ----
 
@@ -354,20 +350,25 @@ def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
 
         # Define the URL path and parse the retrieved file.
         webpage = requests.get(url=url).text
-        soup = BeautifulSoup(webpage, 'html.parser')
+        soup = BeautifulSoup(webpage, "html.parser")
 
         # Compile a list of all URL paths.
         if ext is None:
             ext = str()
-        webfiles = (url + '/' + node.get('href') for node in
-                    soup.find_all('a') if node.get('href').endswith(ext))
+        webfiles = (
+            url + "/" + node.get("href")
+            for node in soup.find_all("a")
+            if node.get("href").endswith(ext)
+        )
         weblist = list()
         for webfile in webfiles:
             weblist.append(webfile)
 
     except Exception as error:
-        msg = ('Collection of files available at internet path {0} failed '
-               'with error {1}. Aborting!!!'.format(url, error))
+        msg = (
+            "Collection of files available at internet path {0} failed "
+            "with error {1}. Aborting!!!".format(url, error)
+        )
         raise CurlError(msg=msg)
 
     return weblist

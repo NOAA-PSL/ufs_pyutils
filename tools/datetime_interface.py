@@ -150,13 +150,14 @@ from tools import parser_interface
 # ----
 
 # Define all available functions.
-__all__ = ['compare_crontab',
-           'current_date',
-           'datestrcomps',
-           'datestrfrmt',
-           'datestrupdate',
-           'elapsed_seconds'
-           ]
+__all__ = [
+    "compare_crontab",
+    "current_date",
+    "datestrcomps",
+    "datestrfrmt",
+    "datestrupdate",
+    "elapsed_seconds",
+]
 
 # ----
 
@@ -166,6 +167,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 
 # ----
+
 
 def _get_dateobj(datestr: str, frmttyp: str) -> object:
     """
@@ -201,6 +203,7 @@ def _get_dateobj(datestr: str, frmttyp: str) -> object:
     dateobj = datetime.datetime.strptime(datestr, frmttyp)
 
     return dateobj
+
 
 # ----
 
@@ -250,6 +253,7 @@ def compare_crontab(datestr: str, cronstr: str, frmttyp: str) -> bool:
 
     return crontab_match
 
+
 # ----
 
 
@@ -282,10 +286,10 @@ def current_date(frmttyp: str) -> str:
 
     # Determine the timestamp corresponding to the current time upon
     # function entry.
-    timestamp = datetime.datetime.fromtimestamp(time.time()).\
-        strftime(f'{frmttyp}')
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime(f"{frmttyp}")
 
     return timestamp
+
 
 # ----
 
@@ -364,77 +368,82 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
     # Initialize the Python datetime objects.
     def date_comps_obj():
         return None
+
     dateobj = _get_dateobj(datestr, frmttyp)
 
     # Loop through timestamp attributes and append values to local
     # list.
-    date_comps_dict = {'year': '%Y',
-                       'month': '%m',
-                       'day': '%d',
-                       'hour': '%H',
-                       'minute': '%M',
-                       'second': '%S',
-                       'month_name_long': '%B',
-                       'month_name_short': '%b',
-                       'century_short': '%G',
-                       'year_short': '%y',
-                       'century': '%G',
-                       'weekday_long': '%A',
-                       'weekday_short': '%a',
-                       'date_string': '%Y-%m-%d_%H:%M:%S',
-                       'cycle': '%Y%m%d%H%M%S',
-                       'day_of_year': '%j'
-                       }
+    date_comps_dict = {
+        "year": "%Y",
+        "month": "%m",
+        "day": "%d",
+        "hour": "%H",
+        "minute": "%M",
+        "second": "%S",
+        "month_name_long": "%B",
+        "month_name_short": "%b",
+        "century_short": "%G",
+        "year_short": "%y",
+        "century": "%G",
+        "weekday_long": "%A",
+        "weekday_short": "%a",
+        "date_string": "%Y-%m-%d_%H:%M:%S",
+        "cycle": "%Y%m%d%H%M%S",
+        "day_of_year": "%j",
+    }
 
     for (key, item) in date_comps_dict.items():
         value = datetime.datetime.strftime(dateobj, item)
-        if key.lower() == 'century_short':
+        if key.lower() == "century_short":
             century_list = [int(d) for d in str(value)]
-            value = (f'{century_list[0]}{century_list[1]}')
+            value = f"{century_list[0]}{century_list[1]}"
         date_comps_obj = parser_interface.object_setattr(
-            object_in=date_comps_obj, key=key, value=value)
+            object_in=date_comps_obj, key=key, value=value
+        )
 
     # Define connect object for SQlite3 library and define the
     # timestamp values accordingly.
-    connect = sqlite3.connect(':memory:')
-    datestr = '{0}-{1}-{2} {3}:{4}:{5}'.format(
-        parser_interface.object_getattr(object_in=date_comps_obj, key='year'),
-        parser_interface.object_getattr(object_in=date_comps_obj, key='month'),
-        parser_interface.object_getattr(object_in=date_comps_obj, key='day'),
-        parser_interface.object_getattr(object_in=date_comps_obj, key='hour'),
-        parser_interface.object_getattr(
-            object_in=date_comps_obj, key='minute'),
-        parser_interface.object_getattr(object_in=date_comps_obj, key='second'))
+    connect = sqlite3.connect(":memory:")
+    datestr = "{0}-{1}-{2} {3}:{4}:{5}".format(
+        parser_interface.object_getattr(object_in=date_comps_obj, key="year"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="month"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="day"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="hour"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="minute"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="second"),
+    )
 
     # Collect the Julian attribute using SQLite3 and proceed
     # accordingly.
     value = list(connect.execute(f'select julianday("{datestr}")'))[0][0]
     date_comps_obj = parser_interface.object_setattr(
-        object_in=date_comps_obj, key='julian_day', value=value)
-    timedate = time.strptime(datestr, '%Y-%m-%d %H:%M:%S')
+        object_in=date_comps_obj, key="julian_day", value=value
+    )
+    timedate = time.strptime(datestr, "%Y-%m-%d %H:%M:%S")
 
     # Collect the total number of seconds of the day corresponding to
     # the respective timestamp provided upon entry.
-    value = datetime.timedelta(hours=timedate.tm_hour, minutes=timedate.tm_min,
-                               seconds=timedate.tm_sec).total_seconds()
-    value = f'{int(value):05d}'  # .format(int(value))
+    value = datetime.timedelta(
+        hours=timedate.tm_hour, minutes=timedate.tm_min, seconds=timedate.tm_sec
+    ).total_seconds()
+    value = f"{int(value):05d}"  # .format(int(value))
     date_comps_obj = parser_interface.object_setattr(
-        object_in=date_comps_obj, key='total_seconds_of_day',
-        value=value)
+        object_in=date_comps_obj, key="total_seconds_of_day", value=value
+    )
 
     # Add the date and time component list corresponding to the
     # respective timestamp provided upon entry.
     date_comps_obj = parser_interface.object_setattr(
-        object_in=date_comps_obj, key='comps_list',
-        value=vars(date_comps_obj))
+        object_in=date_comps_obj, key="comps_list", value=vars(date_comps_obj)
+    )
 
     return date_comps_obj
+
 
 # ----
 
 
-def datestrfrmt(datestr: str, frmttyp: str,
-                offset_seconds: int = None) -> str:
+def datestrfrmt(datestr: str, frmttyp: str, offset_seconds: int = None) -> str:
     """
     "Description
     -----------
@@ -483,20 +492,22 @@ def datestrfrmt(datestr: str, frmttyp: str,
 
     # Define the specified format for the respective date and
     # timestamp provided upon entry.
-    dateobj = _get_dateobj(datestr, '%Y-%m-%d_%H:%M:%S')
+    dateobj = _get_dateobj(datestr, "%Y-%m-%d_%H:%M:%S")
 
     if offset_seconds is not None:
-        dateobj = dateobj+datetime.timedelta(0, offset_seconds)
+        dateobj = dateobj + datetime.timedelta(0, offset_seconds)
 
     outdatestr = datetime.datetime.strftime(dateobj, frmttyp)
 
     return outdatestr
 
+
 # ----
 
 
-def datestrupdate(datestr: str, in_frmttyp: str, out_frmttyp: str,
-                  offset_seconds: int = None) -> str:
+def datestrupdate(
+    datestr: str, in_frmttyp: str, out_frmttyp: str, offset_seconds: int = None
+) -> str:
     """
     Description
     -----------
@@ -555,21 +566,23 @@ def datestrupdate(datestr: str, in_frmttyp: str, out_frmttyp: str,
     outdatestr = datetime.datetime.strftime(dateobj, out_frmttyp)
     date_comps_obj = datestrcomps(datestr=datestr, frmttyp=in_frmttyp)
     comps_list = parser_interface.object_getattr(
-        object_in=date_comps_obj, key='comps_list')
+        object_in=date_comps_obj, key="comps_list"
+    )
 
     for item in comps_list:
-        if f'<{item}>' in outdatestr:
-            time_attr = parser_interface.object_getattr(
-                date_comps_obj, key=item)
-            outdatestr = outdatestr.replace(f'<{item}>', time_attr)
+        if f"<{item}>" in outdatestr:
+            time_attr = parser_interface.object_getattr(date_comps_obj, key=item)
+            outdatestr = outdatestr.replace(f"<{item}>", time_attr)
 
     return outdatestr
+
 
 # ----
 
 
-def elapsed_seconds(start_datestr: str, start_frmttyp: str, stop_datestr: str,
-                    stop_frmttyp: str) -> float:
+def elapsed_seconds(
+    start_datestr: str, start_frmttyp: str, stop_datestr: str, stop_frmttyp: str
+) -> float:
     """
     Description
     -----------

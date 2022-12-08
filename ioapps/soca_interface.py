@@ -108,8 +108,7 @@ class CICE2SOCA(object):
         Creates a new CICE2SOCA object.
 
         """
-        self.vardict = {'aicen': 'aicen', 'vicen': 'vicen', 'vsnon':
-                        'vsonn'}
+        self.vardict = {"aicen": "aicen", "vicen": "vicen", "vsnon": "vsonn"}
 
     def build_soca(self):
         """
@@ -122,13 +121,13 @@ class CICE2SOCA(object):
 
         """
         aice = numpy.sum(self.model_obj.aicen, axis=0)
-        kwargs = {'object_in': self.model_obj, 'key': 'aice', 'value': aice}
+        kwargs = {"object_in": self.model_obj, "key": "aice", "value": aice}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
         hice = numpy.sum(self.model_obj.vicen, axis=0)
-        kwargs = {'object_in': self.model_obj, 'key': 'hice', 'value': hice}
+        kwargs = {"object_in": self.model_obj, "key": "hice", "value": hice}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
         hsno = numpy.sum(self.model_obj.vsnon, axis=0)
-        kwargs = {'object_in': self.model_obj, 'key': 'hsno', 'value': hsno}
+        kwargs = {"object_in": self.model_obj, "key": "hsno", "value": hsno}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
 
     def read_model(self, filepath):
@@ -150,33 +149,33 @@ class CICE2SOCA(object):
 
         """
         self.model_obj = tools.parser_interface.object_define()
-        msg = ('Reading CICE model variables from file %s.' % filepath)
+        msg = "Reading CICE model variables from file %s." % filepath
         logger.info(msg=msg)
         ncfile = filepath
-        ncvarname = 'aicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "aicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
-        kwargs = {'object_in': self.model_obj, 'key': 'aicen', 'value': ncvar}
+        kwargs = {"object_in": self.model_obj, "key": "aicen", "value": ncvar}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
         ncfile = filepath
-        ncvarname = 'vicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "vicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
-        kwargs = {'object_in': self.model_obj, 'key': 'vicen', 'value': ncvar}
+        kwargs = {"object_in": self.model_obj, "key": "vicen", "value": ncvar}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
         ncfile = filepath
-        ncvarname = 'vsnon'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "vsnon"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
-        kwargs = {'object_in': self.model_obj, 'key': 'vsnon', 'value': ncvar}
+        kwargs = {"object_in": self.model_obj, "key": "vsnon", "value": ncvar}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
         hicen = numpy.zeros(numpy.shape(self.model_obj.vicen))
         I = numpy.where(self.model_obj.aicen > 0.0)
-        hicen = self.model_obj.vicen/self.model_obj.aicen
-        kwargs = {'object_in': self.model_obj, 'key': 'hicen', 'value': hicen}
+        hicen = self.model_obj.vicen / self.model_obj.aicen
+        kwargs = {"object_in": self.model_obj, "key": "hicen", "value": hicen}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
-        hsnon = self.model_obj.vsnon/self.model_obj.aicen
-        kwargs = {'object_in': self.model_obj, 'key': 'hsnon', 'value': hsnon}
+        hsnon = self.model_obj.vsnon / self.model_obj.aicen
+        kwargs = {"object_in": self.model_obj, "key": "hsnon", "value": hsnon}
         self.model_obj = tools.parser_interface.object_setattr(**kwargs)
 
     def write_soca(self, filepath):
@@ -199,39 +198,56 @@ class CICE2SOCA(object):
 
         """
         ncfile = filepath
-        (ncdim_obj, ncvar_obj) = (tools.parser_interface.object_define()
-                                  for i in range(2))
+        (ncdim_obj, ncvar_obj) = (
+            tools.parser_interface.object_define() for i in range(2)
+        )
         xaxis_1 = numpy.shape(self.model_obj.aice)[1]
-        kwargs = {'object_in': ncdim_obj, 'key': 'xaxis_1', 'value':
-                  xaxis_1}
+        kwargs = {"object_in": ncdim_obj, "key": "xaxis_1", "value": xaxis_1}
         ncdim_obj = tools.parser_interface.object_setattr(**kwargs)
         self.xaxis_1 = numpy.ones(xaxis_1)
         yaxis_1 = numpy.shape(self.model_obj.aice)[0]
-        kwargs = {'object_in': ncdim_obj, 'key': 'yaxis_1', 'value':
-                  yaxis_1}
+        kwargs = {"object_in": ncdim_obj, "key": "yaxis_1", "value": yaxis_1}
         ncdim_obj = tools.parser_interface.object_setattr(**kwargs)
         self.yaxis_1 = numpy.ones(yaxis_1)
         time = 1
-        kwargs = {'object_in': ncdim_obj, 'key': 'Time', 'value':
-                  time}
+        kwargs = {"object_in": ncdim_obj, "key": "Time", "value": time}
         ncdim_obj = tools.parser_interface.object_setattr(**kwargs)
-        ncvar_dict = {'aicen': {'varname': 'aicen', 'dims': ['Time', 'yaxis_1',
-                                                             'xaxis_1'],
-                                'type': 'float64', 'values': self.model_obj.aice},
-                      'hicen': {'varname': 'hicen', 'dims': ['Time', 'yaxis_1',
-                                                             'xaxis_1'],
-                                'type': 'float64', 'values': self.model_obj.hice},
-                      'hsnon': {'varname': 'hsnon', 'dims': ['Time', 'yaxis_1',
-                                                             'xaxis_1'],
-                                'type': 'float64', 'values': self.model_obj.hsno},
-                      'xaxis_1': {'varname': 'xaxis_1', 'dims': 'xaxis_1',
-                                  'type': 'float64', 'values': self.xaxis_1},
-                      'yaxis_1': {'varname': 'yaxis_1', 'dims': 'yaxis_1',
-                                  'type': 'float64', 'values': self.yaxis_1}}
+        ncvar_dict = {
+            "aicen": {
+                "varname": "aicen",
+                "dims": ["Time", "yaxis_1", "xaxis_1"],
+                "type": "float64",
+                "values": self.model_obj.aice,
+            },
+            "hicen": {
+                "varname": "hicen",
+                "dims": ["Time", "yaxis_1", "xaxis_1"],
+                "type": "float64",
+                "values": self.model_obj.hice,
+            },
+            "hsnon": {
+                "varname": "hsnon",
+                "dims": ["Time", "yaxis_1", "xaxis_1"],
+                "type": "float64",
+                "values": self.model_obj.hsno,
+            },
+            "xaxis_1": {
+                "varname": "xaxis_1",
+                "dims": "xaxis_1",
+                "type": "float64",
+                "values": self.xaxis_1,
+            },
+            "yaxis_1": {
+                "varname": "yaxis_1",
+                "dims": "yaxis_1",
+                "type": "float64",
+                "values": self.yaxis_1,
+            },
+        }
         for key in ncvar_dict.keys():
             dict_in = dict()
             for item in ncvar_dict[key].keys():
-                kwargs = {'dict_in': ncvar_dict[key], 'key': item}
+                kwargs = {"dict_in": ncvar_dict[key], "key": item}
                 try:
                     value = tools.parser_interface.dict_key_value(**kwargs)[:]
                     if len(value) == 1:
@@ -239,12 +255,11 @@ class CICE2SOCA(object):
                 except TypeError:
                     value = tools.parser_interface.dict_key_value(**kwargs)
                 dict_in[item] = value
-            kwargs = {'object_in': ncvar_obj, 'key': key, 'value': dict_in}
+            kwargs = {"object_in": ncvar_obj, "key": key, "value": dict_in}
             ncvar_obj = tools.parser_interface.object_setattr(**kwargs)
-        msg = ('Creating netCDF file %s.' % ncfile)
+        msg = "Creating netCDF file %s." % ncfile
         logger.info(msg=msg)
-        kwargs = {'ncfile': ncfile, 'ncdim_obj': ncdim_obj, 'ncvar_obj':
-                  ncvar_obj}
+        kwargs = {"ncfile": ncfile, "ncdim_obj": ncdim_obj, "ncvar_obj": ncvar_obj}
         ioapps.netcdf4_interface.ncwrite(**kwargs)
 
     def run(self, cice_filepath, soca_filepath):
@@ -279,11 +294,12 @@ class CICE2SOCA(object):
             application.
 
         """
-        kwargs = {'filepath': cice_filepath}
+        kwargs = {"filepath": cice_filepath}
         self.read_model(**kwargs)
         self.build_soca()
-        kwargs = {'filepath': soca_filepath}
+        kwargs = {"filepath": soca_filepath}
         self.write_soca(**kwargs)
+
 
 # ----
 
@@ -324,19 +340,21 @@ class CICEcheckpoint_model(object):
 
     """
 
-    def __init__(self, analy_filepath, bkgrd_filepath, output_filepath,
-                 rescale_yaml):
-        """ 
+    def __init__(self, analy_filepath, bkgrd_filepath, output_filepath, rescale_yaml):
+        """
         Description
         -----------
 
         Creates a new CICEcheckpoint_model object.
 
         """
-        kwargs = {'fname': bkgrd_filepath, 'rescale_yaml': rescale_yaml,
-                  'output': output_filepath}
+        kwargs = {
+            "fname": bkgrd_filepath,
+            "rescale_yaml": rescale_yaml,
+            "output": output_filepath,
+        }
         self.bkg = CICEState(**kwargs)
-        kwargs = {'fname': analy_filepath, 'rescale_yaml': rescale_yaml}
+        kwargs = {"fname": analy_filepath, "rescale_yaml": rescale_yaml}
         self.ana = CICEState(**kwargs)
 
     def run(self):
@@ -369,6 +387,7 @@ class CICEcheckpoint_model(object):
         self.bkg.balance(self.ana)
         self.bkg.write_cice()
 
+
 # ----
 
 
@@ -391,8 +410,7 @@ class CICEEnsInitConds(object):
         Creates a new CICEEnsInitConds object.
 
         """
-        self.analy_vardict = {'aicen': 'aicen', 'hicen': 'hicen', 'hsnon':
-                              'hsnon'}
+        self.analy_vardict = {"aicen": "aicen", "hicen": "hicen", "hsnon": "hsnon"}
         self.analy_obj = tools.parser_interface.object_define()
 
     def checkpoint_model(self, output_filepath):
@@ -418,18 +436,15 @@ class CICEEnsInitConds(object):
         self.analy_obj.aicen[self.analy_obj.aicen < 0.0] = 0.0
         self.analy_obj.aicen[self.analy_obj.aicen > 1.0] = 1.0
         self.analy_obj.hicen[self.analy_obj.hicen < 0.0] = 0.0
-        chkpntmdl_dict = {'aicen': self.analy_obj.aicen,
-                          'hicen': self.analy_obj.hicen}
+        chkpntmdl_dict = {"aicen": self.analy_obj.aicen, "hicen": self.analy_obj.hicen}
         ncfile = output_filepath
         for key in chkpntmdl_dict.keys():
             ncvarname = key
-            msg = ('Writing netCDF variable %s to netCDF file %s.' %
-                   (ncvarname, ncfile))
+            msg = "Writing netCDF variable %s to netCDF file %s." % (ncvarname, ncfile)
             logger.info(msg=msg)
-            kwargs = {'dict_in': chkpntmdl_dict, 'key': key}
+            kwargs = {"dict_in": chkpntmdl_dict, "key": key}
             ncvar = tools.parser_interface.dict_key_value(**kwargs)
-            kwargs = {'ncfile': output_filepath, 'ncvarname': ncvarname,
-                      'ncvar': ncvar}
+            kwargs = {"ncfile": output_filepath, "ncvarname": ncvarname, "ncvar": ncvar}
             ioapps.netcdf4_interface.ncwritevar(**kwargs)
 
     def read_analy(self, analy_filepath):
@@ -451,19 +466,16 @@ class CICEEnsInitConds(object):
             ensemble perturbation (enspert) application.
 
         """
-        msg = ('Reading CICE analysis from file %s.' % analy_filepath)
+        msg = "Reading CICE analysis from file %s." % analy_filepath
         logger.info(msg=msg)
         ncfile = analy_filepath
         for key in self.analy_vardict.keys():
-            kwargs = {'dict_in': self.analy_vardict, 'key': key,
-                      'no_split': True}
+            kwargs = {"dict_in": self.analy_vardict, "key": key, "no_split": True}
             ncvarname = tools.parser_interface.dict_key_value(**kwargs)
-            kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+            kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
             ncvar = ioapps.netcdf4_interface.ncreadvar(**kwargs)
-            kwargs = {'object_in': self.analy_obj, 'key': key,
-                      'value': ncvar}
-            self.analy_obj = \
-                tools.parser_interface.object_setattr(**kwargs)
+            kwargs = {"object_in": self.analy_obj, "key": key, "value": ncvar}
+            self.analy_obj = tools.parser_interface.object_setattr(**kwargs)
 
     def setup(self, bkgrd_filepath, analy_filepath, output_filepath):
         """
@@ -500,15 +512,15 @@ class CICEEnsInitConds(object):
         """
         srcfile = bkgrd_filepath
         dstfile = output_filepath
-        msg = ('Copying file %s to %s.' % (srcfile, dstfile))
+        msg = "Copying file %s to %s." % (srcfile, dstfile)
         logger.info(msg=msg)
-        kwargs = {'srcfile': srcfile, 'dstfile': dstfile}
+        kwargs = {"srcfile": srcfile, "dstfile": dstfile}
         tools.fileio_interface.copyfile(**kwargs)
-        kwargs = {'analy_filepath': analy_filepath}
+        kwargs = {"analy_filepath": analy_filepath}
         self.read_analy(**kwargs)
 
     def run(self, bkgrd_filepath, analy_filepath, output_filepath):
-        """ 
+        """
         Description
         -----------
 
@@ -545,11 +557,15 @@ class CICEEnsInitConds(object):
             respective ensemble member.
 
         """
-        kwargs = {'bkgrd_filepath': bkgrd_filepath, 'analy_filepath':
-                  analy_filepath, 'output_filepath': output_filepath}
+        kwargs = {
+            "bkgrd_filepath": bkgrd_filepath,
+            "analy_filepath": analy_filepath,
+            "output_filepath": output_filepath,
+        }
         self.setup(**kwargs)
-        kwargs = {'output_filepath': output_filepath}
+        kwargs = {"output_filepath": output_filepath}
         self.checkpoint_model(**kwargs)
+
 
 # ----
 
@@ -595,15 +611,13 @@ class CICEState(object):
         Creates a new CICEState object.
 
         """
-        obj_attrs_list = ['fname', 'output']
+        obj_attrs_list = ["fname", "output"]
         for obj_attr in obj_attrs_list:
-            kwargs = {'object_in': self, 'key': obj_attr, 'value':
-                      eval(obj_attr)}
+            kwargs = {"object_in": self, "key": obj_attr, "value": eval(obj_attr)}
             self = tools.parser_interface.object_setattr(**kwargs)
-        kwargs = {'yaml_file': rescale_yaml}
+        kwargs = {"yaml_file": rescale_yaml}
         yaml_dict = tools.fileio_interface.read_yaml(**kwargs)
-        kwargs = {'dict_in': yaml_dict, 'key': 'rescale', 'no_split':
-                  True}
+        kwargs = {"dict_in": yaml_dict, "key": "rescale", "no_split": True}
         self.rescale_dict = tools.parser_interface.dict_key_value(**kwargs)
 
     def aggregate(self):
@@ -640,45 +654,37 @@ class CICEState(object):
         """
         rescale_obj = tools.parser_interface.object_define()
         for key in self.rescale_dict.keys():
-            kwargs = {'dict_in': self.rescale_dict, 'key': key,
-                      'no_split': True}
+            kwargs = {"dict_in": self.rescale_dict, "key": key, "no_split": True}
             value = tools.parser_interface.dict_key_value(**kwargs)
-            kwargs = {'object_in': rescale_obj, 'key': key, 'value':
-                      value}
+            kwargs = {"object_in": rescale_obj, "key": key, "value": value}
             rescale_obj = tools.parser_interface.object_setattr(**kwargs)
         ana.aice[ana.aice < 0.0] = 0.0
         ana.aice[ana.aice > 1.0] = 1.0
         ana.hice[ana.hice < 0.0] = 0.0
         alpha = numpy.ones(numpy.shape(ana.aice))
         I = numpy.where(self.aice > rescale_obj.minval)
-        alpha[I] = ana.aice[I]/self.aice[I]
-        alpha[alpha < rescale_obj.alpha_min] = \
-            rescale_obj.alpha_min
-        alpha[alpha > rescale_obj.alpha_max] = \
-            rescale_obj.alpha_max
+        alpha[I] = ana.aice[I] / self.aice[I]
+        alpha[alpha < rescale_obj.alpha_min] = rescale_obj.alpha_min
+        alpha[alpha > rescale_obj.alpha_max] = rescale_obj.alpha_max
         self.aicen_ana = self.aicen
-        self.aicen_ana = alpha*self.aicen
+        self.aicen_ana = alpha * self.aicen
         self.vicen_ana = self.vicen
-        self.vicen_ana = alpha*self.vicen
+        self.vicen_ana = alpha * self.vicen
         self.hice = numpy.sum(self.vicen, axis=0)
         I = numpy.where(self.hice > rescale_obj.minval)
-        alpha[I] = ana.hice[I]/self.hice[I]
-        alpha[alpha < rescale_obj.alpha_min] = \
-            rescale_obj.alpha_min
-        alpha[alpha > rescale_obj.alpha_max] = \
-            rescale_obj.alpha_max
-        self.vicen_ana = alpha*self.vicen
+        alpha[I] = ana.hice[I] / self.hice[I]
+        alpha[alpha < rescale_obj.alpha_min] = rescale_obj.alpha_min
+        alpha[alpha > rescale_obj.alpha_max] = rescale_obj.alpha_max
+        self.vicen_ana = alpha * self.vicen
         hice_bad = numpy.sum(self.vicen_ana, axis=0)
         hice_good = numpy.sum(self.vicen_ana, axis=0)
         hice_good[hice_good > 10.0] = 10.0
         I = numpy.where(hice_bad > 10.0)
         alpha = numpy.ones(numpy.shape(ana.aice))
-        alpha[I] = hice_good[I]/hice_bad[I]
-        alpha[alpha < rescale_obj.alpha_min] = \
-            rescale_obj.alpha_min
-        alpha[alpha > rescale_obj.alpha_max] = \
-            rescale_obj.alpha_max
-        self.vicen_ana = alpha*self.vicen_ana
+        alpha[I] = hice_good[I] / hice_bad[I]
+        alpha[alpha < rescale_obj.alpha_min] = rescale_obj.alpha_min
+        alpha[alpha > rescale_obj.alpha_max] = rescale_obj.alpha_max
+        self.vicen_ana = alpha * self.vicen_ana
 
     def read_model(self):
         """
@@ -690,30 +696,27 @@ class CICEState(object):
         containing the respective state variables.
 
         """
-        msg = ('Reading CICE model variables from file %s.' % self.fname)
+        msg = "Reading CICE model variables from file %s." % self.fname
         logger.info(msg=msg)
         ncfile = self.fname
-        ncvarname = 'aicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
-        ncvar = \
-            numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
+        ncvarname = "aicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
+        ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.aicen = ncvar
         ncfile = self.fname
-        ncvarname = 'vicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
-        ncvar = \
-            numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
+        ncvarname = "vicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
+        ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.vicen = ncvar
         ncfile = self.fname
-        ncvarname = 'vsnon'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
-        ncvar = \
-            numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
+        ncvarname = "vsnon"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
+        ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.vsnon = ncvar
         self.hicen = numpy.zeros(numpy.shape(self.vicen))
         I = numpy.where(self.aicen > 0.0)
-        self.hicen = self.vicen/self.aicen
-        self.hsnon = self.vsnon/self.aicen
+        self.hicen = self.vicen / self.aicen
+        self.hsnon = self.vsnon / self.aicen
 
     def read_soca(self):
         """
@@ -724,21 +727,21 @@ class CICEState(object):
         file provided to SOCA.
 
         """
-        msg = ('Reading SOCA variables from file %s.' % self.fname)
+        msg = "Reading SOCA variables from file %s." % self.fname
         logger.info(msg=msg)
         ncfile = self.fname
-        ncvarname = 'aicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "aicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.aice = ncvar
         ncfile = self.fname
-        ncvarname = 'hicen'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "hicen"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.hice = ncvar
         ncfile = self.fname
-        ncvarname = 'hsnon'
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+        ncvarname = "hsnon"
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
         ncvar = numpy.squeeze(ioapps.netcdf4_interface.ncreadvar(**kwargs)[:])
         self.hsno = ncvar
 
@@ -753,21 +756,20 @@ class CICEState(object):
 
         """
         ncfile = self.output
-        ncvarname = 'aicen'
-        msg = ('Updating CICE variable %s.' % ncvarname)
+        ncvarname = "aicen"
+        msg = "Updating CICE variable %s." % ncvarname
         logger.info(msg=msg)
         ncvar = self.aicen_ana
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname, 'ncvar':
-                  ncvar}
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname, "ncvar": ncvar}
         ioapps.netcdf4_interface.ncwritevar(**kwargs)
         ncfile = self.output
-        ncvarname = 'vicen'
-        msg = ('Updating CICE variable %s.' % ncvarname)
+        ncvarname = "vicen"
+        msg = "Updating CICE variable %s." % ncvarname
         logger.info(msg=msg)
         ncvar = self.vicen_ana
-        kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname, 'ncvar':
-                  ncvar}
+        kwargs = {"ncfile": ncfile, "ncvarname": ncvarname, "ncvar": ncvar}
         ioapps.netcdf4_interface.ncwritevar(**kwargs)
+
 
 # ----
 
@@ -800,17 +802,18 @@ class MOM6EnsInitConds(object):
 
         """
         self.analy_obj = tools.parser_interface.object_define()
-        self.analy_varlist = ['ave_ssh', 'h', 'u', 'v', 'Salt',
-                              'Temp']
-        kwargs = {'path': rescale_yaml}
+        self.analy_varlist = ["ave_ssh", "h", "u", "v", "Salt", "Temp"]
+        kwargs = {"path": rescale_yaml}
         exist = tools.fileio_interface.fileexist(**kwargs)
         if not exist:
-            msg = ('The location for the YAML-formatted file containing '
-                   'the MOM6 rescaling values for the MOM6 analysis variables '
-                   '(soca_rescale_ocean_yaml) could not be determined from '
-                   'the user experiment configuration. Aborting!!!')
+            msg = (
+                "The location for the YAML-formatted file containing "
+                "the MOM6 rescaling values for the MOM6 analysis variables "
+                "(soca_rescale_ocean_yaml) could not be determined from "
+                "the user experiment configuration. Aborting!!!"
+            )
             raise SOCAInterfaceError(msg=msg)
-        kwargs = {'yaml_file': rescale_yaml}
+        kwargs = {"yaml_file": rescale_yaml}
         self.yaml_dict = tools.fileio_interface.read_yaml(**kwargs)
 
     def read_analy(self, analy_filepath):
@@ -832,17 +835,15 @@ class MOM6EnsInitConds(object):
             ensemble perturbation (enspert) application.
 
         """
-        msg = ('Reading MOM6 analysis from file %s.' % analy_filepath)
+        msg = "Reading MOM6 analysis from file %s." % analy_filepath
         logger.info(msg=msg)
         ncfile = analy_filepath
         for analy_var in self.analy_varlist:
             ncvarname = analy_var
-            kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname}
+            kwargs = {"ncfile": ncfile, "ncvarname": ncvarname}
             ncvar = ioapps.netcdf4_interface.ncreadvar(**kwargs)
-            kwargs = {'object_in': self.analy_obj, 'key': analy_var,
-                      'value': ncvar}
-            self.analy_obj = \
-                tools.parser_interface.object_setattr(**kwargs)
+            kwargs = {"object_in": self.analy_obj, "key": analy_var, "value": ncvar}
+            self.analy_obj = tools.parser_interface.object_setattr(**kwargs)
 
     def updateics(self, analy_filepath, output_filepath):
         """
@@ -871,28 +872,32 @@ class MOM6EnsInitConds(object):
             respective ensemble member.
 
         """
-        msg = ('Updating MOM6 initial condition file %s using MOM6 '
-               'analysis in file %s.' % (output_filepath,
-                                         analy_filepath))
+        msg = (
+            "Updating MOM6 initial condition file %s using MOM6 "
+            "analysis in file %s." % (output_filepath, analy_filepath)
+        )
         logger.info(msg=msg)
         ncfile = output_filepath
         for analy_var in self.analy_varlist:
             ncvarname = analy_var
-            kwargs = {'object_in': self.analy_obj, 'key': ncvarname}
+            kwargs = {"object_in": self.analy_obj, "key": ncvarname}
             ncvar = tools.parser_interface.object_getattr(**kwargs)
             if analy_var in self.yaml_dict.keys():
-                kwargs = {'dict_in': self.yaml_dict, 'key': analy_var}
+                kwargs = {"dict_in": self.yaml_dict, "key": analy_var}
                 rescale_value = tools.parser_interface.dict_key_value(**kwargs)
-                msg = ('Resetting all NaN valued variables for analysis '
-                       'variable %s to %s.' % (analy_var, rescale_value))
+                msg = (
+                    "Resetting all NaN valued variables for analysis "
+                    "variable %s to %s." % (analy_var, rescale_value)
+                )
                 logger.warn(msg=msg)
                 ncvar[numpy.isnan(ncvar)] = rescale_value
             if ncvar is None:
-                msg = ('The analysis variable %s cannot be NoneType. '
-                       'Aborting!!!' % ncvarname)
+                msg = (
+                    "The analysis variable %s cannot be NoneType. "
+                    "Aborting!!!" % ncvarname
+                )
                 raise SOCAInterfaceError(msg=msg)
-            kwargs = {'ncfile': ncfile, 'ncvarname': ncvarname,
-                      'ncvar': ncvar}
+            kwargs = {"ncfile": ncfile, "ncvarname": ncvarname, "ncvar": ncvar}
             ioapps.netcdf4_interface.ncwritevar(**kwargs)
 
     def setup(self, analy_filepath, bkgrd_filepath, output_filepath):
@@ -901,7 +906,7 @@ class MOM6EnsInitConds(object):
         -----------
 
         This method prepares the working directory for the respective
-        MOM6 ensemble member initial condition file update. 
+        MOM6 ensemble member initial condition file update.
 
         Parameters
         ----------
@@ -930,11 +935,11 @@ class MOM6EnsInitConds(object):
         """
         srcfile = bkgrd_filepath
         dstfile = output_filepath
-        msg = ('Copying file %s to %s.' % (srcfile, dstfile))
+        msg = "Copying file %s to %s." % (srcfile, dstfile)
         logger.info(msg=msg)
-        kwargs = {'srcfile': srcfile, 'dstfile': dstfile}
+        kwargs = {"srcfile": srcfile, "dstfile": dstfile}
         tools.fileio_interface.copyfile(**kwargs)
-        kwargs = {'analy_filepath': analy_filepath}
+        kwargs = {"analy_filepath": analy_filepath}
         self.read_analy(**kwargs)
 
     def run(self, analy_filepath, bkgrd_filepath, output_filepath):
@@ -975,11 +980,13 @@ class MOM6EnsInitConds(object):
             respective ensemble member.
 
         """
-        kwargs = {'analy_filepath': analy_filepath, 'bkgrd_filepath':
-                  bkgrd_filepath, 'output_filepath': output_filepath}
+        kwargs = {
+            "analy_filepath": analy_filepath,
+            "bkgrd_filepath": bkgrd_filepath,
+            "output_filepath": output_filepath,
+        }
         self.setup(**kwargs)
-        kwargs = {'analy_filepath': analy_filepath, 'output_filepath':
-                  output_filepath}
+        kwargs = {"analy_filepath": analy_filepath, "output_filepath": output_filepath}
         self.updateics(**kwargs)
 
 

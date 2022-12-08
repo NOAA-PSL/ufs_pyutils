@@ -183,26 +183,27 @@ from utils.error_interface import Error
 # ----
 
 # Define all available functions.
-__all__ = ['dict_formatter',
-           'dict_key_remove',
-           'dict_key_value',
-           'enviro_get',
-           'enviro_set',
-           'find_commonprefix',
-           'list_get_type',
-           'match_list',
-           'object_append',
-           'object_compare',
-           'object_deepcopy',
-           'object_define',
-           'object_getattr',
-           'object_hasattr',
-           'object_setattr',
-           'object_todict',
-           'string_parser',
-           'true_or_false',
-           'unique_list'
-           ]
+__all__ = [
+    "dict_formatter",
+    "dict_key_remove",
+    "dict_key_value",
+    "enviro_get",
+    "enviro_set",
+    "find_commonprefix",
+    "list_get_type",
+    "match_list",
+    "object_append",
+    "object_compare",
+    "object_deepcopy",
+    "object_define",
+    "object_getattr",
+    "object_hasattr",
+    "object_setattr",
+    "object_todict",
+    "string_parser",
+    "true_or_false",
+    "unique_list",
+]
 
 # ----
 
@@ -241,6 +242,7 @@ class ParserInterfaceError(Error):
         """
         super().__init__(msg=msg)
 
+
 # ----
 
 
@@ -270,16 +272,18 @@ def dict_formatter(in_dict: dict) -> dict:
 
     # Define local function to sort and format the input Python
     # dictionary upon entry.
-    def sorted_by_keys(dct,):
+    def sorted_by_keys(
+        dct,
+    ):
         new_dct = collections.OrderedDict()
         for key, value in sorted(dct.items(), key=lambda key: key):
 
             # Check the Python version and proceed accordingly.
             if sys.version_info < (3, 0, 0):
                 if isinstance(value, str):
-                    value = value.encode('ascii', 'ignore')
+                    value = value.encode("ascii", "ignore")
                 if isinstance(key, str):
-                    key = key.encode('ascii', 'ignore')
+                    key = key.encode("ascii", "ignore")
 
             # Write the key and value pair for the output dictionary.
             if isinstance(value, dict):
@@ -289,9 +293,9 @@ def dict_formatter(in_dict: dict) -> dict:
                 # Check the Python version and proceed accordingly.
                 if sys.version_info < (3, 0, 0):
                     if isinstance(key, str):
-                        key = key.encode('ascii', 'ignore')
+                        key = key.encode("ascii", "ignore")
                     if isinstance(value, str):
-                        value = value.encode('ascii', 'ignore')
+                        value = value.encode("ascii", "ignore")
                 test_value = value
 
                 # Check if the key and value pair is a boolean type
@@ -307,16 +311,16 @@ def dict_formatter(in_dict: dict) -> dict:
                 if isinstance(test_value, str):
                     try:
                         dummy = float(test_value)
-                        if '.' in test_value:
+                        if "." in test_value:
                             value = float(test_value)
                         else:
                             value = int(test_value)
                     except ValueError:
-                        if test_value.lower() == 'none':
+                        if test_value.lower() == "none":
                             value = None
-                        elif test_value.lower() == 'true':
+                        elif test_value.lower() == "true":
                             value = True
-                        elif test_value.lower() == 'false':
+                        elif test_value.lower() == "false":
                             value = False
                         else:
                             value = str(test_value)
@@ -330,6 +334,7 @@ def dict_formatter(in_dict: dict) -> dict:
     out_dict = sorted_by_keys(dct=in_dict)
 
     return out_dict
+
 
 # ----
 
@@ -374,13 +379,19 @@ def dict_key_remove(dict_in: dict, key: str) -> dict:
 
     return dict_in
 
+
 # ----
 
 
-def dict_key_value(dict_in: dict, key: str, force: bool = False,
-                   max_value: bool = False, min_value: bool = False,
-                   index_value: int = None,
-                   no_split: bool = False) -> Union[list, str]:
+def dict_key_value(
+    dict_in: dict,
+    key: str,
+    force: bool = False,
+    max_value: bool = False,
+    min_value: bool = False,
+    index_value: int = None,
+    no_split: bool = False,
+) -> Union[list, str]:
     """
     Description
     -----------
@@ -458,29 +469,35 @@ def dict_key_value(dict_in: dict, key: str, force: bool = False,
 
     """
     if max_value and min_value:
-        msg = ('The user has requested both minimum and maximum list '
-               'values. Please check that only one threshold value is '
-               'is to be sought from the list. Aborting!!!')
+        msg = (
+            "The user has requested both minimum and maximum list "
+            "values. Please check that only one threshold value is "
+            "is to be sought from the list. Aborting!!!"
+        )
         raise ParserInterfaceError(msg=msg)
 
     if index_value is not None:
         if max_value:
-            msg = ('The user has selected both a single value (as per '
-                   'the specified index) and the maximum list value. '
-                   'Please check which criteria to fulfill. Aborting!!!')
+            msg = (
+                "The user has selected both a single value (as per "
+                "the specified index) and the maximum list value. "
+                "Please check which criteria to fulfill. Aborting!!!"
+            )
             raise ParserInterfaceError(msg=msg)
 
         if min_value:
-            msg = ('The user has selected both a single value (as per '
-                   'the specified index) and the minimum list value. '
-                   'Please check which criteria to fulfill. Aborting!!!')
+            msg = (
+                "The user has selected both a single value (as per "
+                "the specified index) and the minimum list value. "
+                "Please check which criteria to fulfill. Aborting!!!"
+            )
             raise ParserInterfaceError(msg=msg)
     try:
         value = dict_in[key]
         if no_split:
             return value
         try:
-            in_list = dict_in[key].split(',')
+            in_list = dict_in[key].split(",")
             value = list(string_parser(in_list=in_list))
             if max_value:
                 value = max(value)
@@ -494,14 +511,17 @@ def dict_key_value(dict_in: dict, key: str, force: bool = False,
 
     except KeyError as error:
         if not force:
-            msg = (f'Key {key} could not be found in user provided dictionary. '
-                   'Aborting!!!')
+            msg = (
+                f"Key {key} could not be found in user provided dictionary. "
+                "Aborting!!!"
+            )
             raise ParserInterfaceError(msg=msg) from error
 
         if force:
             value = None
 
     return value
+
 
 # ----
 
@@ -541,6 +561,7 @@ def enviro_get(envvar: str) -> Union[bool, float, int, str]:
 
     return envvarval
 
+
 # ----
 
 
@@ -568,6 +589,7 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
 
     # Define the run-time environment variable.
     os.environ[envvar] = value
+
 
 # ----
 
@@ -604,6 +626,7 @@ def find_commonprefix(strings_list: list) -> str:
         common_prefix = os.path.commonprefix(strings_list)
 
     return common_prefix
+
 
 # ----
 
@@ -651,11 +674,11 @@ def list_get_type(in_list: list, dtype: str) -> list:
 
     return var_list
 
+
 # ----
 
 
-def object_append(object_in: object, object_key: str,
-                  dict_in: dict) -> object:
+def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
     """
     Description
     -----------
@@ -702,10 +725,10 @@ def object_append(object_in: object, object_key: str,
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(object_in=object_out, key=object_key,
-                                value=object_dict)
+    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
+
 
 # ----
 
@@ -739,9 +762,10 @@ def object_compare(obj1: object, obj2: object) -> bool:
     """
 
     # Compare the Python objects provided upon entry.
-    compare = (obj1 == obj2)
+    compare = obj1 == obj2
 
     return compare
+
 
 # ----
 
@@ -802,12 +826,13 @@ def object_define() -> object:
 
     return empty_obj
 
+
 # ----
 
 
-def object_getattr(object_in: object, key: str,
-                   force: bool = False) -> Union[bool, dict, float,
-                                                 int, str, list]:
+def object_getattr(
+    object_in: object, key: str, force: bool = False
+) -> Union[bool, dict, float, int, str, list]:
     """
     Description
     -----------
@@ -866,17 +891,19 @@ def object_getattr(object_in: object, key: str,
             value = None
 
         if not force:
-            msg = (f'The object {object_in} does not contain attribute '
-                   '{key}. Aborting!!!')
+            msg = (
+                f"The object {object_in} does not contain attribute "
+                "{key}. Aborting!!!"
+            )
             raise ParserInterfaceError(msg=msg)
 
     return value
 
+
 # ----
 
 
-def match_list(in_list: list, match_string: str,
-               exact: bool = False) -> (bool, str):
+def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, str):
     """
     Description
     -----------
@@ -931,8 +958,7 @@ def match_list(in_list: list, match_string: str,
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower() and
-                  not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
@@ -970,6 +996,7 @@ def match_list(in_list: list, match_string: str,
             match_chk = True
 
     return (match_chk, match_str)
+
 
 # ----
 
@@ -1011,12 +1038,13 @@ def object_hasattr(object_in: object, key: str) -> bool:
 
     return chk_attr
 
+
 # ----
 
 
-def object_setattr(object_in: object, key: str,
-                   value: Union[bool, dict, float, int,
-                                numpy.array, str]) -> object:
+def object_setattr(
+    object_in: object, key: str, value: Union[bool, dict, float, int, numpy.array, str]
+) -> object:
     """
     Description
     -----------
@@ -1057,6 +1085,7 @@ def object_setattr(object_in: object, key: str,
 
     return object_out
 
+
 # ----
 
 
@@ -1090,6 +1119,7 @@ def object_todict(object_in: object) -> dict:
     dict_out = list(dir(object_in))
 
     return dict_out
+
 
 # ----
 
@@ -1129,9 +1159,10 @@ def singletrue(bool_list: list) -> bool:
     # variables specified upon entry and proceed accordingly.
     has_true = any(iterator)
     has_another_true = any(iterator)
-    check = (has_true and not has_another_true)
+    check = has_true and not has_another_true
 
     return check
+
 
 # ----
 
@@ -1173,7 +1204,7 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
             test_value = value
             try:
                 if isinstance(test_value, str):
-                    test_value = test_value.encode('ascii', 'ignore')
+                    test_value = test_value.encode("ascii", "ignore")
             except NameError:
                 pass
 
@@ -1186,17 +1217,17 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
             if isinstance(test_value, str):
                 try:
                     dummy = float(test_value)
-                    if '.' in test_value:
+                    if "." in test_value:
                         value = float(test_value)
                     else:
                         value = int(test_value)
 
                 except ValueError:
-                    if test_value.lower() == 'none':
+                    if test_value.lower() == "none":
                         value = None
-                    elif test_value.lower() == 'true':
+                    elif test_value.lower() == "true":
                         value = True
-                    elif test_value.lower() == 'false':
+                    elif test_value.lower() == "false":
                         value = False
                     else:
                         value = str(test_value)
@@ -1216,17 +1247,17 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
     if remove_comma:
         new_list = []
         for item in out_list:
-            if item != ',':
+            if item != ",":
                 new_list.append(item)
         out_list = new_list
 
     return out_list
 
+
 # ----
 
 
-def true_or_false(argval:
-                  Union[bool, dict, float, int, str]) -> Union[bool, None]:
+def true_or_false(argval: Union[bool, dict, float, int, str]) -> Union[bool, None]:
     """
     Description
     -----------
@@ -1254,16 +1285,17 @@ def true_or_false(argval:
 
     # Check the arguments provided upon entry and proceed accordingly.
     string = str(argval).upper()
-    if 'TRUE'.startswith(string):
+    if "TRUE".startswith(string):
         pytype = True
 
-    elif 'FALSE'.startswith(string):
+    elif "FALSE".startswith(string):
         pytype = False
 
     else:
         pytype = None
 
     return pytype
+
 
 # ----
 
@@ -1292,11 +1324,10 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not
-                                                in out_list)
+    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):
-        out_list.append(key.replace(' ', ''))
+        out_list.append(key.replace(" ", ""))
 
     return out_list

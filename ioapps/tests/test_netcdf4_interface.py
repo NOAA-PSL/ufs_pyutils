@@ -97,41 +97,44 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Define the base-class attributes.
-        (self.ncdim_obj, self.ncvar_obj) = \
-            [parser_interface.object_define() for i in range(2)]
-        self.ncfile = os.path.join(os.getcwd(), 'tests',
-                                   'ncwrite.nc')
-        print('I AM IN PATH %s' % self.ncfile)
-        self.ncfrmt = 'NETCDF4_CLASSIC'
+        (self.ncdim_obj, self.ncvar_obj) = [
+            parser_interface.object_define() for i in range(2)
+        ]
+        self.ncfile = os.path.join(os.getcwd(), "tests", "ncwrite.nc")
+        print("I AM IN PATH %s" % self.ncfile)
+        self.ncfrmt = "NETCDF4_CLASSIC"
 
         # Build the Python object containing the netCDF-formatted file
         # dimension(s) attribute(s).
-        (self.ncdim_name, self.ncdim_value) = ('nlocs', 10)
+        (self.ncdim_name, self.ncdim_value) = ("nlocs", 10)
         self.ncdim_obj = parser_interface.object_setattr(
-            object_in=self.ncdim_obj, key=self.ncdim_name,
-            value=self.ncdim_value)
+            object_in=self.ncdim_obj, key=self.ncdim_name, value=self.ncdim_value
+        )
 
         # Build the Python object containing the netCDF-formatted file
         # variable attributes.
-        self.ncvarname = 'locations'
+        self.ncvarname = "locations"
         ncvar = numpy.random.rand(self.ncdim_value)
-        ncvar_dict = {self.ncvarname:
-                      {'type': 'float',
-                       'varname': self.ncvarname,
-                       'dims': self.ncdim_name,
-                       'values': ncvar}
-                      }
+        ncvar_dict = {
+            self.ncvarname: {
+                "type": "float",
+                "varname": self.ncvarname,
+                "dims": self.ncdim_name,
+                "values": ncvar,
+            }
+        }
 
         for ncvar in ncvar_dict.keys():
             dict_in = dict()
             for item in ncvar_dict[ncvar].keys():
                 value = parser_interface.dict_key_value(
-                    dict_in=ncvar_dict[ncvar], key=item,
-                    no_split=True)
+                    dict_in=ncvar_dict[ncvar], key=item, no_split=True
+                )
                 dict_in[item] = value
 
             self.ncvar_obj = parser_interface.object_setattr(
-                object_in=self.ncvar_obj, key=ncvar, value=dict_in)
+                object_in=self.ncvar_obj, key=ncvar, value=dict_in
+            )
 
         # Check whether the netCDF-formatted file exists; if so,
         # define the netCDF variable array; this will be used for the
@@ -141,12 +144,16 @@ class TestNetCDF4Methods(TestCase):
 
             # Define the netCDF variable array.
             self.ncvar = netcdf4_interface.ncreadvar(
-                ncfile=self.ncfile, ncvarname=self.ncvarname,
-                ncfrmt=self.ncfrmt, from_ncgroup=False)
+                ncfile=self.ncfile,
+                ncvarname=self.ncvarname,
+                ncfrmt=self.ncfrmt,
+                from_ncgroup=False,
+            )
 
         # Define the message to accompany any unit-test failures.
-        self.unit_test_msg = ('The unit-test for netcdf4_interface function {0} '
-                              'failed.')
+        self.unit_test_msg = (
+            "The unit-test for netcdf4_interface function {0} " "failed."
+        )
 
     @pytest.mark.order(100)
     def test_cleanup(self):
@@ -165,8 +172,7 @@ class TestNetCDF4Methods(TestCase):
 
         # Define the list of (the) netCDF-formatted file(s) to be
         # removed.
-        filelist = [self.ncfile
-                    ]
+        filelist = [self.ncfile]
 
         # Remove the specified netCDF-formatted file(s).
         fileio_interface.removefiles(filelist=filelist)
@@ -183,10 +189,9 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Check that the netCDF file path is a netCDF-formatted file.
-        nccheck = netcdf4_interface.nccheck(ncfile=self.ncfile,
-                                            ncfrmt=self.ncfrmt)
+        nccheck = netcdf4_interface.nccheck(ncfile=self.ncfile, ncfrmt=self.ncfrmt)
 
-        self.assertTrue(nccheck, msg=self.unit_test_msg.format('nccheck'))
+        self.assertTrue(nccheck, msg=self.unit_test_msg.format("nccheck"))
 
     @pytest.mark.order(3)
     def test_ncreaddim(self):
@@ -200,12 +205,13 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Read the dimension variable from the netCDF-formatted file.
-        ncdim = netcdf4_interface.ncreaddim(ncfile=self.ncfile,
-                                            ncdimname=self.ncdim_name,
-                                            ncfrmt=self.ncfrmt)
+        ncdim = netcdf4_interface.ncreaddim(
+            ncfile=self.ncfile, ncdimname=self.ncdim_name, ncfrmt=self.ncfrmt
+        )
 
-        self.assertTrue(ncdim == self.ncdim_value,
-                        msg=self.unit_test_msg.format('ncreaddim'))
+        self.assertTrue(
+            ncdim == self.ncdim_value, msg=self.unit_test_msg.format("ncreaddim")
+        )
 
     @pytest.mark.order(3)
     def test_ncreadvar(self):
@@ -219,14 +225,16 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Read the netCDF variable from the netCDF-formatted file.
-        ncvar = netcdf4_interface.ncreadvar(ncfile=self.ncfile,
-                                            ncvarname=self.ncvarname,
-                                            ncfrmt=self.ncfrmt,
-                                            from_ncgroup=False)
+        ncvar = netcdf4_interface.ncreadvar(
+            ncfile=self.ncfile,
+            ncvarname=self.ncvarname,
+            ncfrmt=self.ncfrmt,
+            from_ncgroup=False,
+        )
 
-        assert all([a == b for (a, b) in zip(list(self.ncvar),
-                                             list(ncvar))]), \
-            self.unit_test_msg.format('ncreadvar')
+        assert all(
+            [a == b for (a, b) in zip(list(self.ncvar), list(ncvar))]
+        ), self.unit_test_msg.format("ncreadvar")
 
     @pytest.mark.order(3)
     def test_ncvarexist(self):
@@ -241,19 +249,17 @@ class TestNetCDF4Methods(TestCase):
 
         # Check that the netCDF variable exists within the
         # netCDF-formatted file.
-        ncvarexist = netcdf4_interface.ncvarexist(ncfile=self.ncfile,
-                                                  ncvarname=self.ncvarname,
-                                                  ncfrmt=self.ncfrmt)
+        ncvarexist = netcdf4_interface.ncvarexist(
+            ncfile=self.ncfile, ncvarname=self.ncvarname, ncfrmt=self.ncfrmt
+        )
 
-        self.assertTrue(ncvarexist, msg=(
-            self.unit_test_msg.format('ncvarexist')))
+        self.assertTrue(ncvarexist, msg=(self.unit_test_msg.format("ncvarexist")))
 
-        ncvarexist = netcdf4_interface.ncvarexist(ncfile=self.ncfile,
-                                                  ncvarname='dummy_test_var',
-                                                  ncfrmt=self.ncfrmt)
+        ncvarexist = netcdf4_interface.ncvarexist(
+            ncfile=self.ncfile, ncvarname="dummy_test_var", ncfrmt=self.ncfrmt
+        )
 
-        self.assertTrue(not ncvarexist, msg=(
-            self.unit_test_msg.format('ncvarexist')))
+        self.assertTrue(not ncvarexist, msg=(self.unit_test_msg.format("ncvarexist")))
 
     @pytest.mark.order(1)
     def test_ncwrite(self):
@@ -267,20 +273,26 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Write the netCDF-formatted file.
-        netcdf4_interface.ncwrite(ncfile=self.ncfile,
-                                  ncdim_obj=self.ncdim_obj,
-                                  ncvar_obj=self.ncvar_obj,
-                                  ncfrmt=self.ncfrmt)
+        netcdf4_interface.ncwrite(
+            ncfile=self.ncfile,
+            ncdim_obj=self.ncdim_obj,
+            ncvar_obj=self.ncvar_obj,
+            ncfrmt=self.ncfrmt,
+        )
 
-        assert True, self.unit_test_msg.format('ncwrite')
+        assert True, self.unit_test_msg.format("ncwrite")
 
         # Check that the netCDF-formatted file exists.
         exist = fileio_interface.fileexist(path=self.ncfile)
-        self.assertTrue(exist, msg=('The netCDF-formatted file {0} does '
-                                    'not exist.'.format(self.ncfile)))
+        self.assertTrue(
+            exist,
+            msg=(
+                "The netCDF-formatted file {0} does " "not exist.".format(self.ncfile)
+            ),
+        )
 
 
 # ----
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
