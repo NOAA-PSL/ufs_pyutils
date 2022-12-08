@@ -50,6 +50,10 @@ History
 
 # ----
 
+# pylint: disable=unused-variable
+
+# ----
+
 import logging
 import sys
 import types
@@ -63,7 +67,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Logger(object):
+class Logger():
     """
     Description
     -----------
@@ -103,10 +107,17 @@ class Logger(object):
 
         # Assign the terminal colors for the respective logger message
         # types.
-        def cyan(text): return '\033[0;36m' + text + '\033[0m'
-        def green(text): return '\033[0;32m' + text + '\033[0m'
-        def red(text): return '\033[0;31m' + text + '\033[0m'
-        def yellow(text): return '\033[0;33m' + text + '\033[0m'
+        def cyan(text):
+            return '\033[0;36m' + text + '\033[0m'
+
+        def green(text):
+            return '\033[0;32m' + text + '\033[0m'
+
+        def red(text):
+            return '\033[0;31m' + text + '\033[0m'
+
+        def yellow(text):
+            return '\033[0;33m' + text + '\033[0m'
 
         colors_list = ['cyan',
                        'green',
