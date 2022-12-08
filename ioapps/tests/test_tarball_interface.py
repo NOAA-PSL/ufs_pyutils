@@ -98,21 +98,23 @@ class TesTarFileMethods(TestCase):
         # Define the base-class attributes.
         self.nmems = 5
         self.dirpath = os.getcwd()
-        self.tarball = os.path.join(self.dirpath, 'tests', 'member_files.tar')
+        self.tarball = os.path.join(self.dirpath, "tests", "member_files.tar")
 
         # Define and create the local files to compose the tarball.
         self.filelist = list()
         for mem in range(self.nmems):
 
             # Create the respective member file for the tarball.
-            filepath = os.path.join(self.dirpath, 'tests', 'member_file.%03d.file' %
-                                    mem)
+            filepath = os.path.join(
+                self.dirpath, "tests", "member_file.%03d.file" % mem
+            )
             self.filelist.append(filepath)
             fileio_interface.touch(path=filepath)
 
             # Define the message to accompany any unit-test failures.
-        self.unit_test_msg = ('The unit-test for tarball_interface function {0} '
-                              'failed.')
+        self.unit_test_msg = (
+            "The unit-test for tarball_interface function {0} " "failed."
+        )
 
     @pytest.mark.order(100)
     def test_cleanup(self):
@@ -137,7 +139,7 @@ class TesTarFileMethods(TestCase):
 
     @pytest.mark.order(2)
     def test_read_tarfile(self):
-        """ 
+        """
         Description
         -----------
 
@@ -148,8 +150,7 @@ class TesTarFileMethods(TestCase):
 
         # Read the tarball file and extract the respective member
         # files.
-        tarfile_interface.read_tarfile(
-            path=self.dirpath, tarball_path=self.tarball)
+        tarfile_interface.read_tarfile(path=self.dirpath, tarball_path=self.tarball)
 
         assert True
 
@@ -158,12 +159,11 @@ class TesTarFileMethods(TestCase):
 
             exist = fileio_interface.fileexist(path=filename)
 
-            self.assertTrue(exist, msg=(
-                self.unit_test_msg.format('read_tarfile')))
+            self.assertTrue(exist, msg=(self.unit_test_msg.format("read_tarfile")))
 
     @pytest.mark.order(1)
     def test_write_tarfile(self):
-        """ 
+        """
         Description
         -----------
 
@@ -174,21 +174,22 @@ class TesTarFileMethods(TestCase):
 
         # Create the tarball file from the respective member files.
         tarfile_interface.write_tarfile(
-            path=self.dirpath, tarball_path=self.tarball, filelist=self.filelist)
+            path=self.dirpath, tarball_path=self.tarball, filelist=self.filelist
+        )
 
         assert True
 
         # Check that the tarball file exists (i.e., was created).
         exist = fileio_interface.fileexist(path=self.tarball)
 
-        self.assertTrue(exist, msg=(
-            self.unit_test_msg.format('write_tarfile')))
+        self.assertTrue(exist, msg=(self.unit_test_msg.format("write_tarfile")))
 
         # Remove the member files.
         fileio_interface.removefiles(filelist=self.filelist)
 
+
 # ----
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

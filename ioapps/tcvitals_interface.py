@@ -73,9 +73,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ['write_tcvfile',
-           'write_tcvstr'
-           ]
+__all__ = ["write_tcvfile", "write_tcvstr"]
 
 # ----
 
@@ -117,6 +115,7 @@ class TCVitalsError(Error):
         """
         super(TCVitalsError, self).__init__(msg=msg)
 
+
 # ----
 
 
@@ -143,10 +142,11 @@ def write_tcvfile(filepath: str, tcvstr: str) -> None:
     """
 
     # Write the TC-vitals record(s) to the specified filepath.
-    msg = ('Writing TC-Vitals file {0}.'.format(filepath))
+    msg = "Writing TC-Vitals file {0}.".format(filepath)
     logger.info(msg=msg)
-    with open(filepath, 'w') as f:
+    with open(filepath, "w") as f:
         f.write(tcvstr)
+
 
 # ----
 
@@ -271,96 +271,113 @@ def write_tcvstr(tcvit_obj: object) -> str:
     # Define the TC-vitals record attributes.
     tcvstr = str()
     tcvobj = parser_interface.object_define()
-    tcvstr_frmt = ('%-4s %-3s %-9s %s %s %s %s %03d %03d %04d %04d %04d '
-                   '%02d %03d %04d %04d %04d %04d %s\n')
+    tcvstr_frmt = (
+        "%-4s %-3s %-9s %s %s %s %s %03d %03d %04d %04d %04d "
+        "%02d %03d %04d %04d %04d %04d %s\n"
+    )
 
     # Check that all mandatory TC-vitals record attributes are
     # specified; proceed accordingly.
-    mand_attr_list = ['lat',
-                      'lon',
-                      'mslp',
-                      'tcid',
-                      'time_hm',
-                      'time_ymd',
-                      'vmax'
-                      ]
+    mand_attr_list = ["lat", "lon", "mslp", "tcid", "time_hm", "time_ymd", "vmax"]
 
     for mand_attr in mand_attr_list:
-        if not parser_interface.object_hasattr(
-                object_in=tcvit_obj, key=mand_attr):
-            msg = ('The input TC-vitals variable object does not contain '
-                   'the mandatory attribute {0}. Aborting!!!'
-                   .format(mand_attr))
+        if not parser_interface.object_hasattr(object_in=tcvit_obj, key=mand_attr):
+            msg = (
+                "The input TC-vitals variable object does not contain "
+                "the mandatory attribute {0}. Aborting!!!".format(mand_attr)
+            )
             raise TCVitalsError(msg=msg)
 
         # Build the TC-vitals record object.
-        value = parser_interface.object_getattr(
-            object_in=tcvit_obj, key=mand_attr)
+        value = parser_interface.object_getattr(object_in=tcvit_obj, key=mand_attr)
         tcvobj = parser_interface.object_setattr(
-            object_in=tcvobj, key=mand_attr, value=value)
+            object_in=tcvobj, key=mand_attr, value=value
+        )
 
     # Check the TC-vitals record attributes; proceed accordingly.
-    if (tcvobj.lat is None) or (tcvobj.lon is None) or (tcvobj.mslp is None) or \
-       (tcvobj.vmax is None):
-        msg = ('Received a NoneType value for a required TC vitals record; no '
-               'TC-vitals string will be created.')
+    if (
+        (tcvobj.lat is None)
+        or (tcvobj.lon is None)
+        or (tcvobj.mslp is None)
+        or (tcvobj.vmax is None)
+    ):
+        msg = (
+            "Received a NoneType value for a required TC vitals record; no "
+            "TC-vitals string will be created."
+        )
         logger.warn(msg=msg)
 
         return tcvstr
 
     # Convert the wind speed units from knots to meters-per-second.
-    tcvobj.vmax = (tcvobj.vmax*constants_interface.kts2mps).value
+    tcvobj.vmax = (tcvobj.vmax * constants_interface.kts2mps).value
 
     # Define default values for the optional TC-vitals record
     # attributes.
-    opt_attr_dict = {'event_name': 'NAMELESS',
-                     'NE34': -999,
-                     'SE34': -999,
-                     'SW34': -999,
-                     'NW34': -999,
-                     'poci': -999,
-                     'rmw': -99,
-                     'roci': -999,
-                     'tcv_center': 'XXXX',
-                     'stormdepth': 'X',
-                     'stormdir': -99,
-                     'stormspeed': -99
-                     }
+    opt_attr_dict = {
+        "event_name": "NAMELESS",
+        "NE34": -999,
+        "SE34": -999,
+        "SW34": -999,
+        "NW34": -999,
+        "poci": -999,
+        "rmw": -99,
+        "roci": -999,
+        "tcv_center": "XXXX",
+        "stormdepth": "X",
+        "stormdir": -99,
+        "stormspeed": -99,
+    }
 
     # Define the optional TC-vitals record attributes in accordance
     # with the values provided upon entry.
     for opt_attr in opt_attr_dict.keys():
 
         # Collect the TC-vitals record attribute; proceed accordingly.
-        if parser_interface.object_hasattr(
-                object_in=tcvit_obj, key=opt_attr):
-            value = parser_interface.object_getattr(
-                object_in=tcvit_obj, key=opt_attr)
+        if parser_interface.object_hasattr(object_in=tcvit_obj, key=opt_attr):
+            value = parser_interface.object_getattr(object_in=tcvit_obj, key=opt_attr)
         else:
             value = parser_interface.dict_key_value(
-                dict_in=opt_attr_dict, key=opt_attr, no_split=True)
+                dict_in=opt_attr_dict, key=opt_attr, no_split=True
+            )
 
         # Define the TC-vitals record attribute.
         tcvobj = parser_interface.object_setattr(
-            object_in=tcvobj, key=opt_attr, value=value)
+            object_in=tcvobj, key=opt_attr, value=value
+        )
 
     # Check that the TC-vitals records are valid; proceed accordingly.
     if (tcvobj.lat is not None) and (tcvobj.lon is not None):
 
         # Scale the hemisphere values accordingly.
-        hemip = ('N' if(tcvobj.lat > 0) else 'S')
-        hemim = ('E' if(tcvobj.lon < 0) else 'W')
-        tcvobj.lat = '%03d%s' % (numpy.abs(numpy.rint(tcvobj.lat*10)), hemip)
-        tcvobj.lon = '%04d%s' % (numpy.abs(numpy.rint(tcvobj.lon*10)), hemim)
+        hemip = "N" if (tcvobj.lat > 0) else "S"
+        hemim = "E" if (tcvobj.lon < 0) else "W"
+        tcvobj.lat = "%03d%s" % (numpy.abs(numpy.rint(tcvobj.lat * 10)), hemip)
+        tcvobj.lon = "%04d%s" % (numpy.abs(numpy.rint(tcvobj.lon * 10)), hemim)
 
         # Write the TC-vitals record.
-        tcvstr = tcvstr_frmt % (tcvobj.tcv_center, tcvobj.tcid, tcvobj.event_name,
-                                tcvobj.time_ymd, tcvobj.time_hm, tcvobj.lat, tcvobj.lon,
-                                tcvobj.stormdir, tcvobj.stormspeed, tcvobj.mslp, tcvobj.poci,
-                                tcvobj.roci, tcvobj.vmax, tcvobj.rmw, tcvobj.NE34, tcvobj.SE34,
-                                tcvobj.SW34, tcvobj.NW34, tcvobj.stormdepth)
-        msg = (
-            'Constructed the following TC-vitals record:\n{0}'.format(tcvstr))
+        tcvstr = tcvstr_frmt % (
+            tcvobj.tcv_center,
+            tcvobj.tcid,
+            tcvobj.event_name,
+            tcvobj.time_ymd,
+            tcvobj.time_hm,
+            tcvobj.lat,
+            tcvobj.lon,
+            tcvobj.stormdir,
+            tcvobj.stormspeed,
+            tcvobj.mslp,
+            tcvobj.poci,
+            tcvobj.roci,
+            tcvobj.vmax,
+            tcvobj.rmw,
+            tcvobj.NE34,
+            tcvobj.SE34,
+            tcvobj.SW34,
+            tcvobj.NW34,
+            tcvobj.stormdepth,
+        )
+        msg = "Constructed the following TC-vitals record:\n{0}".format(tcvstr)
         logger.info(msg=msg)
 
     return tcvstr

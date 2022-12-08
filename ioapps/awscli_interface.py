@@ -84,8 +84,7 @@ from tools import parser_interface
 # ----
 
 # Define all available functions.
-__all__ = ['put_awsfile'
-           ]
+__all__ = ["put_awsfile"]
 
 # ----
 
@@ -128,6 +127,7 @@ class AWSCLIError(Error):
         """
         super(AWSCLIError, self).__init__(msg=msg)
 
+
 # ----
 
 
@@ -158,34 +158,41 @@ def _check_awscli_env() -> str:
 
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
-    cmd = ['which',
-           'aws'
-           ]
+    cmd = ["which", "aws"]
 
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Define the AWS CLI executable path; proceed accordingly.
     if len(out) > 0:
-        awscli = out.rstrip().decode('utf-8')
+        awscli = out.rstrip().decode("utf-8")
 
     else:
-        msg = ('The AWS CLI executable could not be determined for your '
-               'system; please check that the appropriate AWS CLI '
-               'libaries/modules are loaded prior to calling this script. '
-               'Aborting!!!')
+        msg = (
+            "The AWS CLI executable could not be determined for your "
+            "system; please check that the appropriate AWS CLI "
+            "libaries/modules are loaded prior to calling this script. "
+            "Aborting!!!"
+        )
         raise AWSCLIError(msg=msg)
 
     return awscli
 
+
 # ----
 
 
-def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
-                is_wildcards: bool = False, aws_exclude: str = None,
-                aws_include: str = None, profile: str = None,
-                errlog: str = None, outlog: str = None) -> None:
+def put_awsfile(
+    aws_path: str,
+    path: str,
+    is_dir: bool = False,
+    is_wildcards: bool = False,
+    aws_exclude: str = None,
+    aws_include: str = None,
+    profile: str = None,
+    errlog: str = None,
+    outlog: str = None,
+) -> None:
     """
     Description
     -----------
@@ -274,59 +281,58 @@ def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
 
     # Define the Python dictionaries and list of parameter keys and
     # values provided upon entry.
-    awss3_kwargs_list = ['aws_exclude',
-                         'aws_include',
-                         'is_dir',
-                         'is_wildcards'
-                         ]
+    awss3_kwargs_list = ["aws_exclude", "aws_include", "is_dir", "is_wildcards"]
 
-    awss3_kwargs_dict = {'aws_exclude': 'exclude',
-                         'aws_include': 'include'
-                         }
+    awss3_kwargs_dict = {"aws_exclude": "exclude", "aws_include": "include"}
 
     # Define the keywords provided upon entry and proceed accordingly.
     awss3_obj = parser_interface.object_define()
     for awss3_kwarg in awss3_kwargs_list:
         value = eval(awss3_kwarg)
         awss3_obj = parser_interface.object_setattr(
-            object_in=awss3_obj, key=awss3_kwarg, value=value)
+            object_in=awss3_obj, key=awss3_kwarg, value=value
+        )
 
     # Check that the associated keywords provided upon entry are
     # valid.
     if awss3_obj.is_wildcards:
         if not any([awss3_obj.aws_exclude, awss3_obj.aws_include]):
-            msg = ('For AWS s3 wildcard strings to be valid, either/'
-                   'aws_exclude and/or aws_include must not be '
-                   'NoneType. Aborting!!!')
+            msg = (
+                "For AWS s3 wildcard strings to be valid, either/"
+                "aws_exclude and/or aws_include must not be "
+                "NoneType. Aborting!!!"
+            )
             raise AWSCLIError(msg=msg)
 
     if not awss3_obj.is_wildcards:
-        for item in ['aws_exclude',
-                     'aws_include'
-                     ]:
+        for item in ["aws_exclude", "aws_include"]:
 
-            if parser_interface.object_getattr(
-                    object_in=awss3_obj, key=item) is not None:
+            if (
+                parser_interface.object_getattr(object_in=awss3_obj, key=item)
+                is not None
+            ):
 
                 # Reset the value for the wildcard related keyword
                 # values.
-                msg = ('The keyword {0} had a value of {1} upon '
-                       'entry; wildcards are not supported by the '
-                       'parameters provided upon entry; resetting to '
-                       'NoneType.'.format(item, parser_interface.object_getattr(
-                           object_in=awss3_obj, key=item)))
+                msg = (
+                    "The keyword {0} had a value of {1} upon "
+                    "entry; wildcards are not supported by the "
+                    "parameters provided upon entry; resetting to "
+                    "NoneType.".format(
+                        item,
+                        parser_interface.object_getattr(object_in=awss3_obj, key=item),
+                    )
+                )
                 logger.warn(msg=msg)
                 awss3_obj = parser_interface.object_setattr(
-                    object_in=awss3_obj, key=item, value=None)
+                    object_in=awss3_obj, key=item, value=None
+                )
 
     # Build the AWS CLI command line string and proceed accordingly.
-    cmd = ['{0}'.format(awscli),
-           's3',
-           'cp'
-           ]
+    cmd = ["{0}".format(awscli), "s3", "cp"]
 
     if awss3_obj.is_dir:
-        cmd.append('--recursive')
+        cmd.append("--recursive")
 
     # Establish the keyword arguments for the AWS CLI executable
     # relative to the parameter values provided upon entry.
@@ -336,9 +342,11 @@ def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
         # accordingly.
         if awss3_kwarg in list(awss3_kwargs_dict.keys()):
             strval = parser_interface.dict_key_value(
-                dict_in=awss3_kwargs_dict, key=awss3_kwarg, no_split=True)
+                dict_in=awss3_kwargs_dict, key=awss3_kwarg, no_split=True
+            )
             value = parser_interface.object_getattr(
-                object_in=awss3_obj, key=awss3_kwarg)
+                object_in=awss3_obj, key=awss3_kwarg
+            )
 
             # Check that the keyword argument value is not NoneType;
             # proceed accordingly.
@@ -346,42 +354,45 @@ def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
                 if isinstance(value, str):
                     cmd.append('{0} "{1}"'.format(strval, value))
                 if not isinstance(value, str):
-                    cmd.append('{0} {1}'.format(strval, value))
+                    cmd.append("{0} {1}".format(strval, value))
 
     # Add the local and AWS s3 file paths for the AWS CLI executable
     # application.
-    cmd.append('{0}'.format(path))
-    cmd.append('{0}'.format(aws_path))
+    cmd.append("{0}".format(path))
+    cmd.append("{0}".format(aws_path))
 
     # Determine the permission attributes for the AWS CLI executable.
     if profile is None:
-        cmd.append('--no-sign-request')
+        cmd.append("--no-sign-request")
     if profile is not None:
-        cmd.append('--profile')
-        cmd.append('{0}'.format(profile))
+        cmd.append("--profile")
+        cmd.append("{0}".format(profile))
 
     # Check the subprocess stderr and stdout attributes provided upon
     # entry; proceed accordingly.
     if errlog is None:
         stderr = subprocess.PIPE
     if errlog is not None:
-        msg = ('The stderr from the AWS CLI application will be written '
-               'to {0}.'.format(errlog))
+        msg = (
+            "The stderr from the AWS CLI application will be written "
+            "to {0}.".format(errlog)
+        )
         logger.warn(msg=msg)
-        stderr = open(errlog, 'w')
+        stderr = open(errlog, "w")
 
     if outlog is None:
         stdout = subprocess.PIPE
     if outlog is not None:
-        msg = ('The stdout from the AWS CLI application will be written '
-               'to {0}.'.format(outlog))
+        msg = (
+            "The stdout from the AWS CLI application will be written "
+            "to {0}.".format(outlog)
+        )
         logger.warn(msg=msg)
-        stdout = open(outlog, 'w')
+        stdout = open(outlog, "w")
 
     # Upload the local file path to the AWS s3 bucket and object path;
     # proceed accordingly.
-    msg = ('Uploading files from path {0} to AWS s3 path {1}.'
-           .format(path, aws_path))
+    msg = "Uploading files from path {0} to AWS s3 path {1}.".format(path, aws_path)
     logger.info(msg=msg)
     try:
         proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
@@ -389,8 +400,9 @@ def put_awsfile(aws_path: str, path: str, is_dir: bool = False,
         proc.wait()
 
     except Exception as error:
-        msg = ('The AWS CLI application failed with error {0}. '
-               'Aborting!!!'.format(error))
+        msg = "The AWS CLI application failed with error {0}. " "Aborting!!!".format(
+            error
+        )
         raise AWSCLIError(msg=msg)
 
     # Check the subprocess stderr and stdout attributes; proceed

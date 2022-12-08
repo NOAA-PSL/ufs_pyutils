@@ -131,10 +131,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ['s3filelist',
-           's3get',
-           's3put'
-           ]
+__all__ = ["s3filelist", "s3get", "s3put"]
 
 # ----
 
@@ -176,6 +173,7 @@ class Boto3Error(Error):
 
         """
         super(Boto3Error, self).__init__(msg=msg)
+
 
 # ----
 
@@ -240,22 +238,24 @@ def _aws_credentials(profile_name: str = None) -> tuple:
         # initiate a boto3 session; proceed accordingly.
         try:
 
-            (unsigned, session) = (False,
-                                   boto3.Session(profile_name=profile_name))
+            (unsigned, session) = (False, boto3.Session(profile_name=profile_name))
 
         except Exception as error:
-            msg = ('Establishing the boto3 session for profile name {0} '
-                   'failed with error {1}. Aborting!!!'.format(profile_name,
-                                                               error))
+            msg = (
+                "Establishing the boto3 session for profile name {0} "
+                "failed with error {1}. Aborting!!!".format(profile_name, error)
+            )
             raise Boto3Error(msg=msg)
 
     return (unsigned, session)
 
+
 # ----
 
 
-def _s3client(unsigned: bool = False, session: object = None,
-              profile_name: str = None) -> object:
+def _s3client(
+    unsigned: bool = False, session: object = None, profile_name: str = None
+) -> object:
     """
     Description
     -----------
@@ -295,34 +295,37 @@ def _s3client(unsigned: bool = False, session: object = None,
 
     # Check parameter values provided upon entry; proceed accordingly.
     if not unsigned and session is None:
-        msg = ('The boto3 client cannot be established for instances when '
-               'using neither UNSIGNED credentials of a valid '
-               '~/.aws/credentials profile name. Aborting!!!')
+        msg = (
+            "The boto3 client cannot be established for instances when "
+            "using neither UNSIGNED credentials of a valid "
+            "~/.aws/credentials profile name. Aborting!!!"
+        )
         raise Boto3Error(msg=msg)
 
     if unsigned and session is not None:
-        msg = ('A boto3 client configuration cannot be determined when '
-               'UNSIGNED credentials are specified and the profile_name '
-               'parameter value upon entry is not NoneType. Aborting!!!')
+        msg = (
+            "A boto3 client configuration cannot be determined when "
+            "UNSIGNED credentials are specified and the profile_name "
+            "parameter value upon entry is not NoneType. Aborting!!!"
+        )
         raise Boto3Error(msg=msg)
 
     # Establish the boto3 s3 bucket client object in accordance with
     # the upon entry parameter values.
     if unsigned:
-        client = boto3.client('s3', config=Config(
-            signature_version=UNSIGNED))
+        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
 
     if session is not None:
         session = _s3session(profile_name=profile_name)
-        client = session.client('s3')
+        client = session.client("s3")
 
     return client
+
 
 # ----
 
 
-def _s3list(client: object, bucket: str, object_path:
-            str = None) -> list:
+def _s3list(client: object, bucket: str, object_path: str = None) -> list:
     """
     Description
     -----------
@@ -367,26 +370,26 @@ def _s3list(client: object, bucket: str, object_path:
     if object_path is None:
         while True:
             response = client.list_objects_v2(Bucket=bucket)
-            for obj in response['Contents']:
-                filelist.append(obj['Key'])
+            for obj in response["Contents"]:
+                filelist.append(obj["Key"])
             try:
-                kwargs['ContinuationToken'] = response['NextContinuationToken']
+                kwargs["ContinuationToken"] = response["NextContinuationToken"]
 
             except KeyError:
                 break
 
     if object_path is not None:
         response = client.list_objects(Bucket=bucket, Prefix=object_path)
-        for content in response.get('Contents', []):
-            filelist.append(content.get('Key'))
+        for content in response.get("Contents", []):
+            filelist.append(content.get("Key"))
 
     return filelist
+
 
 # ----
 
 
-def _s3read(client: object, bucket: str, file_name: str,
-            object_name: str) -> None:
+def _s3read(client: object, bucket: str, file_name: str, object_name: str) -> None:
     """
     Description
     -----------
@@ -422,15 +425,17 @@ def _s3read(client: object, bucket: str, file_name: str,
         client.download_file(bucket, object_name, file_name)
 
     except Exception as error:
-        msg = ('Reading from S3 caused the following exception to '
-               'occur:\n {0}'.format(error))
+        msg = (
+            "Reading from S3 caused the following exception to "
+            "occur:\n {0}".format(error)
+        )
         logger.warn(msg=msg)
+
 
 # ----
 
 
-def _s3resource(unsigned: bool = False, profile_name: str =
-                None) -> object:
+def _s3resource(unsigned: bool = False, profile_name: str = None) -> object:
     """
     Description
     -----------
@@ -464,15 +469,15 @@ def _s3resource(unsigned: bool = False, profile_name: str =
 
     # Establish the boto3 s3 bucket client object.
     if unsigned:
-        resource = boto3.resource('s3', config=Config(
-            signature_version=UNSIGNED))
+        resource = boto3.resource("s3", config=Config(signature_version=UNSIGNED))
 
     if not unsigned:
 
         session = _s3session(profile_name=profile_name)
-        resource = session.resource('s3')
+        resource = session.resource("s3")
 
     return resource
+
 
 # ----
 
@@ -509,11 +514,11 @@ def _s3session(profile_name: str) -> object:
 
     return session
 
+
 # ----
 
 
-def _s3write(client: object, bucket: str, file_name: str,
-             object_name: str) -> None:
+def _s3write(client: object, bucket: str, file_name: str, object_name: str) -> None:
     """
     Description
     -----------
@@ -548,11 +553,11 @@ def _s3write(client: object, bucket: str, file_name: str,
     # and object path.
     client.upload_file(file_name, bucket, object_name)
 
+
 # ----
 
 
-def s3filelist(bucket: str, object_path: str = None,
-               profile_name: str = None) -> list:
+def s3filelist(bucket: str, object_path: str = None, profile_name: str = None) -> list:
     """
     Description
     -----------
@@ -596,8 +601,7 @@ def s3filelist(bucket: str, object_path: str = None,
 
     # Collect the contents of the respective s3 bucket path.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _s3client(unsigned=unsigned, session=session,
-                       profile_name=profile_name)
+    client = _s3client(unsigned=unsigned, session=session, profile_name=profile_name)
     filelist = _s3list(client=client, bucket=bucket, object_path=object_path)
 
     return filelist
@@ -606,8 +610,13 @@ def s3filelist(bucket: str, object_path: str = None,
 # ----
 
 
-def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
-          object_path: str = None, profile_name: str = None) -> object:
+def s3get(
+    bucket: str,
+    filedict: dict = None,
+    into_mem: bool = False,
+    object_path: str = None,
+    profile_name: str = None,
+) -> object:
     """
     Description
     -----------
@@ -686,8 +695,10 @@ def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
         # Check the parameter values provided upon entry and proceed
         # accordingly.
         if object_path is None:
-            msg = ('For into memory retrievals, the parameter variable '
-                   'object_path value cannot be NoneType. Aborting!!!')
+            msg = (
+                "For into memory retrievals, the parameter variable "
+                "object_path value cannot be NoneType. Aborting!!!"
+            )
             raise Boto3Error(msg=msg)
 
         # Define the Python boto3 bucket resource object.
@@ -702,13 +713,15 @@ def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
             bucket = resource.Bucket(bucket)
             object = bucket.Object(object_path)
             object_memory = NamedTemporaryFile()
-            f = open(object_memory.name, 'wb')
+            f = open(object_memory.name, "wb")
             object.download_fileobj(f)
             f.close()
 
         except Exception as error:
-            msg = ('Reading s3 object path {0} into memory failed with '
-                   'error {1}. Aborting!!!'.format(object_path, error))
+            msg = (
+                "Reading s3 object path {0} into memory failed with "
+                "error {1}. Aborting!!!".format(object_path, error)
+            )
             raise Boto3Error(msg=msg)
 
     if not into_mem:
@@ -720,31 +733,43 @@ def s3get(bucket: str, filedict: dict = None, into_mem: bool = False,
         # Check the parameter values provided upon entry and proceed
         # accordingly.
         if filedict is None:
-            msg = ('For file retrievals to the local platform/disk, the '
-                   'parameter variable filedict cannot be NoneType upon '
-                   'entry. Aborting!!!')
+            msg = (
+                "For file retrievals to the local platform/disk, the "
+                "parameter variable filedict cannot be NoneType upon "
+                "entry. Aborting!!!"
+            )
             raise Boto3Error(msg=msg)
 
         # Define the Python boto3 bucket client object.
-        client = _s3client(unsigned=unsigned, session=session,
-                           profile_name=profile_name)
+        client = _s3client(
+            unsigned=unsigned, session=session, profile_name=profile_name
+        )
 
         # Collect the specified files from the s3 bucket and object path.
         for key in filedict.keys():
-            msg = ('Downloading object {0} from s3 bucket {1} to {2}.'.
-                   format(filedict[key], bucket, key))
+            msg = "Downloading object {0} from s3 bucket {1} to {2}.".format(
+                filedict[key], bucket, key
+            )
             logger.info(msg=msg)
             try:
-                _s3read(client=client, bucket=bucket,
-                        file_name=key, object_name=filedict[key])
+                _s3read(
+                    client=client,
+                    bucket=bucket,
+                    file_name=key,
+                    object_name=filedict[key],
+                )
 
             except Exception as error:
-                msg = ('Downloading of object {0} from s3 bucket {1} to {2} failed '
-                       'with error {3}. Aborting!!!'.format(
-                           filedict[key], bucket, key, error))
+                msg = (
+                    "Downloading of object {0} from s3 bucket {1} to {2} failed "
+                    "with error {3}. Aborting!!!".format(
+                        filedict[key], bucket, key, error
+                    )
+                )
                 raise Boto3Error(msg=msg)
 
     return object_memory
+
 
 # ----
 
@@ -792,20 +817,22 @@ def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
 
     # Define the Python boto3 s3 bucket client object.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _s3client(unsigned=unsigned, session=session,
-                       profile_name=profile_name)
+    client = _s3client(unsigned=unsigned, session=session, profile_name=profile_name)
 
     # Upload the specified files from the s3 bucket and object path.
     for key in filedict.keys():
-        msg = ('Uploading file {0} to s3 bucket {1} object {2}.'.format(
-            key, bucket, filedict[key]))
+        msg = "Uploading file {0} to s3 bucket {1} object {2}.".format(
+            key, bucket, filedict[key]
+        )
         logger.info(msg=msg)
         try:
-            _s3write(client=client, bucket=bucket,
-                     file_name=key, object_name=filedict[key])
+            _s3write(
+                client=client, bucket=bucket, file_name=key, object_name=filedict[key]
+            )
 
         except Exception as error:
-            msg = ('Uploading of file {0} to s3 bucket {1} object {2} failed '
-                   'with error {3}. Aborting!!!'.format(
-                       key, bucket, filedict[key], error))
+            msg = (
+                "Uploading of file {0} to s3 bucket {1} object {2} failed "
+                "with error {3}. Aborting!!!".format(key, bucket, filedict[key], error)
+            )
             raise Boto3Error(msg=msg)
