@@ -101,7 +101,6 @@ class TestNetCDF4Methods(TestCase):
             parser_interface.object_define() for i in range(2)
         ]
         self.ncfile = os.path.join(os.getcwd(), "tests", "ncwrite.nc")
-        print("I AM IN PATH %s" % self.ncfile)
         self.ncfrmt = "NETCDF4_CLASSIC"
 
         # Build the Python object containing the netCDF-formatted file
@@ -189,7 +188,8 @@ class TestNetCDF4Methods(TestCase):
         """
 
         # Check that the netCDF file path is a netCDF-formatted file.
-        nccheck = netcdf4_interface.nccheck(ncfile=self.ncfile, ncfrmt=self.ncfrmt)
+        nccheck = netcdf4_interface.nccheck(
+            ncfile=self.ncfile, ncfrmt=self.ncfrmt)
 
         self.assertTrue(nccheck, msg=self.unit_test_msg.format("nccheck"))
 
@@ -253,7 +253,8 @@ class TestNetCDF4Methods(TestCase):
             ncfile=self.ncfile, ncvarname=self.ncvarname, ncfrmt=self.ncfrmt
         )
 
-        self.assertTrue(ncvarexist, msg=(self.unit_test_msg.format("ncvarexist")))
+        self.assertTrue(ncvarexist, msg=(
+            self.unit_test_msg.format("ncvarexist")))
 
         ncvarexist = netcdf4_interface.ncvarexist(
             ncfile=self.ncfile, ncvarname="dummy_test_var", ncfrmt=self.ncfrmt
