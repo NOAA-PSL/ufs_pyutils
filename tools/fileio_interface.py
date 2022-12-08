@@ -180,24 +180,25 @@ from typing import Union
 # ----
 
 # Define all available functions.
-__all__ = ['concatenate',
-           'copyfile',
-           'dircontents',
-           'fileexist',
-           'filepermission',
-           'filesize',
-           'makedirs',
-           'read_json',
-           'read_yaml',
-           'removefiles',
-           'rename',
-           'rmdir',
-           'symlink',
-           'touch',
-           'write_jinja2',
-           'write_json',
-           'write_yaml'
-           ]
+__all__ = [
+    "concatenate",
+    "copyfile",
+    "dircontents",
+    "fileexist",
+    "filepermission",
+    "filesize",
+    "makedirs",
+    "read_json",
+    "read_yaml",
+    "removefiles",
+    "rename",
+    "rmdir",
+    "symlink",
+    "touch",
+    "write_jinja2",
+    "write_json",
+    "write_yaml",
+]
 
 # ----
 
@@ -223,7 +224,7 @@ class RNRYAMLLoader(yaml.SafeLoader):
     # discussion found at
     # https://stackoverflow.com/questions/52412297/\
     #   how-to-replace-environment-variable-value-in-yaml-file-to-be-parsed-using-python
-    envvar_matcher = re.compile(r'.*\$\{([^}^{]+)\}.*')
+    envvar_matcher = re.compile(r".*\$\{([^}^{]+)\}.*")
 
     def envvar_constructor(self, node):
         """
@@ -236,6 +237,7 @@ class RNRYAMLLoader(yaml.SafeLoader):
         """
 
         return os.path.expandvars(node.value)
+
 
 # ----
 
@@ -267,11 +269,12 @@ def concatenate(filelist: list, concatfile: str) -> None:
 
     # Concatenate files contained within the specified list of files
     # upon entry.
-    with open(concatfile, 'wb') as fout:
+    with open(concatfile, "wb") as fout:
         for filename in filelist:
-            with open(filename, 'rb') as fin:
+            with open(filename, "rb") as fin:
                 data = fin.read()
             fout.write(data)
+
 
 # ----
 
@@ -312,15 +315,11 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     # Copy the specified source file to the corresponding destination
     # file using the respective platform copy method.
-    cmd = ['cp',
-           '-rRfL',
-           srcfile,
-           dstfile
-           ]
+    cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
+
 
 # ----
 
@@ -354,6 +353,7 @@ def dircontents(path: str) -> list:
     contents = os.listdir(path)
 
     return contents
+
 
 # ----
 
@@ -390,6 +390,7 @@ def fileexist(path: str) -> bool:
 
     return exist
 
+
 # ----
 
 
@@ -415,6 +416,7 @@ def filepermission(path: str, permission: int) -> None:
 
     # Define the permissions for the specified file path.
     os.chmod(path, permission)
+
 
 # ----
 
@@ -459,12 +461,13 @@ def filesize(path: str) -> tuple:
 
     # Define and/or compute the specified file path sizes.
     bytes_path = os.path.getsize(path)
-    megabytes_path = numpy.int(bytes_path/1.e6)
-    gigabytes_path = numpy.int(bytes_path/1.e9)
-    terabytes_path = numpy.int(bytes_path/1.e12)
+    megabytes_path = numpy.int(bytes_path / 1.0e6)
+    gigabytes_path = numpy.int(bytes_path / 1.0e9)
+    terabytes_path = numpy.int(bytes_path / 1.0e12)
     bytes_path = numpy.int(bytes_path)
 
     return (bytes_path, megabytes_path, gigabytes_path, terabytes_path)
+
 
 # ----
 
@@ -507,6 +510,7 @@ def makedirs(path: str, force: bool = False) -> None:
     except OSError:
         pass
 
+
 # ----
 
 
@@ -539,16 +543,16 @@ def read_json(json_file: str) -> dict:
 
     # Open and read the contents of the specified JSON-formatted file
     # path.
-    with open(json_file, 'r') as stream:
+    with open(json_file, "r") as stream:
         json_dict = json.load(stream)
 
     return json_dict
 
+
 # ----
 
 
-def read_yaml(yaml_file: str, return_obj: bool =
-              False) -> Union[dict, object]:
+def read_yaml(yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
     """
     Description
     -----------
@@ -595,13 +599,12 @@ def read_yaml(yaml_file: str, return_obj: bool =
     """
 
     # Define the YAML library loader type.
-    RNRYAMLLoader.add_implicit_resolver(
-        '!ENV', RNRYAMLLoader.envvar_matcher, None)
-    RNRYAMLLoader.add_constructor('!ENV', RNRYAMLLoader.envvar_constructor)
+    RNRYAMLLoader.add_implicit_resolver("!ENV", RNRYAMLLoader.envvar_matcher, None)
+    RNRYAMLLoader.add_constructor("!ENV", RNRYAMLLoader.envvar_constructor)
 
     # Open and read the contents of the specified YAML-formatted file
     # path.
-    with open(yaml_file, 'r') as stream:
+    with open(yaml_file, "r") as stream:
         yaml_dict = yaml.load(stream, Loader=RNRYAMLLoader)
 
     # Define the Python data type to be returned; proceed accordingly.
@@ -611,9 +614,11 @@ def read_yaml(yaml_file: str, return_obj: bool =
         for key in yaml_dict.keys():
             attr_list.append(key)
             value = parser_interface.dict_key_value(
-                dict_in=yaml_dict, key=key, no_split=True)
+                dict_in=yaml_dict, key=key, no_split=True
+            )
             yaml_obj = parser_interface.object_setattr(
-                object_in=yaml_obj, key=key, value=value)
+                object_in=yaml_obj, key=key, value=value
+            )
         yaml_return = yaml_obj
 
     if not return_obj:
@@ -621,6 +626,7 @@ def read_yaml(yaml_file: str, return_obj: bool =
         yaml_return = yaml_dict
 
     return yaml_return
+
 
 # ----
 
@@ -647,6 +653,7 @@ def removefiles(filelist: list) -> None:
     for filename in filelist:
         if os.path.isfile(filename):
             os.remove(filename)
+
 
 # ----
 
@@ -683,6 +690,7 @@ def rename(srcfile: str, dstfile: str) -> None:
     except Exception:
         pass
 
+
 # ----
 
 
@@ -711,6 +719,7 @@ def rmdir(path: str) -> None:
 
     if not os.path.isdir(path):
         pass
+
 
 # ----
 
@@ -750,6 +759,7 @@ def symlink(srcfile: str, dstfile: str) -> None:
     except OSError:
         pass
 
+
 # ----
 
 
@@ -771,8 +781,9 @@ def touch(path: str):
     """
 
     # Open and append to the file path specified upon entry.
-    with open(path, 'a'):
+    with open(path, "a"):
         os.utime(path, None)
+
 
 # ----
 
@@ -802,17 +813,18 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
 
     # Open and write the dictionary contents to the specified
     # Jinja2-formatted file path.
-    with open(jinja2_file, 'w') as file:
-        file.write('#!Jinja2\n')
+    with open(jinja2_file, "w") as file:
+        file.write("#!Jinja2\n")
         for key in in_dict.keys():
             value = in_dict[key]
 
             if isinstance(value, str):
                 string = f'set {key} = "{value}"'
             else:
-                string = f'set {key} = {value}'
+                string = f"set {key} = {value}"
 
-            file.write('{%% %s %%}\n' % string)
+            file.write("{%% %s %%}\n" % string)
+
 
 # ----
 
@@ -850,14 +862,14 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
 
     # Open and write the dictionary contents to the specified
     # JSON-formatted file path.
-    with open(json_file, 'w') as file:
+    with open(json_file, "w") as file:
         json.dump(in_dict, file, indent=indent)
+
 
 # ----
 
 
-def write_yaml(yaml_file: str, in_dict: dict,
-               default_flow_style: bool = False) -> None:
+def write_yaml(yaml_file: str, in_dict: dict, default_flow_style: bool = False) -> None:
     """
     Description
     -----------
@@ -890,5 +902,5 @@ def write_yaml(yaml_file: str, in_dict: dict,
 
     # Open and write the dictionary contents to the specified
     # YAML-formatted file path.
-    with open(yaml_file, 'w') as file:
+    with open(yaml_file, "w") as file:
         yaml.dump(in_dict, file, default_flow_style=default_flow_style)

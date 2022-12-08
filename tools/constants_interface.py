@@ -68,9 +68,10 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 # Conversion value for transforming nautical miles per hour (knots) to
 # meters per second.
-kts2mps = (units.imperial.kn).to(
-    units.meter/units.second) * (units.meter/units.second)
+kts2mps = (units.imperial.kn).to(units.meter / units.second) * (
+    units.meter / units.second
+)
 
 # Conversion value for transforming meters per second to nautical
 # miles per hour (knots).
-mps2kts = (units.meter/units.second).to(units.imperial.kn) * units.imperial.kn
+mps2kts = (units.meter / units.second).to(units.imperial.kn) * units.imperial.kn
