@@ -1,8 +1,17 @@
 name: Unit Tests
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [opened]
+    
+  release:
+    types: [published]
 
+  schedule:
+    - cron: "0 0 * * *"
+          
 jobs:
+     
   build:
     runs-on: ubuntu-latest
     name: Run ufs_pyutils unit tests.
