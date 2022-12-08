@@ -25,6 +25,6 @@ jobs:
     - name: Run pycodestyle application.
       run: |
         cd $GITHUB_WORKSPACE/ufs_pyutils
-        pycodestyle =v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle .
+        pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle .
      
 
