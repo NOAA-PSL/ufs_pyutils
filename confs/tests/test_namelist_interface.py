@@ -58,6 +58,11 @@ History
 
 # ----
 
+# pylint: disable=undefined-variable
+# pylint: disable=wrong-import-order
+
+# ----
+
 import filecmp
 import os
 import pytest
@@ -86,7 +91,7 @@ class TestNamelistMethods(TestCase):
     """
 
     def setUp(self):
-        """ 
+        """
         Description
         -----------
 
@@ -97,24 +102,22 @@ class TestNamelistMethods(TestCase):
 
         # Define the base-class attributes.
         self.nml_test_dict = {
-            'TEST_STRING': 'This is a test string.',
-            'TEST_FLOAT1': 10.0,
-            'TEST_FLOAT2': 1.e6,
-            'TEST_INT': 1,
-            'TEST_COMMA_LIST': '1, 10, 100'
+            "TEST_STRING": "This is a test string.",
+            "TEST_FLOAT1": 10.0,
+            "TEST_FLOAT2": 1.0e6,
+            "TEST_INT": 1,
+            "TEST_COMMA_LIST": "1, 10, 100",
         }
 
         # Define the file paths required for the test method(s).
-        dirpath = os.path.join(os.getcwd(), 'tests')
-        self.nml_template = os.path.join(dirpath, 'test_files',
-                                         'namelist.template')
-        self.nml_check = os.path.join(dirpath, 'test_files', 'namelist.check')
-        self.nml_path = os.path.join(dirpath, 'namelist.test')
+        dirpath = os.path.join(os.getcwd(), "tests")
+        self.nml_template = os.path.join(
+            dirpath, "test_files", "namelist.template")
+        self.nml_check = os.path.join(dirpath, "test_files", "namelist.check")
+        self.nml_path = os.path.join(dirpath, "namelist.test")
 
         # Define the message to accompany any unit-test failures.
-        self.unit_test_msg = (
-            "The unit-test for namelist_interface failed."
-        )
+        self.unit_test_msg = "The unit-test for namelist_interface failed."
 
     @pytest.mark.order(100)
     def test_cleanup(self):
@@ -150,10 +153,11 @@ class TestNamelistMethods(TestCase):
 
         # Write the FORTRAN 90 formatted namelist file.
         namelist = namelist_interface.Namelist()
-        namelist.run(nml_dict=self.nml_test_dict,
-                     nml_template=self.nml_template,
-                     nml_path=self.nml_path
-                     )
+        namelist.run(
+            nml_dict=self.nml_test_dict,
+            nml_template=self.nml_template,
+            nml_path=self.nml_path,
+        )
 
         assert True
 
@@ -162,6 +166,7 @@ class TestNamelistMethods(TestCase):
         check = filecmp.cmp(self.nml_path, self.nml_check)
 
         self.assertTrue(check, msg=self.unit_test_msg)
+
 
 # ----
 
