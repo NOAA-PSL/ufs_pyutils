@@ -98,3 +98,10 @@ jobs:
         export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
         cd ufs_pyutils/tools
         pytest 
+
+    # Execute the confs package unit-tests.
+    - name: Run tools package unit-tests.
+      run: |
+        export PYTHONPATH="$GITHUB_WORKSPACE/ufs_pyutils"
+        cd ufs_pyutils/confs
+        pytest 
