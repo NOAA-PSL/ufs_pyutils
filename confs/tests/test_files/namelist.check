@@ -1,0 +1,16 @@
+&block_str
+test_string = "This is a test string."
+/
+
+&block_floats
+test_float1 = 10.0
+test_float2 = 1000000.0
+/
+
+&block_int
+test_int = 1
+/
+
+&block_comma_list
+test_comma_list = 1, 10, 100,
+/

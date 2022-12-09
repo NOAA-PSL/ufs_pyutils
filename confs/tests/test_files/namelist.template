@@ -1,0 +1,16 @@
+&block_str
+test_string = <TEST_STRING>
+/
+
+&block_floats
+test_float1 = <TEST_FLOAT1>
+test_float2 = <TEST_FLOAT2>
+/
+
+&block_int
+test_int = <TEST_INT>
+/
+
+&block_comma_list
+test_comma_list = <TEST_COMMA_LIST>
+/
