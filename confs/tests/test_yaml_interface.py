@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Module: confs/tests/test_namelist_interface.py
+# Module: confs/tests/test_yaml_interface.py
 
 # Author: Henry R. Winterbottom
 
@@ -21,20 +21,20 @@
 Module
 ------
 
-    test_namelist_interface.py
+    test_yaml_interface.py
 
 Description
 -----------
 
-    This module provides unit-tests for the respective
-    namelist_interface module functions.
+    This module provides unit-tests for the respective yaml_interface
+    module functions.
 
 Classes
 -------
 
-    TestNamelistMethods()
+    TestYAMLMethods()
 
-        This is the base-class object for all namelist_interface
+        This is the base-class object for all yaml_interface
         unit-tests; it is a sub-class of TestCase.
 
 Requirements
@@ -66,7 +66,7 @@ History
 import os
 import pytest
 
-from confs import namelist_interface
+from confs import yaml_interface
 from tools import fileio_interface
 from unittest import TestCase
 
@@ -79,13 +79,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class TestNamelistMethods(TestCase):
+class TestYAMLMethods(TestCase):
     """
     Description
     -----------
 
-    This is the base-class object for all namelist_interface
-    unit-tests; it is a sub-class of TestCase.
+    This is the base-class object for all yaml_interface unit-tests;
+    it is a sub-class of TestCase.
 
     """
 
@@ -95,27 +95,29 @@ class TestNamelistMethods(TestCase):
         -----------
 
         This method defines the base-class attributes for all
-        namelist_interface unit-tests.
+        yaml_interface unit-tests.
 
         """
 
         # Define the base-class attributes.
-        self.nml_test_dict = {
-            "TEST_STRING": "This is a test string.",
-            "TEST_FLOAT1": 10.0,
-            "TEST_FLOAT2": 1.0e6,
-            "TEST_INT": 1,
-            "TEST_COMMA_LIST": "1, 10, 100",
+        self.yaml_test_dict = {
+            "OBSNAME": "obsname",
+            "OBSDATAIN": "obsdatain.nc",
+            "OBSDATAOUT": "obsdataout.nc",
+            "OBS_VARIABLE": "obs_variable",
+            "LENGTHSCALE": "200e3",
+            "THRESHOLD": 5.0,
         }
 
         # Define the file paths required for the test method(s).
         dirpath = os.path.join(os.getcwd(), "tests")
-        self.nml_template = os.path.join(dirpath, "test_files", "namelist.template")
-        self.nml_check = os.path.join(dirpath, "test_files", "namelist.check")
-        self.nml_path = os.path.join(dirpath, "namelist.test")
+        self.yaml_template = os.path.join(
+            dirpath, "test_files", "yaml.template")
+        self.yaml_check = os.path.join(dirpath, "test_files", "yaml.check")
+        self.yaml_path = os.path.join(dirpath, "yaml.test")
 
         # Define the message to accompany any unit-test failures.
-        self.unit_test_msg = "The unit-test for namelist_interface failed."
+        self.unit_test_msg = "The unit-test for yaml_interface failed."
 
     @pytest.mark.order(100)
     def test_cleanup(self):
@@ -124,7 +126,7 @@ class TestNamelistMethods(TestCase):
         -----------
 
         This method removes the test files used for the respective
-        namelist_interface function unit-tests; it is not an actual
+        yaml_interface function unit-tests; it is not an actual
         unit-test but is simply used to remove the test files file
         following the completion of the actual (i.e., valid)
         unit-tests; this should be the last test that is executed by
@@ -133,44 +135,42 @@ class TestNamelistMethods(TestCase):
         """
 
         # Define the list of (the) test file(s) to be removed.
-        filelist = [self.nml_path]
+        filelist = [self.yaml_path]
 
         # Remove the specified files.
         fileio_interface.removefiles(filelist=filelist)
 
     @pytest.mark.order(1)
-    def test_namelist(self):
+    def test_yaml(self):
         """
         Description
         -----------
 
-        This method provides a unit-test for the namelist_interface
+        This method provides a unit-test for the yaml_interface
         module.
 
         """
 
-        # Write the FORTRAN 90 formatted namelist file.
-        namelist = namelist_interface.Namelist()
-        namelist.run(
-            nml_dict=self.nml_test_dict,
-            nml_template=self.nml_template,
-            nml_path=self.nml_path,
+        # Write the YAML-formatted file.
+        yaml = yaml_interface.YAML()
+        yaml.run(
+            yaml_dict=self.yaml_test_dict,
+            yaml_template=self.yaml_template,
+            yaml_path=self.yaml_path,
         )
 
         assert True
 
-        # Compare the generated FORTRAN 90 formatted namelist file to
-        # the example FORTRAN 90 formatted namelist file.
-        with open(self.nml_check, "r", encoding="utf-8") as file:
-            nml_check = file.read().rstrip()
-        with open(self.nml_path, "r", encoding="utf-8") as file:
-            nml_path = file.read().rstrip()
+        # Compare the generated YAML-formatted file to the example
+        # YAML-formatted file.
+        with open(self.yaml_check, "r", encoding="utf-8") as file:
+            yaml_check = file.read().rstrip()
+        with open(self.yaml_path, "r", encoding="utf-8") as file:
+            yaml_path = file.read().rstrip()
 
-        assert nml_check == nml_path, self.unit_test_msg
+        assert yaml_check == yaml_path, self.unit_test_msg
 
 
 # ----
-
-
 if __name__ == "__main__":
     unittest.main()

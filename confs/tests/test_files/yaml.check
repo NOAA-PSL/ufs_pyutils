@@ -1,0 +1,25 @@
+  - obs space:
+      name: obsname
+      distribution: *obs_distribution
+      obsdatain:  {obsfile: obsdatain.nc}
+      obsdataout: {obsfile: obsdataout.nc}
+      simulated variables: [obs_variable]
+    obs operator:
+      name: Identity
+    obs error:
+      covariance model: *obs_error
+    obs localization: 
+      localization method: Gaspari-Cohn
+      lengthscale: 200e3
+      search method: kd_tree
+    obs filters:
+    - *obs_land_mask
+    - filter: Bounds Check
+      minvalue: 0.0
+      maxvalue: 1.0
+    - filter: Background Check
+      threshold: 5.0
+    - filter: Domain Check
+      where:
+      - variable: { name: obsdata@GeoVaLs}
+        maxvalue: 0.9
