@@ -33,9 +33,9 @@
 
 #    user@host:$ docker build -f el7-miniconda.ufs_pyutils.docker --tag el7-miniconda.ufs_pyutils:<TAG> .
 
-#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
 
-#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
 
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
@@ -60,7 +60,7 @@
 # Author(s)
 # ---------
 
-#    Henry R. Winterbottom; 06 December 2022 
+#    Henry R. Winterbottom; 07 December 2022 
 
 # History
 # -------
