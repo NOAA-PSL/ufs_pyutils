@@ -82,7 +82,7 @@
 #----
 
 # Define the container base information.
-FROM centos:7
+FROM amd64/centos:7
 MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)" 
 
 #----
