@@ -52,23 +52,42 @@ class TestContainerMethods(TestCase):
         """
 
         # Define the base-class attributes.
-        dirpath = os.getcwd()
-        self.build_sfd_yaml = os.path.join(dirpath, "tests", "test_files",
+        self.dirpath = os.getcwd()
+        self.build_sfd_yaml = os.path.join(self.dirpath, "tests", "test_files",
                                            "build.hello_world.yaml")
 
+        # Define the message to accompany any unit-test failures.
+        self.unit_test_msg = (
+            "The unit-test for container_interface function {0} " "failed."
+        )
+
     @pytest.mark.order(1)
-    def test_build_sfd(self):
+    def test_build_sfd_local(self):
         """ """
 
         # Build the Singularity image from the Docker containerized
         # image.
-        build_dict = fileio_interface.read_yaml(yaml_file=self.build_sfd_yaml)
-        container_interface.build_sfd(build_dict=build_dict)
+        yaml_dict = fileio_interface.read_yaml(yaml_file=self.build_sfd_yaml)
+        build_dict = parser_interface.dict_key_value(
+            dict_in=yaml_dict, key='hello_world')
+
+        (stderr, stdout) = [os.path.join(self.dirpath, "tests", 'hello_world.err'),
+                            os.path.join(self.dirpath, "tests",
+                                         'hello_world.out')
+                            ]
+
+        sif_name = container_interface.build_sfd_local(build_dict=build_dict,
+                                                       stderr=stderr, stdout=stdout)
 
         assert True
 
+        # Check that the Singularity image exists locally.
+        exist = fileio_interface.fileexist(path=sif_name)
+
+        self.assertTrue(exist, msg=(
+            self.unit_test_msg.format('build_sfd_local')))
+
+
 # ----
-
-
 if __name__ == "__main__":
     unittest.main()

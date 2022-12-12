@@ -1,6 +1,6 @@
 hello_world:
 
-     sif_name: ./hello_world.sif
-     sif_owner: Null
+     sif_name: ./tests/hello_world.sif
+     update_owner: True
      docker_tag: latest
-     docker_image: noaaufsrnr/hello_world
+     docker_image: docker://noaaufsrnr/hello_world
