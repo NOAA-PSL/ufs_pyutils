@@ -110,13 +110,15 @@ class TimestampInterfaceError(Error):
         Creates a new TimestampInterfaceError object.
 
         """
-        super(TimestampInterfaceError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
 
-def check_frmt(datestr: str, in_frmttyp: str = GLOBAL,
-               out_frmttyp: str = GLOBAL) -> None:
+
+def check_frmt(
+    datestr: str, in_frmttyp: str = GLOBAL, out_frmttyp: str = GLOBAL
+) -> None:
     """
     Description
     -----------
@@ -158,11 +160,13 @@ def check_frmt(datestr: str, in_frmttyp: str = GLOBAL,
 
     # Define the timestamp string against which to compare the
     # parameter specified upon entry.
-    check = datetime_interface.datestrupdate(datestr=datestr
-                                             in_frmttyp=in_frmttyp,
-                                             out_frmttyp=out_frmttyp)
+    check = datetime_interface.datestrupdate(
+        datestr=datestr, in_frmttyp=in_frmttyp, out_frmttyp=out_frmttyp
+    )
 
-    if (check != datestr):
-        msg = (f'The timestamp string {datestr} does not match the format '
-               f'{out_frmttyp}. Aborting!!!')
+    if check != datestr:
+        msg = (
+            f"The timestamp string {datestr} does not match the format "
+            f"{out_frmttyp}. Aborting!!!"
+        )
         raise TimestampInterfaceError(msg=msg)
