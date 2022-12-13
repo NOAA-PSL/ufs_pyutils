@@ -124,7 +124,7 @@ def task_exit() -> None:
     [module, lineno] = (stack[2][1], stack[2][2])
 
     # Gracefully exit task.
-    msg = f"Task exit called from file {module} line number " "{lineno}."
+    msg = f"Task exit called from file {module} line number {lineno}."
     logger.warn(msg=msg)
 
     sys.exit(0)
