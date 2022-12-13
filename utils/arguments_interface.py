@@ -37,6 +37,11 @@ Classes
         This is the base-class object for all command line argument(s)
         parsing.
 
+    ArgumentsError(msg)
+
+        This is the base-class for all exceptions; it is a sub-class
+        of Error.
+
 Author(s)
 ---------
 
