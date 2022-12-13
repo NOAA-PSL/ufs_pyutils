@@ -34,7 +34,7 @@ Functions
 
     _get_dateobj(datestr, frmttyp)
 
-        This method builds/defines and returns the Python datetime
+        This function builds/defines and returns the Python datetime
         object relative to the attributes provided upon entry.
 
     compare_crontab(datestr, cronstr, frmttyp)
@@ -140,6 +140,10 @@ History
 
 # ----
 
+# pylint: disable=consider-using-f-string
+
+# ----
+
 import datetime
 import time
 import sqlite3
@@ -174,8 +178,8 @@ def _get_dateobj(datestr: str, frmttyp: str) -> object:
     Description
     -----------
 
-    This method builds/defines and returns the Python datetime object
-    relative to the attributes provided upon entry.
+    This function builds/defines and returns the Python datetime
+    object relative to the attributes provided upon entry.
 
     Parameters
     ----------
@@ -258,7 +262,8 @@ def compare_crontab(datestr: str, cronstr: str, frmttyp: str) -> bool:
 
 
 def current_date(frmttyp: str) -> str:
-    """Description
+    """
+    Description
     -----------
 
     This function returns the current time (at invocation of this
