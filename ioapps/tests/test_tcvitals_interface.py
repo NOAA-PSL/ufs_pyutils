@@ -65,8 +65,8 @@ import pytest
 from ioapps import tcvitals_interface
 from tools import fileio_interface
 from tools import parser_interface
-from tools.constants_interface import mps2kts
 from unittest import TestCase
+from utils.constants_interface import mps2kts
 
 # ----
 
@@ -172,14 +172,12 @@ class TestTCVitalsMethods(TestCase):
 
         # Write the TC-vitals attributes to the output file to be
         # used for comparison.
-        tcvitals_interface.write_tcvfile(
-            filepath=self.tcv_file, tcvstr=self.tcinfo)
+        tcvitals_interface.write_tcvfile(filepath=self.tcv_file, tcvstr=self.tcinfo)
 
         # Compare the example file to the generated TC-vitals file.
         check = filecmp.cmp(self.tcv_exfile, self.tcv_file)
 
-        self.assertTrue(check, msg=(
-            self.unit_test_msg.format("write_tcvfile")))
+        self.assertTrue(check, msg=(self.unit_test_msg.format("write_tcvfile")))
 
     @pytest.mark.order(1)
     def test_write_tcvstr(self):
@@ -239,8 +237,7 @@ class TestTCVitalsMethods(TestCase):
 
             # Write the formatted TC-vitals attributes for the
             # respective TC event.
-            tcvstr = tcvitals_interface.write_tcvstr(
-                tcvit_obj=tcvit_obj).split()[:-1]
+            tcvstr = tcvitals_interface.write_tcvstr(tcvit_obj=tcvit_obj).split()[:-1]
 
             assert tcvstr == list(tc.split()), self.unit_test_msg.format("write_tcvstr")
 
