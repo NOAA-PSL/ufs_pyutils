@@ -59,6 +59,11 @@ Functions
         This function compiles a content list of the user specified
         directory.
 
+    dirpath_tree(path)
+
+        This function checks whether the directory tree (i.e., path)
+        exists; if not an attempt will be made to build it.
+
     fileexist(path)
 
         This function will ingest a file-path and check whether the
@@ -176,6 +181,7 @@ import yaml
 
 from tools import parser_interface
 from typing import Union
+from utils.logger_interface import Logger
 
 # ----
 
@@ -184,6 +190,7 @@ __all__ = [
     "concatenate",
     "copyfile",
     "dircontents",
+    "dirpath_tree",
     "fileexist",
     "filepermission",
     "filesize",
@@ -199,6 +206,10 @@ __all__ = [
     "write_json",
     "write_yaml",
 ]
+
+# ----
+
+logger = Logger()
 
 # ----
 
@@ -315,9 +326,13 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     # Copy the specified source file to the corresponding destination
     # file using the respective platform copy method.
+    msg = (f'Copying file {srcfile} to {dstfile}.')
+    logger.info(msg=msg)
+
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -354,6 +369,47 @@ def dircontents(path: str) -> list:
 
     return contents
 
+# ----
+
+
+def dirpath_tree(path: str) -> None:
+    """
+    Description
+    -----------
+
+    This function checks whether the directory tree (i.e., path) exists;
+    if not an attempt will be made to build it.
+
+    Parameters
+    ----------
+
+    path: str
+
+        A Python string specifying the directory tree path to be
+        created if it does not (yet) exist.
+
+    Raises
+    ------
+
+    StagingError:
+
+        * raised if an exception is encountered while attempting to
+          build the specified directory tree.
+
+    """
+
+    # Check whether the directory tree exists; proceed accordingly.
+    exist = fileexist(path=path)
+    if exist:
+        msg = (f'The directory tree {path} exists; nothing to be done.')
+        logger.info(msg=msg)
+
+    if not exist:
+        msg = (f'The directory tree {path} does not exist; an attempt '
+               'will be made to create it.')
+        logger.warn(msg=msg)
+
+        makedirs(path=path)
 
 # ----
 
@@ -599,7 +655,8 @@ def read_yaml(yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
     """
 
     # Define the YAML library loader type.
-    RNRYAMLLoader.add_implicit_resolver("!ENV", RNRYAMLLoader.envvar_matcher, None)
+    RNRYAMLLoader.add_implicit_resolver(
+        "!ENV", RNRYAMLLoader.envvar_matcher, None)
     RNRYAMLLoader.add_constructor("!ENV", RNRYAMLLoader.envvar_constructor)
 
     # Open and read the contents of the specified YAML-formatted file
