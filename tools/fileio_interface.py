@@ -326,13 +326,12 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     # Copy the specified source file to the corresponding destination
     # file using the respective platform copy method.
-    msg = (f'Copying file {srcfile} to {dstfile}.')
+    msg = f"Copying file {srcfile} to {dstfile}."
     logger.info(msg=msg)
 
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -369,6 +368,7 @@ def dircontents(path: str) -> list:
 
     return contents
 
+
 # ----
 
 
@@ -401,15 +401,18 @@ def dirpath_tree(path: str) -> None:
     # Check whether the directory tree exists; proceed accordingly.
     exist = fileexist(path=path)
     if exist:
-        msg = (f'The directory tree {path} exists; nothing to be done.')
+        msg = f"The directory tree {path} exists; nothing to be done."
         logger.info(msg=msg)
 
     if not exist:
-        msg = (f'The directory tree {path} does not exist; an attempt '
-               'will be made to create it.')
+        msg = (
+            f"The directory tree {path} does not exist; an attempt "
+            "will be made to create it."
+        )
         logger.warn(msg=msg)
 
         makedirs(path=path)
+
 
 # ----
 
@@ -655,8 +658,7 @@ def read_yaml(yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
     """
 
     # Define the YAML library loader type.
-    RNRYAMLLoader.add_implicit_resolver(
-        "!ENV", RNRYAMLLoader.envvar_matcher, None)
+    RNRYAMLLoader.add_implicit_resolver("!ENV", RNRYAMLLoader.envvar_matcher, None)
     RNRYAMLLoader.add_constructor("!ENV", RNRYAMLLoader.envvar_constructor)
 
     # Open and read the contents of the specified YAML-formatted file
