@@ -163,9 +163,19 @@ History
 
 # ----
 
+# pylint: disable=consider-using-with
+# pylint: disable=no-member
+# pylint: disable=redefined-outer-name
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-lines
+# pylint: disable=too-many-locals
+# pylint: disable=wrong-import-order
+
+# ----
+
 import netCDF4
 import numpy
-import os
 import subprocess
 
 from tools import parser_interface
@@ -229,7 +239,7 @@ class NCError(Error):
         Creates a new NCError object.
 
         """
-        super(NCError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -270,10 +280,10 @@ def _get_ncapp_path(ncapp: str) -> str:
 
     # Check the run-time environment in order to determine the netCDF
     # application path.
-    cmd = ["which", "{0}".format(ncapp)]
+    cmd = ["which", f"{ncapp}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
+    (out, _) = proc.communicate()
 
     # Define the netCDF application path; proceed accordingly.
     if len(out) > 0:
@@ -281,10 +291,10 @@ def _get_ncapp_path(ncapp: str) -> str:
 
     else:
         msg = (
-            "The path for the netCDF application {0} could not be "
+            f"The path for the netCDF application {ncapp} could not be "
             "determined for your system; please check that the appropriate "
             "libaries/modules are loaded prior to calling this script. "
-            "Aborting!!!".format(ncapp)
+            "Aborting!!!"
         )
         raise NCError(msg=msg)
 
@@ -325,7 +335,7 @@ def _read_ncdim_obj(ncdim_obj: object) -> dict:
     """
 
     # Collect the netCDF dimension attributes.
-    ncdim_dict = dict()
+    ncdim_dict = {}
     keys = vars(ncdim_obj)
     for key in keys:
         value = parser_interface.object_getattr(object_in=ncdim_obj, key=key)
@@ -367,7 +377,7 @@ def _read_ncvar_obj(ncvar_obj: object) -> dict:
     """
 
     # Collect the netCDF variable attributes.
-    ncvar_dict = dict()
+    ncvar_dict = {}
     keys = vars(ncvar_obj)
     for key in keys:
         value = parser_interface.object_getattr(object_in=ncvar_obj, key=key)
@@ -439,40 +449,39 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
     Description
     -----------
 
-    This function concatenates a list of netCDF-formatted files,
-    provided in ncfilelist, into a single file (ncfile); the
-    concatenation is performed along a single user-specified
-    dimension(ncdim); optional arguments enable the user to specify
-    the format of the concatenated file.
+    This function concatenates a list of netCDF files, provided in
+    ncfilelist, into a single file(ncfile); the concatenation is
+    performed along a single user-specified dimension(ncdim);
+    optional arguments enable the user to specify the format of the
+    concatenated file.
 
     Parameters
     ----------
 
-    ncfilelist: list
+    ncfilelist: str
 
-        A Python list containing the netCDF-formatted files to be
+        A Python string containing the list of netCDF files to be
         concatenated.
 
     ncfile: str
 
-        A Python string specifying the netCDF-formatted file (to be
-        created) containing the concatenated values collected from
-        each of the files to be concatenated.
+        A Python string specifying the netCDF file(to be created)
+        containing the concatenated values collected from each of the
+        files to be concatenated.
 
     ncdim: str
 
         A Python string specifying the netCDF variable dimension along
-        which to concatenated the respective netCDF-formatted files
-        list.
+        which to concatenated the respective netCDF files list.
 
     Keywords
     --------
 
     ncfrmt: str, optional
 
-        A Python string specifying the format of the netCDF-formatted
-        file containing the concatenated values collected from each of
-        the files to be concatenated; available options are
+        A Python string specifying the format of the netCDF file
+        containing the concatenated values collected from each of the
+        files to be concatenated; available options are NETCDF4,
         NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
         NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
         assumed.
@@ -480,12 +489,11 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
     """
 
     # Open the destination netCDF-formatted file and read each
-    # variable dimension from the respective source files and define
-    # the total array dimension along which the source
+    # variable dimension from the respective source files and
+    # define the total array dimension along which the source
     # netCDF-formatted files are to be concatenated.
     if ncfrmt is None:
         ncfrmt = "NETCDF4_CLASSIC"
-
     ncdimsum = 0
     dstfile = netCDF4.Dataset(filename=ncfile, mode="w", format=ncfrmt)
     for item in ncfilelist:
@@ -505,32 +513,62 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
             dimsize = len(dimension) if not dimension.isunlimited() else None
         dstfile.createDimension(name, dimsize)
 
-    # Collect and define the destination netCDF-formatted file
-    # attributes.
-    for (name, variable) in srcfile.variables.items():
-        x = dstfile.createVariable(name, variable.datatype, variable.dimensions)
-        dstfile[name].setncatts(srcfile[name].__dict__)
-    dstfile.setncatts(srcfile.__dict__)
+    # Check whether the respective source netCDF-formatted files
+    # contain groups; proceed accordingly.
+    if len(list(srcfile.groups.keys())) > 0:
 
-    # Concatenate the variables along the specified axis (i.e.,
-    # dimension) and write the results to the destination
-    # netCDF-formatted file.
-    mxncdimsum = ncdimsum
-    ncdimsum = 0
-    for item in ncfilelist:
-        srcfile = netCDF4.Dataset(item)
-        ncdimval = len(srcfile.dimensions[ncdim])
-        start = ncdimsum
-        stop = start + ncdimval
+        # Collect and define the destination netCDF-formatted file
+        # attributes.
+        for group in srcfile.groups.keys():
+            dstfile.createGroup(group)
+            dstfile[group].setncatts(srcfile[group].__dict__)
+            for (name, variable) in srcfile[group].variables.items():
+                dstfile[group].createVariable(
+                    name, variable.datatype, variable.dimensions
+                )
+
+        # Concatenate the variables along the specified axis (i.e.,
+        # dimension) and write the results to the destination
+        # netCDF-formatted file.
+        ncdimsum = 0
+        for item in ncfilelist:
+            srcfile = netCDF4.Dataset(item)
+            ncdimval = len(srcfile.dimensions[ncdim])
+            start = ncdimsum
+            stop = start + ncdimval
+            for group in srcfile.groups.keys():
+                for (name, variable) in srcfile[group].variables.items():
+                    if ncdim in variable.dimensions:
+                        dstfile[group][name][start:stop] = srcfile[group][name][:]
+                ncdimsum = stop
+            srcfile.close()
+
+    else:
+
+        # Collect and define the destination netCDF-formatted file
+        # attributes.
         for (name, variable) in srcfile.variables.items():
-            if ncdim in variable.dimensions:
-                dstfile[name][start:stop] = srcfile[name][:]
-        ncdimsum = stop
+            dstfile.createVariable(name, variable.datatype, variable.dimensions)
+            dstfile[name].setncatts(srcfile[name].__dict__)
+        dstfile.setncatts(srcfile.__dict__)
 
-    # Close the open source and destination netCDF-formatted
-    # files.
+        # Concatenate the variables along the specified axis (i.e.,
+        # dimension) and write the results to the destination
+        # netCDF-formatted file.
+        ncdimsum = 0
+        for item in ncfilelist:
+            srcfile = netCDF4.Dataset(item)
+            ncdimval = len(srcfile.dimensions[ncdim])
+            start = ncdimsum
+            stop = start + ncdimval
+            for (name, variable) in srcfile.variables.items():
+                if ncdim in variable.dimensions:
+                    dstfile[name][start:stop] = srcfile[name][:]
+                ncdimsum = stop
+            srcfile.close()
+
+    # Close the respective netCDF formatted files.
     dstfile.close()
-    srcfile.close()
 
 
 # ----
@@ -625,26 +663,21 @@ def nccopy(
         if nccopy_app_str is None:
             msg = (
                 "The netCDF nccopy application output file formatted "
-                "type {0} is not supported. Aborting!!!".format(ncfrmtout)
+                f"type {ncfrmtout} is not supported. Aborting!!!"
             )
             raise NCError(msg=msg)
 
         # Create a direct copy of the netCDF-formatted file provided
         # upon entry.
         msg = (
-            "Creating a direct copy of netCDF-formatted file path {0} "
-            "as {1} and format {2}.".format(ncfilein, ncfileout, ncfrmtout.upper())
+            f"Creating a direct copy of netCDF-formatted file path {ncfilein} "
+            f"as {ncfileout} and format {ncfrmtout.upper()}."
         )
         logger.info(msg=msg)
-        cmd = [
-            "{0}".format(nccopy_app),
-            "-{0}".format(nccopy_app_str),
-            "{0}".format(ncfilein),
-            "{0}".format(ncfileout),
-        ]
+        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}", f"{ncfilein}", f"{ncfileout}"]
 
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (out, err) = proc.communicate()
+        proc.communicate()
 
     # Create a direct copy of the netCDF formatted file provided upon
     # entry using the Python netCDF4 library attributes.
@@ -653,7 +686,7 @@ def nccopy(
         # Initialize the source and destination netCDF-formatted
         # files.
         if ncfrmtin is None:
-            ncfrmt = "NETCDF4_CLASSIC"
+            ncfrmtin = "NETCDF4_CLASSIC"
 
         srcfile = netCDF4.Dataset(ncfilein, "r", format=ncfrmtin)
         dstfile = netCDF4.Dataset(ncfileout, "w", format=ncfrmtout)
@@ -1117,10 +1150,8 @@ def ncreadvar(
         )
         if ncgroups is None:
             msg = (
-                "The netCDF group {0} could not be determined from the "
-                "contents of netCDF-formatted file {1}. Aborting!!!".format(
-                    ncgroupname, ncfile
-                )
+                f"The netCDF group {ncgroupname} could not be determined from the "
+                f"contents of netCDF-formatted file {ncfile}. Aborting!!!"
             )
             raise NCError(msg=msg)
 
@@ -1273,8 +1304,8 @@ def ncvarlist(ncfile: str, ncfrmt: str = None) -> list:
     ncfile = netCDF4.Dataset(filename=ncfile, mode="r", format=ncfrmt)
 
     # Collect the list of variables within the netCDF-formatted file.
-    varlist = list()
-    for (name, variable) in ncfile.variables.items():
+    varlist = []
+    for (name, _) in ncfile.variables.items():
         varlist.append(name)
 
     return varlist
@@ -1333,14 +1364,13 @@ def ncwrite(
     # Define the netCDF attibutes and proceed accordingly.
     ncdim_dict = _read_ncdim_obj(ncdim_obj=ncdim_obj)
     ncvar_dict = _read_ncvar_obj(ncvar_obj=ncvar_obj)
-    for key in ncdim_dict.keys():
-        value = ncdim_dict[key]
+    for (key, value) in ncdim_dict.items():
         ncfile.createDimension(key, value)
 
     # Build the netCDF-formatted file and write each variable.
-    for key in ncvar_dict.keys():
+    for (key, value) in ncvar_dict.items():
         try:
-            var_dict = ncvar_dict[key]
+            var_dict = value
             if var_dict["type"].lower() == "char":
                 datatype = str
 
