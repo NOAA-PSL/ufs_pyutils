@@ -18,7 +18,7 @@
 # =========================================================================
 
 """
-Module 
+Module
 ------
 
     netcdf4_interface.py
@@ -282,8 +282,7 @@ def _get_ncapp_path(ncapp: str) -> str:
     # application path.
     cmd = ["which", f"{ncapp}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, _) = proc.communicate()
 
     # Define the netCDF application path; proceed accordingly.
@@ -1376,9 +1375,7 @@ def ncwrite(
                 datatype = str
 
             else:
-                datatype = parser_interface.object_getattr(
-                    object_in=numpy, key=var_dict["type"]
-                )
+                datatype = getattr(numpy, var_dict["type"])
 
             var = ncfile.createVariable(
                 varname=var_dict["varname"],
