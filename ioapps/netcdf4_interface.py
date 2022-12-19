@@ -18,7 +18,7 @@
 # =========================================================================
 
 """
-Module
+Module 
 ------
 
     netcdf4_interface.py
@@ -282,7 +282,8 @@ def _get_ncapp_path(ncapp: str) -> str:
     # application path.
     cmd = ["which", f"{ncapp}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (out, _) = proc.communicate()
 
     # Define the netCDF application path; proceed accordingly.
