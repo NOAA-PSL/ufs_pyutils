@@ -155,7 +155,7 @@ class TestNetCDF4Methods(TestCase):
         )
 
     @pytest.mark.order(100)
-    def test_cleanup(self):
+    def dtest_cleanup(self):
         """
         Description
         -----------
@@ -177,7 +177,7 @@ class TestNetCDF4Methods(TestCase):
         fileio_interface.removefiles(filelist=filelist)
 
     @pytest.mark.order(2)
-    def test_nccheck(self):
+    def dtest_nccheck(self):
         """
         Description
         -----------
@@ -194,7 +194,7 @@ class TestNetCDF4Methods(TestCase):
         self.assertTrue(nccheck, msg=self.unit_test_msg.format("nccheck"))
 
     @pytest.mark.order(3)
-    def test_ncreaddim(self):
+    def dtest_ncreaddim(self):
         """
         Description
         -----------
@@ -214,7 +214,7 @@ class TestNetCDF4Methods(TestCase):
         )
 
     @pytest.mark.order(3)
-    def test_ncreadvar(self):
+    def dtest_ncreadvar(self):
         """
         Description
         -----------
@@ -237,7 +237,7 @@ class TestNetCDF4Methods(TestCase):
         ), self.unit_test_msg.format("ncreadvar")
 
     @pytest.mark.order(3)
-    def test_ncvarexist(self):
+    def dtest_ncvarexist(self):
         """
         Description
         -----------
