@@ -94,7 +94,7 @@ logger = Logger()
 # ----
 
 
-class UFSLogger():
+class UFSLogger:
     """
     Description
     -----------
@@ -124,14 +124,13 @@ class UFSLogger():
         # Define the base-class attributes.
         self.options_obj = options_obj
 
-        self.logger_opts = {'msg': options_obj.msg,
-                            'msgtype': options_obj.msgtype
-                            }
+        self.logger_opts = {"msg": options_obj.msg, "msgtype": options_obj.msgtype}
 
-        self.msgtype_opts = {'info': logger.info,
-                             'error': logger.error,
-                             'warn': logger.warn
-                             }
+        self.msgtype_opts = {
+            "info": logger.info,
+            "error": logger.error,
+            "warn": logger.warn,
+        }
 
     def run(self) -> None:
         """
@@ -163,32 +162,34 @@ class UFSLogger():
 
         # Define the logger message from the command line attributes.
         logger_msg = parser_interface.object_getattr(
-            object_in=self.options_obj, key='msg', force=True)
+            object_in=self.options_obj, key="msg", force=True
+        )
         if logger_msg is None:
-            msg = ('The logger message cannot be NoneType. '
-                   'Aborting!!!')
+            msg = "The logger message cannot be NoneType. " "Aborting!!!"
             raise UFSLoggerError(msg=msg)
 
         # Determine the logging level from the command line
         # attributes.
         logger_level = parser_interface.object_getattr(
-            object_in=self.options_obj, key='msgtype', force=True)
+            object_in=self.options_obj, key="msgtype", force=True
+        )
         if logger_level is None:
-            msg = ('The logger level type cannot be NoneType. '
-                   'Aborting!!!')
+            msg = "The logger level type cannot be NoneType. " "Aborting!!!"
             raise UFSLoggerError(msg=msg)
 
         if logger_level.lower() not in self.msgtype_opts:
-            msg = (f'The logger level type {logger_level} is not supported. '
-                   'Aborting!!!')
+            msg = (
+                f"The logger level type {logger_level} is not supported. " "Aborting!!!"
+            )
             raise UFSLoggerError(msg=msg)
 
         # Create the logger message using the respective logging
         # level.
         method = parser_interface.dict_key_value(
-            dict_in=self.msgtype_opts, key=logger_level.lower(),
-            no_split=True)
+            dict_in=self.msgtype_opts, key=logger_level.lower(), no_split=True
+        )
         method(msg=logger_msg)
+
 
 # ----
 
@@ -250,6 +251,7 @@ def main():
     total_time = stop_time - start_time
     msg = f"Total Elapsed Time: {total_time} seconds."
     logger.info(msg=msg)
+
 
 # ----
 
