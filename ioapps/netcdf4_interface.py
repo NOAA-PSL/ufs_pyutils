@@ -1375,9 +1375,7 @@ def ncwrite(
                 datatype = str
 
             else:
-                datatype = parser_interface.object_getattr(
-                    object_in=numpy, key=var_dict["type"]
-                )
+                datatype = getattr(numpy, var_dict["type"])
 
             var = ncfile.createVariable(
                 varname=var_dict["varname"],
