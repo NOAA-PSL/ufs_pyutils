@@ -74,7 +74,6 @@ History
 # ----
 
 import os
-import time
 
 from tools import parser_interface
 from utils.arguments_interface import Arguments
@@ -124,7 +123,8 @@ class UFSLogger:
         # Define the base-class attributes.
         self.options_obj = options_obj
 
-        self.logger_opts = {"msg": options_obj.msg, "msgtype": options_obj.msgtype}
+        self.logger_opts = {"msg": options_obj.msg,
+                            "msgtype": options_obj.msgtype}
 
         self.msgtype_opts = {
             "info": logger.info,
@@ -236,22 +236,11 @@ def main():
     """
 
     # Collect the command line arguments.
-    script_name = os.path.basename(__file__)
-    start_time = time.time()
-    msg = f"Beginning application {script_name}."
-    logger.info(msg=msg)
     options_obj = Arguments().run()
 
     # Launch the task.
     task = UFSLogger(options_obj=options_obj)
     task.run()
-    stop_time = time.time()
-    msg = f"Completed application {script_name}."
-    logger.info(msg=msg)
-    total_time = stop_time - start_time
-    msg = f"Total Elapsed Time: {total_time} seconds."
-    logger.info(msg=msg)
-
 
 # ----
 
