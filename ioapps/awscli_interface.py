@@ -258,12 +258,12 @@ def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> b
     (contents, _) = proc.communicate()
     proc.wait()
 
+    # If the contents list returned by the AWS CLI is not empty, the
+    # AWS path is assumed to exist; otherwise it is assumed not to
+    # exist.
     exist = (len(contents.decode('utf-8')) > 0)
-    print(exist)
 
-    quit()
-
-    # return exist
+    return exist
 
 # ----
 
