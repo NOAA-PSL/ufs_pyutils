@@ -258,7 +258,7 @@ def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> b
     (contents, _) = proc.communicate()
     proc.wait()
 
-    print(contents)
+    print(len(contents.decode('utf-8')))
 
     quit()
 
