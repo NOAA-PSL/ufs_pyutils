@@ -88,8 +88,18 @@ History
 
 # ----
 
+# pylint: disable=consider-using-with
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-locals
+# pylint: disable=too-many-statements
+# pylint: disable=unused-argument
+
+# ----
+
 import subprocess
 
+from ast import literal_eval
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 from tools import parser_interface
@@ -138,7 +148,7 @@ class AWSCLIError(Error):
         Creates a new AWSCLIError object.
 
         """
-        super(AWSCLIError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -172,10 +182,9 @@ def _check_awscli_env() -> str:
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
     cmd = ["which", "aws"]
-
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
+    (out, _) = proc.communicate()
 
     # Define the AWS CLI executable path; proceed accordingly.
     if len(out) > 0:
@@ -236,8 +245,8 @@ def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> b
 
     exist: bool
 
-         A Python boolean valued variable specifying whether the AWS
-         path provided upon entry exists.
+        A Python boolean valued variable specifying whether the AWS
+        path provided upon entry exists.
 
     """
 
@@ -347,7 +356,6 @@ def list_awspath(aws_path: str, resource: str = 's3',
         # Build a list of the respective files; encode and decode as
         # necessary and proceed accordingly.
         awspath_list = []
-
         try:
 
             # Update the list with the respective file; format
@@ -361,7 +369,7 @@ def list_awspath(aws_path: str, resource: str = 's3',
     except Exception as error:
         msg = (f'Determining the files in AWS path {aws_path} for AWS '
                f'resource {resource} failed with error {error}. Aborting!!!')
-        raise AWSCLIError(msg=msg)
+        raise AWSCLIError(msg=msg) from error
 
     return awspath_list
 
@@ -482,7 +490,7 @@ def put_awsfile(
     # Define the keywords provided upon entry and proceed accordingly.
     aws_obj = parser_interface.object_define()
     for aws_kwarg in aws_kwargs_list:
-        value = eval(aws_kwarg)
+        value = literal_eval(aws_kwarg)
         aws_obj = parser_interface.object_setattr(
             object_in=aws_obj, key=aws_kwarg, value=value
         )
@@ -533,7 +541,7 @@ def put_awsfile(
 
         # Define the appropriate variable value attributes; proceed
         # accordingly.
-        if aws_kwarg in list(aws_kwargs_dict.keys()):
+        if aws_kwarg in list(aws_kwargs_dict.items()[0]):
             strval = parser_interface.dict_key_value(
                 dict_in=aws_kwargs_dict, key=aws_kwarg, no_split=True
             )
@@ -571,7 +579,7 @@ def put_awsfile(
             f"to {errlog}."
         )
         logger.warn(msg=msg)
-        stderr = open(errlog, "w")
+        stderr = open(errlog, "w", encoding="utf-8")
 
     if outlog is None:
         stdout = subprocess.PIPE
@@ -581,7 +589,7 @@ def put_awsfile(
             f"to {outlog}."
         )
         logger.warn(msg=msg)
-        stdout = open(outlog, "w")
+        stdout = open(outlog, "w", encoding="utf-8")
 
     # Upload the local file path to the AWS resource bucket and object
     # path; proceed accordingly.
@@ -593,8 +601,8 @@ def put_awsfile(
         proc.wait()
 
     except Exception as error:
-        msg = f"The AWS CLI application failed with error {error}. " "Aborting!!!"
-        raise AWSCLIError(msg=msg)
+        msg = f"The AWS CLI application failed with error {error}. Aborting!!!"
+        raise AWSCLIError(msg=msg) from error
 
     # Check the subprocess stderr and stdout attributes; proceed
     # accordingly.
