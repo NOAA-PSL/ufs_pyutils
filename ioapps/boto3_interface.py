@@ -45,7 +45,7 @@ Functions
         This function establishes the boto3 credentials as a function
         of the entry value of the parameter attribute profile_name.
 
-    _client(unsigned=False, session=None, profile_name=None, 
+    _client(unsigned=False, session=None, profile_name=None,
             resource="s3")
 
         This function defines the boto3 resource bucket client object.
@@ -74,7 +74,7 @@ Functions
         This function uploads (i.e., writes) a local file to a
         resource bucket object.
 
-    filelist(bucket, object_path=None, profile_name=None, 
+    filelist(bucket, object_path=None, profile_name=None,
              resource="s3")
 
         This function returns a list containing the contents of a
@@ -120,14 +120,21 @@ History
 
 # ----
 
+# pylint: disable=broad-except
+# pylint: disable=consider-using-with
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
+# pylint: disable=raise-missing-from
+# pylint: disable=redefined-outer-name
+# pylint: disable=wrong-import-order
+
+# ----
+
 import boto3
-import os
 
 from botocore import UNSIGNED
 from botocore.config import Config
 from tempfile import NamedTemporaryFile
-from tools import fileio_interface
-from tools import parser_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 
@@ -175,7 +182,7 @@ class Boto3Error(Error):
         Creates a new Boto3Error object.
 
         """
-        super(Boto3Error, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -257,8 +264,11 @@ def _aws_credentials(profile_name: str = None) -> tuple:
 
 
 def _client(
-    unsigned: bool = False, session: object = None, profile_name: str = None
-        resource: str = "s3") -> object:
+    unsigned: bool = False,
+    session: object = None,
+    profile_name: str = None,
+    resource: str = "s3",
+) -> object:
     """
     Description
     -----------
@@ -322,8 +332,7 @@ def _client(
     # Establish the boto3 resource bucket client object in accordance
     # with the upon entry parameter values.
     if unsigned:
-        client = boto3.client(
-            resource, config=Config(signature_version=UNSIGNED))
+        client = boto3.client(resource, config=Config(signature_version=UNSIGNED))
 
     if session is not None:
         session = _session(profile_name=profile_name)
@@ -445,8 +454,9 @@ def _read(client: object, bucket: str, file_name: str, object_name: str) -> None
 # ----
 
 
-def _resource(unsigned: bool = False, profile_name: str = None,
-              resource: str = "s3") -> object:
+def _resource(
+    unsigned: bool = False, profile_name: str = None, resource: str = "s3"
+) -> object:
     """
     Description
     -----------
@@ -487,7 +497,8 @@ def _resource(unsigned: bool = False, profile_name: str = None,
     # Establish the boto3 resource bucket client object.
     if unsigned:
         resource_obj = boto3.resource(
-            resource, config=Config(signature_version=UNSIGNED))
+            resource, config=Config(signature_version=UNSIGNED)
+        )
 
     if not unsigned:
 
@@ -575,8 +586,9 @@ def _write(client: object, bucket: str, file_name: str, object_name: str) -> Non
 # ----
 
 
-def filelist(bucket: str, object_path: str = None, profile_name: str = None,
-             resource: str = "s3") -> list:
+def filelist(
+    bucket: str, object_path: str = None, profile_name: str = None, resource: str = "s3"
+) -> list:
     """
     Description
     -----------
@@ -626,8 +638,9 @@ def filelist(bucket: str, object_path: str = None, profile_name: str = None,
 
     # Collect the contents of the respective resource bucket path.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _client(unsigned=unsigned, session=session,
-                     profile_name=profile_name, resource=resource)
+    client = _client(
+        unsigned=unsigned, session=session, profile_name=profile_name, resource=resource
+    )
     filelist = _list(client=client, bucket=bucket, object_path=object_path)
 
     return filelist
@@ -642,7 +655,7 @@ def get(
     into_mem: bool = False,
     object_path: str = None,
     profile_name: str = None,
-    resource: str = "s3"
+    resource: str = "s3",
 ) -> object:
     """
     Description
@@ -737,7 +750,8 @@ def get(
 
         # Define the Python boto3 bucket resource object.
         resource_obj = _resource(
-            unsigned=unsigned, profile_name=profile_name, resource=resource)
+            unsigned=unsigned, profile_name=profile_name, resource=resource
+        )
 
         # Collect the object path and store the contents into memory;
         # proceed accordingly.
@@ -746,11 +760,10 @@ def get(
             # Define the resource attributes and read the contents of
             # the specified object path into memory.
             bucket = resource_obj.Bucket(bucket)
-            object = bucket.Object(object_path)
+            bucket_object = bucket.Object(object_path)
             object_memory = NamedTemporaryFile()
-            f = open(object_memory.name, "wb")
-            object.download_fileobj(f)
-            f.close()
+            with open(object_memory.name, "wb") as filepath:
+                bucket_object.download_fileobj(filepath)
 
         except Exception as error:
             msg = (
@@ -777,14 +790,19 @@ def get(
 
         # Define the Python boto3 bucket client object.
         client = _client(
-            unsigned=unsigned, session=session, profile_name=profile_name, resource=resource
+            unsigned=unsigned,
+            session=session,
+            profile_name=profile_name,
+            resource=resource,
         )
 
         # Collect the specified files from the respective resource
         # bucket and object path.
         for key in filedict.keys():
-            msg = (f"Downloading object {filedict[key]} from {resource} bucket "
-                   f"{bucket} to {key}.")
+            msg = (
+                f"Downloading object {filedict[key]} from {resource} bucket "
+                f"{bucket} to {key}."
+            )
             logger.info(msg=msg)
             try:
                 _read(
@@ -807,8 +825,9 @@ def get(
 # ----
 
 
-def put(bucket: str, filedict: dict, profile_name: str = None,
-        resource: str = "s3") -> None:
+def put(
+    bucket: str, filedict: dict, profile_name: str = None, resource: str = "s3"
+) -> None:
     """
     Description
     -----------
@@ -857,15 +876,17 @@ def put(bucket: str, filedict: dict, profile_name: str = None,
 
     # Define the Python boto3 bucket client object.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _client(unsigned=unsigned, session=session,
-                     profile_name=profile_name, resource=resource)
+    client = _client(
+        unsigned=unsigned, session=session, profile_name=profile_name, resource=resource
+    )
 
     # Upload the specified files from the resource bucket and object
     # path.
     for key in filedict.keys():
-        msg = (f"Uploading file {key} to {resource} bucket {bucket} object "
-               f"{filedict[key]}."
-               )
+        msg = (
+            f"Uploading file {key} to {resource} bucket {bucket} object "
+            f"{filedict[key]}."
+        )
         logger.info(msg=msg)
         try:
             _write(
