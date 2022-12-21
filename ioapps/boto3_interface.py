@@ -45,49 +45,52 @@ Functions
         This function establishes the boto3 credentials as a function
         of the entry value of the parameter attribute profile_name.
 
-    _s3client(unsigned=False, session=None, profile_name=None)
+    _client(unsigned=False, session=None, profile_name=None, 
+            resource="s3")
 
-        This function defines the boto s3 bucket client object.
+        This function defines the boto3 resource bucket client object.
 
-    _s3list(client, bucket, object_path=None)
+    _list(client, bucket, object_path=None)
 
         This function yields a generator function containing the
-        contents of a s3 bucket path.
+        contents of a resource bucket path.
 
-    _s3read(client, bucket, file_name, object_name)
+    _read(client, bucket, file_name, object_name)
 
-        This function downloads (i.e., read) a s3 bucket object to a
+        This function downloads (i.e., read) a resource bucket object to a
         local file.
 
-    _s3resource(unsigned=False, profile_name=None)
+    _resource(unsigned=False, profile_name=None, resource="s3")
 
-        This function defines the boto s3 bucket resource object.
+        This function defines the boto3 resource bucket object.
 
-    _s3session(profile_name)
+    _session(profile_name)
 
         This method defines a boto3 session in accordance with the
         profile_name attribute value.
 
-    _s3write(client, bucket, file_name, object_name)
+    _write(client, bucket, file_name, object_name)
 
-        This function uploads (i.e., writes) a local file to a s3
-        bucket object.
+        This function uploads (i.e., writes) a local file to a
+        resource bucket object.
 
-    s3filelist(bucket, object_path=None, profile_name=None)
+    filelist(bucket, object_path=None, profile_name=None, 
+             resource="s3")
 
-        This function returns a list containing the contents of a s3
-        bucket path.
+        This function returns a list containing the contents of a
+        resource bucket path.
 
-    s3get(bucket, filedict=None, into_mem=False, object_path=None,
-          profile_name=None)
+    get(bucket, filedict=None, into_mem=False, object_path=None,
+        profile_name=None, resource="s3")
 
-        This function downloads objects from a user specified s3
+        This function downloads objects from a user specified resource
         bucket either onto the respective platforms local disk
         (into_mem = False) or into memory (into_mem = True).
 
-    s3put(bucket, filedict, profile_name=None)
+    put(bucket, filedict, profile_name=None, resource="s3")
 
-        This function uploads objects to a user specified s3 bucket.
+        This function uploads objects to a user specified resource
+        bucket.
 
 Notes
 -----
@@ -97,6 +100,9 @@ Notes
     and aws_secret_access_key) corresponding to the profile_name
     parameter value upon entry exist in the user path
     ~/.aws/credentials.
+
+    A complete list of supported AWS storage resources can be found at
+    https://tinyurl.com/AWS-Storage-Resources.
 
 Requirements
 ------------
@@ -131,7 +137,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ["s3filelist", "s3get", "s3put"]
+__all__ = ["filelist", "get", "put"]
 
 # ----
 
@@ -222,7 +228,7 @@ def _aws_credentials(profile_name: str = None) -> tuple:
 
     """
 
-    # Define the AWS s3 session and client attributes; proceed
+    # Define the AWS resource session and client attributes; proceed
     # accordingly.
     if profile_name is None:
 
@@ -242,8 +248,8 @@ def _aws_credentials(profile_name: str = None) -> tuple:
 
         except Exception as error:
             msg = (
-                "Establishing the boto3 session for profile name {0} "
-                "failed with error {1}. Aborting!!!".format(profile_name, error)
+                f"Establishing the boto3 session for profile name {profile_name} "
+                f"failed with error {error}. Aborting!!!"
             )
             raise Boto3Error(msg=msg)
 
@@ -253,14 +259,14 @@ def _aws_credentials(profile_name: str = None) -> tuple:
 # ----
 
 
-def _s3client(
+def _client(
     unsigned: bool = False, session: object = None, profile_name: str = None
-) -> object:
+        resource: str = "s3") -> object:
     """
     Description
     -----------
 
-    This function defines the boto3 s3 bucket client object.
+    This function defines the boto3 resource bucket client object.
 
     Keywords
     --------
@@ -268,7 +274,7 @@ def _s3client(
     unsigned: bool, optional
 
         A Python boolean valued variable specifying whether or not to
-        provided UNSIGNED credentials to the AWS s3 client
+        provided UNSIGNED credentials to the AWS resource client
         configuration.
 
     session: object, optional
@@ -284,12 +290,17 @@ def _s3client(
         session; if NoneType upon entry an unsigned session is
         implied.
 
+    resource: str, optional
+
+        A Python string specifing the AWS resource; the default value
+        is "s3".
+
     Returns
     -------
 
     client: object
 
-        A Python boto3 s3 bucket client object.
+        A Python boto3 resource bucket client object.
 
     """
 
@@ -310,14 +321,15 @@ def _s3client(
         )
         raise Boto3Error(msg=msg)
 
-    # Establish the boto3 s3 bucket client object in accordance with
-    # the upon entry parameter values.
+    # Establish the boto3 resource bucket client object in accordance
+    # with the upon entry parameter values.
     if unsigned:
-        client = boto3.client("s3", config=Config(signature_version=UNSIGNED))
+        client = boto3.client(
+            resource, config=Config(signature_version=UNSIGNED))
 
     if session is not None:
-        session = _s3session(profile_name=profile_name)
-        client = session.client("s3")
+        session = _session(profile_name=profile_name)
+        client = session.client(resource)
 
     return client
 
@@ -325,24 +337,24 @@ def _s3client(
 # ----
 
 
-def _s3list(client: object, bucket: str, object_path: str = None) -> list:
+def _list(client: object, bucket: str, object_path: str = None) -> list:
     """
     Description
     -----------
 
-    This function returns a list containing the contents of a s3
-    bucket path as specified by the s3 object keys.
+    This function returns a list containing the contents of a resource
+    bucket path as specified by the bucket object keys.
 
     Parameters
     ----------
 
     client: object
 
-        A Python boto3 s3 bucket client object.
+        A Python boto3 resource bucket client object.
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     Keywords
     --------
@@ -361,12 +373,12 @@ def _s3list(client: object, bucket: str, object_path: str = None) -> list:
     filelist: list
 
         A Python list containing the contents (keys) of the user
-        specified s3 bucket.
+        specified resource bucket.
 
     """
 
-    # Compile a list of the s3 bucket contents accordingly.
-    (filelist, kwargs) = (list(), dict())
+    # Compile a list of the bucket contents accordingly.
+    (filelist, kwargs) = ([], {})
     if object_path is None:
         while True:
             response = client.list_objects_v2(Bucket=bucket)
@@ -389,45 +401,45 @@ def _s3list(client: object, bucket: str, object_path: str = None) -> list:
 # ----
 
 
-def _s3read(client: object, bucket: str, file_name: str, object_name: str) -> None:
+def _read(client: object, bucket: str, file_name: str, object_name: str) -> None:
     """
     Description
     -----------
 
-    This function downloads (i.e., read) a s3 bucket object to a local
-    file.
+    This function downloads (i.e., read) a resource bucket object to a
+    local file.
 
     Parameters
     ----------
 
     client: object
 
-        A Python boto3 s3 bucket client object.
+        A Python boto3 resource bucket client object.
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     file_name: str
 
-        A Python string specifying the local file path to which the s3
-        bucket object is to be downloaded.
+        A Python string specifying the local file path to which the
+        resource bucket object is to be downloaded.
 
     object_name: str
 
-        A Python string specifying the s3 bucket object corresponding
-        to the file_name attribute.
+        A Python string specifying the resource bucket object
+        corresponding to the file_name attribute.
 
     """
 
-    # Download the contents of the specified s3 bucket object.
+    # Download the contents of the specified resource bucket object.
     try:
         client.download_file(bucket, object_name, file_name)
 
     except Exception as error:
         msg = (
-            "Reading from S3 caused the following exception to "
-            "occur:\n {0}".format(error)
+            f"Reading from bucket {bucket} object path {object_name} caused "
+            f"the following exception to occur: {error}"
         )
         logger.warn(msg=msg)
 
@@ -435,12 +447,13 @@ def _s3read(client: object, bucket: str, file_name: str, object_name: str) -> No
 # ----
 
 
-def _s3resource(unsigned: bool = False, profile_name: str = None) -> object:
+def _resource(unsigned: bool = False, profile_name: str = None,
+              resource: str = "s3") -> object:
     """
     Description
     -----------
 
-    This function defines the boto s3 bucket resource object.
+    This function defines the boto client resource object.
 
     Keywords
     --------
@@ -448,7 +461,7 @@ def _s3resource(unsigned: bool = False, profile_name: str = None) -> object:
     unsigned: bool, optional
 
         A Python boolean valued variable specifying whether or not to
-        provided UNSIGNED credentials to the AWS s3 resource
+        provided UNSIGNED credentials to the AWS resource
         configuration.
 
     profile_name: str, optional
@@ -458,31 +471,37 @@ def _s3resource(unsigned: bool = False, profile_name: str = None) -> object:
         session; if NoneType upon entry an unsigned session is
         implied.
 
+    resource: str, optional
+
+        A Python string specifing the AWS resource; the default value
+        is "s3".
+
     Returns
     -------
 
-    resource: object
+    resource_obj: object
 
-        A Python boto3 s3 bucket resource object.
+        A Python boto3 client resource object.
 
     """
 
-    # Establish the boto3 s3 bucket client object.
+    # Establish the boto3 resource bucket client object.
     if unsigned:
-        resource = boto3.resource("s3", config=Config(signature_version=UNSIGNED))
+        resource_obj = boto3.resource(
+            resource, config=Config(signature_version=UNSIGNED))
 
     if not unsigned:
 
-        session = _s3session(profile_name=profile_name)
-        resource = session.resource("s3")
+        session = _session(profile_name=profile_name)
+        resource_obj = session.resource(resource)
 
-    return resource
+    return resource_obj
 
 
 # ----
 
 
-def _s3session(profile_name: str) -> object:
+def _session(profile_name: str) -> object:
     """
     Description
     -----------
@@ -518,51 +537,52 @@ def _s3session(profile_name: str) -> object:
 # ----
 
 
-def _s3write(client: object, bucket: str, file_name: str, object_name: str) -> None:
+def _write(client: object, bucket: str, file_name: str, object_name: str) -> None:
     """
     Description
     -----------
 
-    This function uploads (i.e., writes) a local file to a s3 bucket
-    object.
+    This function uploads (i.e., writes) a local file to a resource
+    bucket object.
 
     Parameters
     ----------
 
     client: object
 
-        A Python boto3 s3 bucket client object.
+        A Python boto3 resource bucket client object.
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     file_name: str
 
         A Python string specifying the local file path to be uploaded
-        as a s3 bucket object.
+        as a resource bucket object.
 
     object_name: str
 
-        A Python string specifying the s3 bucket object corresponding
-        to the file_name attribute.
+        A Python string specifying the resource bucket object
+        corresponding to the file_name attribute.
 
     """
 
-    # Upload the specified local file path to the specified s3 bucket
-    # and object path.
+    # Upload the specified local file path to the specified resource
+    # bucket and object path.
     client.upload_file(file_name, bucket, object_name)
 
 
 # ----
 
 
-def s3filelist(bucket: str, object_path: str = None, profile_name: str = None) -> list:
+def filelist(bucket: str, object_path: str = None, profile_name: str = None,
+             resource: str = "s3") -> list:
     """
     Description
     -----------
 
-    This function returns a list containing the contents of a s3
+    This function returns a list containing the contents of a resource
     bucket path.
 
     Parameters
@@ -570,7 +590,7 @@ def s3filelist(bucket: str, object_path: str = None, profile_name: str = None) -
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     Keywords
     --------
@@ -590,19 +610,25 @@ def s3filelist(bucket: str, object_path: str = None, profile_name: str = None) -
         session; if NoneType upon entry an unsigned session is
         implied.
 
+    resource: str, optional
+
+        A Python string specifing the AWS resource; the default value
+        is "s3".
+
     Returns
     -------
 
     filelist: list
 
-        A Python list containing the contents of the s3 bucket.
+        A Python list containing the contents of the resource bucket.
 
     """
 
-    # Collect the contents of the respective s3 bucket path.
+    # Collect the contents of the respective resource bucket path.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _s3client(unsigned=unsigned, session=session, profile_name=profile_name)
-    filelist = _s3list(client=client, bucket=bucket, object_path=object_path)
+    client = _client(unsigned=unsigned, session=session,
+                     profile_name=profile_name, resource=resource)
+    filelist = _list(client=client, bucket=bucket, object_path=object_path)
 
     return filelist
 
@@ -610,27 +636,28 @@ def s3filelist(bucket: str, object_path: str = None, profile_name: str = None) -
 # ----
 
 
-def s3get(
+def get(
     bucket: str,
     filedict: dict = None,
     into_mem: bool = False,
     object_path: str = None,
     profile_name: str = None,
+    resource: str = "s3"
 ) -> object:
     """
     Description
     -----------
 
-    This function downloads objects from a user specified s3 bucket
-    either onto the respective platforms local disk (into_mem = False)
-    or into memory (into_mem = True).
+    This function downloads objects from a user specified resource
+    bucket either onto the respective platforms local disk (into_mem =
+    False) or into memory (into_mem = True).
 
     Parameters
     ----------
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     Keywords
     --------
@@ -638,20 +665,21 @@ def s3get(
     filedict: dict, optional
 
         A Python dictionary containing key and value pairs for the
-        objects to be read from the s3 bucket objects; the dictionary
-        keys are the local file path and the respective dictionary key
-        values are the s3 object names.
+        objects to be read from the resource bucket objects; the
+        dictionary keys are the local file path and the respective
+        dictionary key values are the resource object names.
 
     into_mem: bool, optional
 
         A Python boolean valued variable specifying whether to read
-        the contents of the s3 bucket and object path (see
+        the contents of the resource bucket and object path (see
         object_path, below) into memory.
 
     object_path: str, optional
 
-        A Python string specifying the respective s3 bucket object
-        path; required and used only if into_mem is True upon entry.
+        A Python string specifying the respective resource bucket
+        object path; required and used only if into_mem is True upon
+        entry.
 
     profile_name: str, optional
 
@@ -660,13 +688,18 @@ def s3get(
         session; if NoneType upon entry an unsigned session is
         implied.
 
+    resource: str, optional
+
+        A Python string specifing the AWS resource; the default value
+        is "s3".
+
     Returns
     -------
 
     object_memory: object
 
         A Python tempfile NamedTemporaryFile object containing the
-        contents of the s3 bucket and object path specified upon
+        contents of the resource bucket and object path specified upon
         entry; if the into_mem parameter is False upon entry, the
         returned value is NoneType.
 
@@ -688,8 +721,8 @@ def s3get(
     # Define the Python boto3 access credentials.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
 
-    # Check the method to be used for the respective s3 object
-    # retrieval; proceed accordingly.
+    # Check the method to be used for the respective object retrieval;
+    # proceed accordingly.
     if into_mem:
 
         # Check the parameter values provided upon entry and proceed
@@ -702,15 +735,16 @@ def s3get(
             raise Boto3Error(msg=msg)
 
         # Define the Python boto3 bucket resource object.
-        resource = _s3resource(unsigned=unsigned, profile_name=profile_name)
+        resource_obj = _resource(
+            unsigned=unsigned, profile_name=profile_name, resource=resource)
 
-        # Collect the s3 object and store the contents into memory;
+        # Collect the object path and store the contents into memory;
         # proceed accordingly.
         try:
 
-            # Define the s3 attributes and read the contents of the
-            # specified s3 object path into memory.
-            bucket = resource.Bucket(bucket)
+            # Define the resource attributes and read the contents of
+            # the specified object path into memory.
+            bucket = resource_obj.Bucket(bucket)
             object = bucket.Object(object_path)
             object_memory = NamedTemporaryFile()
             f = open(object_memory.name, "wb")
@@ -719,8 +753,8 @@ def s3get(
 
         except Exception as error:
             msg = (
-                "Reading s3 object path {0} into memory failed with "
-                "error {1}. Aborting!!!".format(object_path, error)
+                f"Reading {resource} object path {object_path} into memory failed with "
+                f"error {error}. Aborting!!!"
             )
             raise Boto3Error(msg=msg)
 
@@ -741,18 +775,18 @@ def s3get(
             raise Boto3Error(msg=msg)
 
         # Define the Python boto3 bucket client object.
-        client = _s3client(
-            unsigned=unsigned, session=session, profile_name=profile_name
+        client = _client(
+            unsigned=unsigned, session=session, profile_name=profile_name, resource=resource
         )
 
-        # Collect the specified files from the s3 bucket and object path.
+        # Collect the specified files from the respective resource
+        # bucket and object path.
         for key in filedict.keys():
-            msg = "Downloading object {0} from s3 bucket {1} to {2}.".format(
-                filedict[key], bucket, key
-            )
+            msg = (f"Downloading object {filedict[key]} from {resource} bucket "
+                   f"{bucket} to {key}.")
             logger.info(msg=msg)
             try:
-                _s3read(
+                _read(
                     client=client,
                     bucket=bucket,
                     file_name=key,
@@ -761,10 +795,8 @@ def s3get(
 
             except Exception as error:
                 msg = (
-                    "Downloading of object {0} from s3 bucket {1} to {2} failed "
-                    "with error {3}. Aborting!!!".format(
-                        filedict[key], bucket, key, error
-                    )
+                    f"Downloading of object {filedict[key]} from {resource} bucket "
+                    f"{bucket} to {key} failed with error {error}. Aborting!!!"
                 )
                 raise Boto3Error(msg=msg)
 
@@ -774,26 +806,27 @@ def s3get(
 # ----
 
 
-def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
+def put(bucket: str, filedict: dict, profile_name: str = None,
+        resource: str = "s3") -> None:
     """
     Description
     -----------
 
-    This function uploads objects to a user specified s3 bucket.
+    This function uploads objects to a user specified resource bucket.
 
     Parameters
     ----------
 
     bucket: str
 
-        A Python string specifying the name of the s3 bucket.
+        A Python string specifying the name of the resource bucket.
 
     filedict: dict
 
         A Python dictionary containing key and value pairs for the
-        objects to be written to the s3 bucket objects; the dictionary
-        keys are the local file path and the respective dictionary key
-        values are the s3 object names.
+        objects to be written to the resource bucket objects; the
+        dictionary keys are the local file path and the respective
+        dictionary key values are the object names.
 
     Keywords
     --------
@@ -805,6 +838,11 @@ def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
         session; if NoneType upon entry an unsigned session is
         implied.
 
+    resource: str, optional
+
+        A Python string specifing the AWS resource; the default value
+        is "s3".
+
     Raises
     ------
 
@@ -815,24 +853,26 @@ def s3put(bucket: str, filedict: dict, profile_name: str = None) -> None:
 
     """
 
-    # Define the Python boto3 s3 bucket client object.
+    # Define the Python boto3 bucket client object.
     (unsigned, session) = _aws_credentials(profile_name=profile_name)
-    client = _s3client(unsigned=unsigned, session=session, profile_name=profile_name)
+    client = _client(unsigned=unsigned, session=session,
+                     profile_name=profile_name, resource=resource)
 
-    # Upload the specified files from the s3 bucket and object path.
+    # Upload the specified files from the resource bucket and object
+    # path.
     for key in filedict.keys():
-        msg = "Uploading file {0} to s3 bucket {1} object {2}.".format(
-            key, bucket, filedict[key]
-        )
+        msg = (f"Uploading file {key} to {resource} bucket {bucket} object "
+               f"{filedict[key]}."
+               )
         logger.info(msg=msg)
         try:
-            _s3write(
+            _write(
                 client=client, bucket=bucket, file_name=key, object_name=filedict[key]
             )
 
         except Exception as error:
             msg = (
-                "Uploading of file {0} to s3 bucket {1} object {2} failed "
-                "with error {3}. Aborting!!!".format(key, bucket, filedict[key], error)
+                f"Uploading of file {key} to {resource} bucket {bucket} object {filedict[key]} "
+                f"failed with error {error}. Aborting!!!"
             )
             raise Boto3Error(msg=msg)
