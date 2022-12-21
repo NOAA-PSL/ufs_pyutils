@@ -182,8 +182,7 @@ def _check_awscli_env() -> str:
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
     cmd = ["which", "aws"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, _) = proc.communicate()
 
     # Define the AWS CLI executable path; proceed accordingly.
@@ -201,10 +200,11 @@ def _check_awscli_env() -> str:
 
     return awscli
 
+
 # ----
 
 
-def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> bool:
+def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> bool:
     """
     Description
     -----------
@@ -252,7 +252,7 @@ def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> b
 
     # Establish the AWS CLI executable environment.
     awscli = _check_awscli_env()
-    cmd = [f'{awscli}', f'{resource}', 'ls', f'{aws_path}']
+    cmd = [f"{awscli}", f"{resource}", "ls", f"{aws_path}"]
 
     # Determine the permission attributes for the AWS CLI executable.
     if profile is None:
@@ -262,23 +262,22 @@ def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> b
         cmd.append(f"{profile}")
 
     # Query the AWS path; proceed accordingly.
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (contents, _) = proc.communicate()
     proc.wait()
 
     # If the contents list returned by the AWS CLI is not empty, the
     # AWS path is assumed to exist; otherwise it is assumed not to
     # exist.
-    exist = (len(contents.decode('utf-8')) > 0)
+    exist = len(contents.decode("utf-8")) > 0
 
     return exist
+
 
 # ----
 
 
-def list_awspath(aws_path: str, resource: str = 's3',
-                 profile: str = None) -> list:
+def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> list:
     """
     Description
     -----------
@@ -334,7 +333,7 @@ def list_awspath(aws_path: str, resource: str = 's3',
 
     # Establish the AWS CLI executable environment.
     awscli = _check_awscli_env()
-    cmd = [f'{awscli}', f'{resource}', 'ls', f'{aws_path}']
+    cmd = [f"{awscli}", f"{resource}", "ls", f"{aws_path}"]
 
     # Determine the permission attributes for the AWS CLI executable.
     if profile is None:
@@ -348,8 +347,7 @@ def list_awspath(aws_path: str, resource: str = 's3',
     try:
 
         # Collect a list of the AWS resource path contents.
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (path_list, _) = proc.communicate()
         proc.wait()
 
@@ -360,18 +358,21 @@ def list_awspath(aws_path: str, resource: str = 's3',
 
             # Update the list with the respective file; format
             # accordingly.
-            for item in path_list.split('\n'.encode()):
-                awspath_list.append(str(item.split()[3].decode('utf-8')))
+            for item in path_list.split("\n".encode()):
+                awspath_list.append(str(item.split()[3].decode("utf-8")))
 
         except IndexError:
             pass
 
     except Exception as error:
-        msg = (f'Determining the files in AWS path {aws_path} for AWS '
-               f'resource {resource} failed with error {error}. Aborting!!!')
+        msg = (
+            f"Determining the files in AWS path {aws_path} for AWS "
+            f"resource {resource} failed with error {error}. Aborting!!!"
+        )
         raise AWSCLIError(msg=msg) from error
 
     return awspath_list
+
 
 # ----
 
@@ -383,7 +384,7 @@ def put_awsfile(
     is_wildcards: bool = False,
     aws_exclude: str = None,
     aws_include: str = None,
-    resource: str = 's3',
+    resource: str = "s3",
     profile: str = None,
     errlog: str = None,
     outlog: str = None,
@@ -482,8 +483,7 @@ def put_awsfile(
 
     # Define the Python dictionaries and list of parameter keys and
     # values provided upon entry.
-    aws_kwargs_list = ["aws_exclude",
-                       "aws_include", "is_dir", "is_wildcards"]
+    aws_kwargs_list = ["aws_exclude", "aws_include", "is_dir", "is_wildcards"]
 
     aws_kwargs_dict = {"aws_exclude": "exclude", "aws_include": "include"}
 
@@ -509,10 +509,7 @@ def put_awsfile(
     if not aws_obj.is_wildcards:
         for item in ["aws_exclude", "aws_include"]:
 
-            if (
-                parser_interface.object_getattr(object_in=aws_obj, key=item)
-                is not None
-            ):
+            if parser_interface.object_getattr(object_in=aws_obj, key=item) is not None:
 
                 # Reset the value for the wildcard related keyword
                 # values.
@@ -520,8 +517,8 @@ def put_awsfile(
                     f"The keyword {item} had a value of {0} upon "
                     "entry; wildcards are not supported by the "
                     "parameters provided upon entry; resetting to "
-                    "NoneType.".format(parser_interface.object_getattr(
-                        object_in=aws_obj, key=item),
+                    "NoneType.".format(
+                        parser_interface.object_getattr(object_in=aws_obj, key=item),
                     )
                 )
                 logger.warn(msg=msg)
@@ -545,9 +542,7 @@ def put_awsfile(
             strval = parser_interface.dict_key_value(
                 dict_in=aws_kwargs_dict, key=aws_kwarg, no_split=True
             )
-            value = parser_interface.object_getattr(
-                object_in=aws_obj, key=aws_kwarg
-            )
+            value = parser_interface.object_getattr(object_in=aws_obj, key=aws_kwarg)
 
             # Check that the keyword argument value is not NoneType;
             # proceed accordingly.
@@ -574,20 +569,14 @@ def put_awsfile(
     if errlog is None:
         stderr = subprocess.PIPE
     if errlog is not None:
-        msg = (
-            "The stderr from the AWS CLI application will be written "
-            f"to {errlog}."
-        )
+        msg = f"The stderr from the AWS CLI application will be written to {errlog}."
         logger.warn(msg=msg)
         stderr = open(errlog, "w", encoding="utf-8")
 
     if outlog is None:
         stdout = subprocess.PIPE
     if outlog is not None:
-        msg = (
-            "The stdout from the AWS CLI application will be written "
-            f"to {outlog}."
-        )
+        msg = f"The stdout from the AWS CLI application will be written to {outlog}."
         logger.warn(msg=msg)
         stdout = open(outlog, "w", encoding="utf-8")
 
