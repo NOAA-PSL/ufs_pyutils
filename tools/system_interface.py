@@ -61,6 +61,7 @@ History
 
 import inspect
 import sys
+import time
 
 from utils.logger_interface import Logger
 
@@ -102,6 +103,13 @@ def _get_stack() -> list:
     stack = inspect.stack()
 
     return stack
+
+# ----
+
+
+def sleep(seconds: int = 0) -> None:
+    """ """
+    time.sleep(seconds)
 
 
 # ----
