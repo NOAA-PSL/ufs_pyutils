@@ -101,9 +101,6 @@ Notes
     parameter value upon entry exist in the user path
     ~/.aws/credentials.
 
-    A complete list of supported AWS storage resources can be found at
-    https://tinyurl.com/AWS-Storage-Resources.
-
 Requirements
 ------------
 
@@ -292,8 +289,9 @@ def _client(
 
     resource: str, optional
 
-        A Python string specifing the AWS resource; the default value
-        is "s3".
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
 
     Returns
     -------
@@ -473,8 +471,9 @@ def _resource(unsigned: bool = False, profile_name: str = None,
 
     resource: str, optional
 
-        A Python string specifing the AWS resource; the default value
-        is "s3".
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
 
     Returns
     -------
@@ -612,8 +611,9 @@ def filelist(bucket: str, object_path: str = None, profile_name: str = None,
 
     resource: str, optional
 
-        A Python string specifing the AWS resource; the default value
-        is "s3".
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
 
     Returns
     -------
@@ -690,8 +690,9 @@ def get(
 
     resource: str, optional
 
-        A Python string specifing the AWS resource; the default value
-        is "s3".
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
 
     Returns
     -------
@@ -840,8 +841,9 @@ def put(bucket: str, filedict: dict, profile_name: str = None,
 
     resource: str, optional
 
-        A Python string specifing the AWS resource; the default value
-        is "s3".
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
 
     Raises
     ------
