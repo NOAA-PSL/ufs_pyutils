@@ -514,8 +514,7 @@ def put_awsfile(
 
     except Exception as error:
         msg = f"The AWS CLI application failed with error {error}. " "Aborting!!!"
-        )
-        raise AWSCLIError(msg = msg)
+        raise AWSCLIError(msg=msg)
 
     # Check the subprocess stderr and stdout attributes; proceed
     # accordingly.
