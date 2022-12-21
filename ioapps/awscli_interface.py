@@ -47,6 +47,13 @@ Functions
         loaded; if not, an AWSCLIError will be thrown; if so, the path
         to the AWS CLI executable will be defined and returned.
 
+    exist_awspath(aws_path, resource='s3', profile=None)
+
+        This function queries the respective Amazon Web Services (AWS)
+        resource bucket and object path to, using the command line
+        interface (CLI), in order to determine whether a file/path
+        exists; a boolean value indicating the status is returned.
+
     list_awspath(aws_path, resource='s3', profile=None)
 
         This function provides an interface to the Amazon Web Services
@@ -90,7 +97,7 @@ from tools import parser_interface
 # ----
 
 # Define all available functions.
-__all__ = ["list_awspath", "put_awsfile"]
+__all__ = ["exist_awspath", "list_awspath", "put_awsfile"]
 
 # ----
 
@@ -184,6 +191,78 @@ def _check_awscli_env() -> str:
         raise AWSCLIError(msg=msg)
 
     return awscli
+
+# ----
+
+
+def exist_awspath(aws_path: str, resource: str = 's3', profile: str = None) -> bool:
+    """
+    Description
+    -----------
+
+    This function queries the respective Amazon Web Services (AWS)
+    resource bucket and object path to, using the command line
+    interface (CLI), in order to determine whether a file/path exists;
+    a boolean value indicating the status is returned.
+
+    Parameters
+    ----------
+
+    aws_path: str
+
+        A Python string specifying the AWS resource bucket and object
+        path within which to collect the respective contents.
+
+    Keywords
+    --------
+
+    resource: str, optional
+
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
+
+    profile: str, optional
+
+        A Python string specifying the AWS CLI credentials; if
+        NoneType upon entry the AWS CLI assumes the --no-sign-request
+        attribute; if this value is not NoneType, the credentials
+        corresponding to the respective string must live beneath the
+        ~/.aws/credentials path and contain the appropriate AWS
+        aws_access_key_id and aws_secret_access_key attributes.
+
+    Returns
+    -------
+
+    exist: bool
+
+         A Python boolean valued variable specifying whether the AWS
+         path provided upon entry exists.
+
+    """
+
+    # Establish the AWS CLI executable environment.
+    awscli = _check_awscli_env()
+    cmd = [f'{awscli}', f'{resource}', 'ls', f'{aws_path}']
+
+    # Determine the permission attributes for the AWS CLI executable.
+    if profile is None:
+        cmd.append("--no-sign-request")
+    if profile is not None:
+        cmd.append("--profile")
+        cmd.append(f"{profile}")
+
+    # Query the AWS path; proceed accordingly.
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+    (contents, _) = proc.communicate()
+    proc.wait()
+
+    print(contents)
+
+    quit()
+
+    # return exist
 
 # ----
 
