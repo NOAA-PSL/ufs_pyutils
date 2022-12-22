@@ -34,12 +34,17 @@ Functions
 
     _get_stack()
 
-        This method defines the calling application stack frame.
+        This function defines the calling application stack frame.
+
+    sleep(seconds=0)
+
+        This function allows specific calling applications to suspend
+        execution for a specified number of seconds.
 
     task_exit()
 
-        This method (gracefully) exits the respective application and
-        returns a status code of 0 (i.e., success).
+        This function (gracefully) exits the respective application
+        and returns a status code of 0 (i.e., success).
 
 Author(s)
 ---------
@@ -61,6 +66,7 @@ History
 
 import inspect
 import sys
+import time
 
 from utils.logger_interface import Logger
 
@@ -87,7 +93,7 @@ def _get_stack() -> list:
     Description
     -----------
 
-    This method defines the calling application stack frame.
+    This function defines the calling application stack frame.
 
     Returns
     -------
@@ -103,6 +109,30 @@ def _get_stack() -> list:
 
     return stack
 
+# ----
+
+
+def sleep(seconds: int = 0) -> None:
+    """
+    Description
+    -----------
+
+    This function allows specific calling applications to suspend
+    execution for a specified number of seconds.
+
+    Keywords
+    --------
+
+    seconds: int, optional
+
+        A Python integer specifying the number of seconds for which to
+        suspend execution.
+
+    """
+
+    # Suspend execution for the specified number of seconds.
+    time.sleep(seconds)
+
 
 # ----
 
@@ -112,7 +142,7 @@ def task_exit() -> None:
     Description
     -----------
 
-    This method (gracefully) exits the respective application and
+    This function (gracefully) exits the respective application and
     returns a status code of 0 (i.e., success).
 
     """
