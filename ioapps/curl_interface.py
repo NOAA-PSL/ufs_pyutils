@@ -165,15 +165,9 @@ def _check_curl_env() -> str:
 
     # Check the run-time environment in order to determine the curl
     # application executable path.
-    cmd = ["which", "curl"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
+    curl_exec = system_interface.get_app_path(app="curl")
 
-    # Define the curl application executable path; proceed
-    # accordingly.
-    if len(out) > 0:
-        curl_exec = out.rstrip().decode("utf-8")
-    else:
+    if curl_exec is None:
         msg = (
             "The curl application executable could not be determined "
             "from the run-time environment. Aborting!!!"
@@ -252,7 +246,8 @@ def get_webfile(
 
             # Define the standard output stream and the curl
             # application executable command line arguments.
-            msg = "Writing collected URL path {0} to local path {1}.".format(url, path)
+            msg = "Writing collected URL path {0} to local path {1}.".format(
+                url, path)
             stdout = subprocess.PIPE
             cmd = ["{0}".format(curl_exec), "-C", "-", "-O", url]
 
