@@ -183,6 +183,7 @@ def _check_awscli_env() -> str:
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
     awscli = system_interface.get_app_path(app="aws")
+
     if awscli is None:
         msg = (
             "The AWS CLI executable could not be determined for your "
