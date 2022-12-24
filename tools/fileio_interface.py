@@ -32,7 +32,7 @@ Description
 Classes
 -------
 
-    RNRYAMLLoader()
+    YAMLLoader()
 
         This is the base-class object for all YAML file parsing
         interfaces; it is a sub-class of yaml.SafeLoader.
@@ -177,7 +177,6 @@ import re
 import shutil
 import subprocess
 import numpy
-import yaml
 
 from tools import parser_interface
 from typing import Union
@@ -196,15 +195,13 @@ __all__ = [
     "filesize",
     "makedirs",
     "read_json",
-    "read_yaml",
     "removefiles",
     "rename",
     "rmdir",
     "symlink",
     "touch",
     "write_jinja2",
-    "write_json",
-    "write_yaml",
+    "write_json"
 ]
 
 # ----
@@ -216,39 +213,6 @@ logger = Logger()
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-
-# ----
-
-
-class RNRYAMLLoader(yaml.SafeLoader):
-    """
-    Description
-    -----------
-
-    This is the base-class object for all YAML file parsing
-    interfaces; it is a sub-class of yaml.SafeLoader.
-
-    """
-
-    # Define the YAML library loader type; this follows from the
-    # discussion found at
-    # https://stackoverflow.com/questions/52412297/\
-    #   how-to-replace-environment-variable-value-in-yaml-file-to-be-parsed-using-python
-    envvar_matcher = re.compile(r".*\$\{([^}^{]+)\}.*")
-
-    def envvar_constructor(self, node):
-        """
-        Description
-        -----------
-
-        This function is the environment variable template
-        constructor.
-
-        """
-
-        return os.path.expandvars(node.value)
-
 
 # ----
 
@@ -331,7 +295,8 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -607,86 +572,6 @@ def read_json(json_file: str) -> dict:
 
     return json_dict
 
-
-# ----
-
-
-def read_yaml(yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
-    """
-    Description
-    -----------
-
-    This function ingests a YAML Ain't Markup Language (e.g., YAML)
-    formatted file and returns a Python dictionary containing all
-    attributes of the file.
-
-    Parameters
-    ----------
-
-    yaml_file: str
-
-        A Python string containing the full-path to the YAML file to
-        be parsed.
-
-    Keywords
-    --------
-
-    return_obj: bool, optional
-
-        A Python boolean valued variable specifying whether to return
-        a Python object containing the YAML-formatted file contents;
-        in this instance a Python dictionary will be defined using the
-        contents of the YAML-formatted file and then the Python object
-        will be constructed; if True, yaml_obj is returned instead of
-        yaml_dict.
-
-    Returns
-    -------
-
-    yaml_dict: dict
-
-        A Python dictionary containing all attributes ingested from
-        the YAML-formatted file; returned if return_obj is False upon
-        entry.
-
-    yaml_obj: object
-
-        A Python object containing all attributes injested from the
-        YAML-formatted file; returned if return_obj is True upon
-        entry.
-
-    """
-
-    # Define the YAML library loader type.
-    RNRYAMLLoader.add_implicit_resolver("!ENV", RNRYAMLLoader.envvar_matcher, None)
-    RNRYAMLLoader.add_constructor("!ENV", RNRYAMLLoader.envvar_constructor)
-
-    # Open and read the contents of the specified YAML-formatted file
-    # path.
-    with open(yaml_file, "r") as stream:
-        yaml_dict = yaml.load(stream, Loader=RNRYAMLLoader)
-
-    # Define the Python data type to be returned; proceed accordingly.
-    yaml_return = None
-    if return_obj:
-        (attr_list, yaml_obj) = ([], parser_interface.object_define())
-        for key in yaml_dict.keys():
-            attr_list.append(key)
-            value = parser_interface.dict_key_value(
-                dict_in=yaml_dict, key=key, no_split=True
-            )
-            yaml_obj = parser_interface.object_setattr(
-                object_in=yaml_obj, key=key, value=value
-            )
-        yaml_return = yaml_obj
-
-    if not return_obj:
-
-        yaml_return = yaml_dict
-
-    return yaml_return
-
-
 # ----
 
 
@@ -923,43 +808,3 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
     # JSON-formatted file path.
     with open(json_file, "w") as file:
         json.dump(in_dict, file, indent=indent)
-
-
-# ----
-
-
-def write_yaml(yaml_file: str, in_dict: dict, default_flow_style: bool = False) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a YAML Ain't Markup Language (e.g., YAML)
-    formatted file using the specified Python dictionary.
-
-    Parameters
-    ----------
-
-    yaml_file: str
-
-        A Python string containing the full-path to the YAML file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the YAML file.
-
-    Keywords
-    --------
-
-    default_flow_style: bool, optional
-
-        A Python boolean variable specifying the output YAML file
-        formatting.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # YAML-formatted file path.
-    with open(yaml_file, "w") as file:
-        yaml.dump(in_dict, file, default_flow_style=default_flow_style)
