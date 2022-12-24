@@ -60,6 +60,12 @@ Functions
         the dictionary key does not exist within the Python
         dictionary, the function will return NoneType.
 
+    dict_merge(dict1, dict2)
+
+        This function merges two Python dictionaries and returns a
+        generator containing the merged Python dictionary relative to
+        the checks within the function.
+
     enviro_get(envvar)
 
         This function retrieves the environment variable corresponding
@@ -177,6 +183,7 @@ import os
 import sys
 import types
 
+from typing import Generator
 from typing import Union
 from utils.error_interface import Error
 
@@ -187,6 +194,7 @@ __all__ = [
     "dict_formatter",
     "dict_key_remove",
     "dict_key_value",
+    "dict_merge",
     "enviro_get",
     "enviro_set",
     "find_commonprefix",
@@ -522,6 +530,67 @@ def dict_key_value(
 
     return value
 
+# ----
+
+
+def dict_merge(dict1: dict, dict2: dict) -> Generator[dict, dict, dict]:
+    """
+    Description
+    -----------
+
+    This function merges two Python dictionaries and returns a
+    generator containing the merged Python dictionary relative to the
+    checks within the function.
+
+    Parameters
+    ----------
+
+    dict1: dict
+
+         A Python dictionary to be merged.
+
+    dict2: dict
+
+         A Python dictionary to be merged.
+
+    Returns
+    -------
+
+    A Python generator is returned containing the merged Python
+    dictionaries.
+
+    """
+
+    # Define the attributes list containing the unique values from the
+    # respective Python dictionaries.
+    attrs_list = set(dict1.keys()).union(dict2.keys())
+    for k in attrs_list:
+
+        # For unique key values, merge the respective Python
+        # dictionaries.
+        if k in dict1 and k in dict2:
+
+            # If the respective Python dictionary key values are
+            # Python dictionaries, proceed accordingly.
+            if isinstance(dict1[k], dict) and isinstance(dict2[k], dict):
+                yield (k, dict(dict_merge(dict1[k], dict2[k])))
+
+            else:
+
+                # If one of the Python dictionary key values is not a
+                # Python dictionary, update the second dictionary and
+                # continue.
+                yield (k, dict2[k])
+
+        elif k in dict1:
+
+            # Update the first Python dictionary accordingly.
+            yield (k, dict1[k])
+
+        else:
+
+            # Update the second Python dictionary accordingly.
+            yield (k, dict2[k])
 
 # ----
 
@@ -725,7 +794,8 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(
+        object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -958,7 +1028,8 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower()
+                  and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
@@ -1324,7 +1395,8 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
+    out_dict = collections.OrderedDict.fromkeys(
+        x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):
