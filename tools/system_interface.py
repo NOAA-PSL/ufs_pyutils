@@ -36,6 +36,11 @@ Functions
 
         This function defines the calling application stack frame.
 
+    get_app_path(app)
+
+        This function collects the path for the specified application;
+        if the path cannot be determined, NoneType is returned.
+
     sleep(seconds=0)
 
         This function allows specific calling applications to suspend
@@ -65,6 +70,7 @@ History
 # ----
 
 import inspect
+import shutil
 import sys
 import time
 
@@ -73,7 +79,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ["task_exit"]
+__all__ = ["get_app_path", "sleep", "task_exit"]
 
 # ----
 
@@ -108,6 +114,41 @@ def _get_stack() -> list:
     stack = inspect.stack()
 
     return stack
+
+# ----
+
+
+def get_app_path(app: str) -> str:
+    """
+    Description
+    -----------
+
+    This function collects the path for the specified application; if
+    the path cannot be determined, NoneType is returned.
+
+    Parameters
+    ----------
+
+    app: str
+
+        A Python string specifying the name of the application for
+        which to return the respective path.
+
+    Returns
+    -------
+
+    app_path: str
+
+        A Python string specifying the path to the application name
+        provided upon entry; if the application path cannot be
+        determined, this value is NoneType.
+
+    """
+
+    # Collect the application path.
+    app_path = shutil.which(path)
+
+    return app_path
 
 # ----
 
