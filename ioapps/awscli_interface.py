@@ -103,6 +103,7 @@ from ast import literal_eval
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 from tools import parser_interface
+from tools import system_interface
 
 # ----
 
@@ -181,15 +182,8 @@ def _check_awscli_env() -> str:
 
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
-    cmd = ["which", "aws"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, _) = proc.communicate()
-
-    # Define the AWS CLI executable path; proceed accordingly.
-    if len(out) > 0:
-        awscli = out.rstrip().decode("utf-8")
-
-    else:
+    awscli = system_interface.get_app_path(app="aws")
+    if awscli is None:
         msg = (
             "The AWS CLI executable could not be determined for your "
             "system; please check that the appropriate AWS CLI "
@@ -262,7 +256,8 @@ def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> b
         cmd.append(f"{profile}")
 
     # Query the AWS path; proceed accordingly.
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (contents, _) = proc.communicate()
     proc.wait()
 
@@ -347,7 +342,8 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
     try:
 
         # Collect a list of the AWS resource path contents.
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (path_list, _) = proc.communicate()
         proc.wait()
 
