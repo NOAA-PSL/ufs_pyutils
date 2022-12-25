@@ -179,6 +179,7 @@ import numpy
 import subprocess
 
 from tools import parser_interface
+from tools import system_interface
 from typing import Union
 from utils.error_interface import Error
 from utils.logger_interface import Logger
@@ -279,17 +280,10 @@ def _get_ncapp_path(ncapp: str) -> str:
     """
 
     # Check the run-time environment in order to determine the netCDF
-    # application path.
-    cmd = ["which", f"{ncapp}"]
+    # application path; proceed accordingly.
+    ncapp_path = system_interface.get_app_path(app=f"{ncapp}")
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, _) = proc.communicate()
-
-    # Define the netCDF application path; proceed accordingly.
-    if len(out) > 0:
-        ncapp_path = out.rstrip().decode("utf-8")
-
-    else:
+    if ncapp_path is None:
         msg = (
             f"The path for the netCDF application {ncapp} could not be "
             "determined for your system; please check that the appropriate "
