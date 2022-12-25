@@ -180,7 +180,9 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
     # Move to the working directory within which to extract the files
     # within the tarball archive.
-    msg = f"The contents of tarball path {tarball_path} will be extracted to path {path}."
+    msg = (
+        f"The contents of tarball path {tarball_path} will be extracted to path {path}."
+    )
     logger.warn(msg=msg)
     os.chdir(path)
 
