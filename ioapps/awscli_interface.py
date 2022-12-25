@@ -98,12 +98,11 @@ History
 # ----
 
 import subprocess
-
 from ast import literal_eval
+
+from tools import parser_interface, system_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
-from tools import parser_interface
-from tools import system_interface
 
 # ----
 

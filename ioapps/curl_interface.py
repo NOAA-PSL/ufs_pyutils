@@ -81,14 +81,13 @@ History
 # pylint: disable=consider-using-with
 # pylint: disable=raise-missing-from
 # pylint: disable=unused-argument
-# pylint: disable=wrong-import-order
 
 # ----
 
 import os
-import requests
 import subprocess
 
+import requests
 from bs4 import BeautifulSoup
 from tools import system_interface
 from utils.error_interface import Error

@@ -170,17 +170,15 @@ History
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-locals
-# pylint: disable=wrong-import-order
 
 # ----
 
+import subprocess
+from typing import Union
+
 import netCDF4
 import numpy
-import subprocess
-
-from tools import parser_interface
-from tools import system_interface
-from typing import Union
+from tools import parser_interface, system_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 
@@ -542,7 +540,8 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
         # Collect and define the destination netCDF-formatted file
         # attributes.
         for (name, variable) in srcfile.variables.items():
-            dstfile.createVariable(name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(
+                name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
         dstfile.setncatts(srcfile.__dict__)
 

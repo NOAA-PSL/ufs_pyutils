@@ -126,15 +126,14 @@ History
 # pylint: disable=too-many-locals
 # pylint: disable=raise-missing-from
 # pylint: disable=redefined-outer-name
-# pylint: disable=wrong-import-order
 
 # ----
 
-import boto3
+from tempfile import NamedTemporaryFile
 
+import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
-from tempfile import NamedTemporaryFile
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 
@@ -332,7 +331,8 @@ def _client(
     # Establish the boto3 resource bucket client object in accordance
     # with the upon entry parameter values.
     if unsigned:
-        client = boto3.client(resource, config=Config(signature_version=UNSIGNED))
+        client = boto3.client(
+            resource, config=Config(signature_version=UNSIGNED))
 
     if session is not None:
         session = _session(profile_name=profile_name)

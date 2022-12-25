@@ -109,8 +109,7 @@ History
 
 import sqlite3
 
-from tools import fileio_interface
-from tools import parser_interface
+from tools import fileio_interface, parser_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 

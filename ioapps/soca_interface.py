@@ -67,15 +67,16 @@ History
 
 # ----
 
-import ioapps
 import numbers
-import numpy
 import os
+
+import numpy
 import produtil
 import tools
-
 from produtil.error_interface import Error
 from produtil.logger_interface import Logger
+
+import ioapps
 
 logger = Logger()
 
