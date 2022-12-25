@@ -46,7 +46,7 @@ Functions
         file path.
 
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 23 August 2022
 
@@ -103,7 +103,7 @@ class HashLibError(Error):
         Creates a new HashLibError object.
 
         """
-        super(HashLibError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -154,8 +154,8 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
 
     if hash_level not in hash_types:
         msg = (
-            "The checksum/hash level type {0} is not supported. "
-            "Aborting!!!".format(hash_level)
+            f"The checksum/hash level type {hash_level} is not supported. "
+            "Aborting!!!"
         )
         raise HashLibError(msg=msg)
 
@@ -165,8 +165,8 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
         object_in=hashlib, key=hash_level.lower()
     )
 
-    with open(filepath, "rb") as f:
-        c = f.read()
-    hash_index = hash_obj(c).hexdigest()
+    with open(filepath, "rb") as file:
+        value = file.read()
+    hash_index = hash_obj(value).hexdigest()
 
     return hash_index
