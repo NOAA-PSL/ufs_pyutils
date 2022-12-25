@@ -278,8 +278,9 @@ def _database_connect(path: str) -> tuple:
 # ----
 
 
-def _database_execute(cursor: object, exec_str: str,
-                      is_read: bool = False) -> Union[dict, dict]:
+def _database_execute(
+    cursor: object, exec_str: str, is_read: bool = False
+) -> Union[dict, dict]:
     """
     Description
     -----------
@@ -698,8 +699,7 @@ def read_table(path: str, table_name: str) -> dict:
         # Define the SQLite3 database path connection.
         (connect, cursor) = _database_connect(path=path)
         exec_str = f"SELECT * FROM {table_name}"
-        table = _database_execute(
-            cursor=cursor, exec_str=exec_str, is_read=True)
+        table = _database_execute(cursor=cursor, exec_str=exec_str, is_read=True)
 
         # Build the Python dictionary containing the SQLite3 database
         # table contents
@@ -851,12 +851,9 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
             column_values.append(column_value)
 
         column_names_string = ",".join(column_names)
-        column_values_string = ",".join(
-            [str(value) for value in column_values])
+        column_values_string = ",".join([str(value) for value in column_values])
         exec_str = (
-            exec_str
-            + f"({column_names_string})"
-            + f" VALUES ({column_values_string});"
+            exec_str + f"({column_names_string})" + f" VALUES ({column_values_string});"
         )
 
         # Execute the SQLite3 database table command; if database is
