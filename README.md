@@ -42,7 +42,7 @@ user@host:$ git clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_
 The package dependencies and the respective repository and manual
 installation attributes are provided in the table below.
 
-<div align="center>
+<div align="center">
 
 | Package | Installation Instructions |
 | :-------------: | :-------------: | 
