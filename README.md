@@ -37,7 +37,7 @@ obtain the entire system, do as follows.
 user@host:$ git clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
 ~~~
 
-# Installing
+# Building and Installing
 
 In order to install via the Python setup applications, do as follows.
 
