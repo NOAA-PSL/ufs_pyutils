@@ -404,9 +404,10 @@ def nccheck(ncfile: str, ncfrmt: str = None) -> bool:
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file(to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file(to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -600,7 +601,7 @@ def nccopy(
     ncfrmtout: str
 
         A Python string specifying the format of the netCDF file to be
-        created; available options are NETCDF4_CLASSIC,
+        created; available options are NETCDF4, NETCDF4_CLASSIC,
         NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA.
 
     Keywords
@@ -609,9 +610,10 @@ def nccopy(
     ncfrmtin: str, optional
 
         A Python string specifying the format of the input
-        netCDF-formatted file; available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        netCDF-formatted file; available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     ncvarlist: list, optional
 
@@ -644,6 +646,7 @@ def nccopy(
         # Define the argument string corresponding to the format of
         # the copied netCDF-formatted file; proceed accordingly.
         ncfrmtout_dict = {
+            "NETCDF4": "4",
             "NETCDF4_CLASSIC": "4",
             "NETCDF3_CLASSIC": "3",
             "NETCDF3_64BIT_OFFSET": "2",
@@ -667,9 +670,11 @@ def nccopy(
             f"as {ncfileout} and format {ncfrmtout.upper()}."
         )
         logger.info(msg=msg)
-        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}", f"{ncfilein}", f"{ncfileout}"]
+        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}",
+               f"{ncfilein}", f"{ncfileout}"]
 
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
 
     # Create a direct copy of the netCDF formatted file provided upon
@@ -688,10 +693,12 @@ def nccopy(
         # array dimensions for the destination netCDF-formatted file.
         for (name, dimension) in srcfile.dimensions.items():
             if ncunlimval is None:
-                dimsize = len(dimension) if not dimension.isunlimited() else None
+                dimsize = len(
+                    dimension) if not dimension.isunlimited() else None
 
             if ncunlimval is not None:
-                dimsize = len(dimension) if not dimension.isunlimited() else ncunlimval
+                dimsize = len(
+                    dimension) if not dimension.isunlimited() else ncunlimval
 
             dstfile.createDimension(name, dimsize)
 
@@ -699,14 +706,16 @@ def nccopy(
         # accordingly.
         if ncvarlist is None:
             for (name, variable) in srcfile.variables.items():
-                dstfile.createVariable(name, variable.datatype, variable.dimensions)
+                dstfile.createVariable(
+                    name, variable.datatype, variable.dimensions)
                 dstfile[name][:] = srcfile[name][:]
                 dstfile[name].setncatts(srcfile[name].__dict__)
 
         if ncvarlist is not None:
             for (name, variable) in srcfile.variables.items():
                 if name in ncvarlist:
-                    dstfile.createVariable(name, variable.datatype, variable.dimensions)
+                    dstfile.createVariable(
+                        name, variable.datatype, variable.dimensions)
                     dstfile[name][:] = srcfile[name][:]
                     dstfile[name].setncatts(srcfile[name].__dict__)
 
@@ -774,13 +783,13 @@ def nccopyvar(
     ncfrmtin: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        input file; available options are NETCDF4_CLASSIC,
+        input file; available options are NETCDF4, NETCDF4_CLASSIC,
         NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA.
 
     ncfrmtout: str, optional
 
         A Python string specifying the format of the netCDF file to be
-        written to; available options are NETCDF4_CLASSIC,
+        written to; available options are NETCDF4, NETCDF4_CLASSIC,
         NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA.
 
     """
@@ -792,14 +801,16 @@ def nccopyvar(
         ncfrmtout = "NETCDF4_CLASSIC"
 
     srcfile = netCDF4.Dataset(filename=ncfilein, mode="r", format=ncfrmtin)
-    dstfile = netCDF4.Dataset(filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
+    dstfile = netCDF4.Dataset(
+        filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
 
     # Loop through each variable within the netCDF-formatted file and
     # copy the specified variables to the destination netCDF-formatted
     # file.
     for (name, variable) in srcfile.variables.items():
         if ncvarname == name:
-            dstfile.createVariable(name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(
+                name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
             dstfile[name][:] = ncvar
 
@@ -833,9 +844,10 @@ def ncnumvar(ncfile: str, ncfrmt: str = None) -> int:
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -899,9 +911,10 @@ def ncreadattr(
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -968,9 +981,10 @@ def ncreaddim(ncfile: str, ncdimname: str, ncfrmt: str = None) -> int:
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -1047,9 +1061,10 @@ def ncreadvar(
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     from_ncgroup: bool, optional
 
@@ -1216,9 +1231,10 @@ def ncvarexist(ncfile: str, ncvarname: str, ncfrmt: str = None) -> bool:
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -1276,9 +1292,10 @@ def ncvarlist(ncfile: str, ncfrmt: str = None) -> list:
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     Returns
     -------
@@ -1342,9 +1359,10 @@ def ncwrite(
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     """
 
@@ -1389,7 +1407,8 @@ def ncwrite(
                         object_in=var, key=attr, value=value
                     )
 
-            vallist = numpy.reshape(list(map(datatype, var_dict["values"])), var.shape)
+            vallist = numpy.reshape(
+                list(map(datatype, var_dict["values"])), var.shape)
             var[:] = numpy.array(vallist, dtype=datatype)
 
         except TypeError:
@@ -1437,9 +1456,10 @@ def ncwritevar(
     ncfrmt: str, optional
 
         A Python string specifying the format of the netCDF-formatted
-        file (to be created); available options are NETCDF4_CLASSIC,
-        NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or NETCDF3_64BIT_DATA;
-        if not specified, NETCDF4_CLASSIC is assumed.
+        file (to be created); available options are NETCDF4,
+        NETCDF4_CLASSIC, NETCDF3_CLASSIC, NETCDF3_64BIT_OFFSET, or
+        NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
+        assumed.
 
     """
 
