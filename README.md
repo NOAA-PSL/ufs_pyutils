@@ -4,7 +4,7 @@
 
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 
-![Dependencies](https://img.shields.io/badge/dependencies-astropy boto3 bs4 croniter netcdf4 numpy pyyaml-orange)
+![Dependencies](https://img.shields.io/badge/dependencies-astropy-boto3-bs4-croniter-netcdf4-numpy-pyyaml-orange)
 
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
