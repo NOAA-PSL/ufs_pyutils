@@ -6,7 +6,7 @@
 
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 
-![Dependencies](https://img.shields.io/badge/dependencies-astropy|boto3|bs4|croniter|netcdf4|numpy|pylint|pyyaml-blueviolet)
+![Dependencies](https://img.shields.io/badge/dependencies-astropy|boto3|bs4|croniter|netcdf4|numpy|pylint|pyyaml-orange)
 
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
@@ -37,6 +37,17 @@ obtain the entire system, do as follows.
 user@host:$ git clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
 ~~~
 
+# Dependencies
+
+The package dependencies and the respective repository and manual
+installation attributes are provided in the table below.
+
+<div align="center>
+
+
+
+</div>
+
 # Building and Installing
 
 In order to install via the Python setup applications, do as follows.
@@ -56,7 +67,7 @@ respective fork(s) to the authoritative repository, we request that
 the user first submit an issue and that the fork naming conventions
 follow those listed below.
 
-- `docs/user_fork_name`: Documenation additions and/or corrections for the application(s).
+- `docs/user_fork_name`: Documentation additions and/or corrections for the application(s).
 
 - `feature/user_fork_name`: Additions, enhancements, and/or upgrades for the application(s).
 
