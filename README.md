@@ -3,9 +3,7 @@
 
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 
-[![Dependencies](https://img.shields.io/badge/dependencies-netcdf4-blueviolet)|(https://img.shields.io/badge/dependencies-croniter-blueviolet)
-
-#(https://github.com/Unidata/netcdf4-python)|(https://img.shields.io/badge/dependencies-croniter-blueviolet)](https://github.com/Unidata/netcdf4-python)]
+[![Dependencies](https://img.shields.io/badge/dependencies-bs4-blueviolet)|(https://img.shields.io/badge/dependencies-croniter-blueviolet)
 
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
