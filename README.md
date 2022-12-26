@@ -1,3 +1,14 @@
+[![License](https://img.shields.io/badge/license-LGPL_v2.1-lightgray)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/blob/develop/LICENSE)
+
+![Python Version](https://img.shields.io/badge/python-3.5|3.6|3.7-blue)
+
+![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
+
+![Dependencies](https://img.shields.io/badge/dependencies-astropy boto3 bs4 croniter netcdf4 numpy pyyaml-orange)
+
+[![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
+[![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
+
 # Disclaimer
 
 The United States Department of Commerce (DOC) GitHub project code is
@@ -14,19 +25,6 @@ Commerce. The Department of Commerce seal and logo, or the seal and
 logo of a DOC bureau, shall not be used in any manner to imply
 endorsement of any commercial product or activity by DOC or the United
 States Government.
-
-# Attributes
-
-[![License](https://img.shields.io/badge/license-LGPL_v2.1-lightgray)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/blob/develop/LICENSE)
-
-![Python Version](https://img.shields.io/badge/python-3.5|3.6|3.7-blue)
-
-![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
-
-![Dependencies](https://img.shields.io/badge/dependencies-astropy|boto3|bs4|croniter|netcdf4|numpy|pylint|pyyaml-orange)
-
-[![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
-[![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
 
 # Cloning
 
