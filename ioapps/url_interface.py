@@ -189,10 +189,7 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
         soup = BeautifulSoup(url_contents, "html.parser")
 
     except Exception as error:
-        msg = (
-            f"Retrieving the URL path {url} failed with error {error}. "
-            "Aborting!!!"
-        )
+        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
         raise URLError(msg=msg)
 
     # Compile a list of all URL file paths beneath the respective URL
@@ -304,10 +301,7 @@ def read_webfile(
         request = urllib.request.Request(url=url)
 
     except Exception as error:
-        msg = (
-            f"Retrieving the URL path {url} failed with error {error}. "
-            "Aborting!!!"
-        )
+        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
         raise URLError(msg=msg)
 
     # Read the contents of the URL file path; proceed accordingly.
@@ -342,8 +336,7 @@ def read_webfile(
 
             if not ignore_missing:
                 msg = (
-                    f"Opening URL path {url} failed with error {error}. "
-                    "Aborting!!!"
+                    f"Opening URL path {url} failed with error {error}. " "Aborting!!!"
                 )
                 raise URLError(msg=msg)
 
