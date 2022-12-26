@@ -44,7 +44,7 @@ installation attributes are provided in the table below.
 
 <div align="center">
 
-| Package | Installation Instructions |
+| Dependency Package | Installation Instructions |
 | :-------------: | :-------------: | 
 | [`astropy`](https://github.com/astropy/astropy) | <div align="left">`pip install astropy==5.2`</div>| 
 | [`boto3`](https://github.com/boto/boto3) | <div align="left">`conda install -c anaconda boto3==1.24.28`</div>| 
