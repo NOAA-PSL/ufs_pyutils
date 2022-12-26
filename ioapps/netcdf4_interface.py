@@ -541,8 +541,7 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
         # Collect and define the destination netCDF-formatted file
         # attributes.
         for (name, variable) in srcfile.variables.items():
-            dstfile.createVariable(
-                name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
         dstfile.setncatts(srcfile.__dict__)
 
@@ -670,11 +669,9 @@ def nccopy(
             f"as {ncfileout} and format {ncfrmtout.upper()}."
         )
         logger.info(msg=msg)
-        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}",
-               f"{ncfilein}", f"{ncfileout}"]
+        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}", f"{ncfilein}", f"{ncfileout}"]
 
-        proc = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
 
     # Create a direct copy of the netCDF formatted file provided upon
@@ -693,12 +690,10 @@ def nccopy(
         # array dimensions for the destination netCDF-formatted file.
         for (name, dimension) in srcfile.dimensions.items():
             if ncunlimval is None:
-                dimsize = len(
-                    dimension) if not dimension.isunlimited() else None
+                dimsize = len(dimension) if not dimension.isunlimited() else None
 
             if ncunlimval is not None:
-                dimsize = len(
-                    dimension) if not dimension.isunlimited() else ncunlimval
+                dimsize = len(dimension) if not dimension.isunlimited() else ncunlimval
 
             dstfile.createDimension(name, dimsize)
 
@@ -706,16 +701,14 @@ def nccopy(
         # accordingly.
         if ncvarlist is None:
             for (name, variable) in srcfile.variables.items():
-                dstfile.createVariable(
-                    name, variable.datatype, variable.dimensions)
+                dstfile.createVariable(name, variable.datatype, variable.dimensions)
                 dstfile[name][:] = srcfile[name][:]
                 dstfile[name].setncatts(srcfile[name].__dict__)
 
         if ncvarlist is not None:
             for (name, variable) in srcfile.variables.items():
                 if name in ncvarlist:
-                    dstfile.createVariable(
-                        name, variable.datatype, variable.dimensions)
+                    dstfile.createVariable(name, variable.datatype, variable.dimensions)
                     dstfile[name][:] = srcfile[name][:]
                     dstfile[name].setncatts(srcfile[name].__dict__)
 
@@ -801,16 +794,14 @@ def nccopyvar(
         ncfrmtout = "NETCDF4_CLASSIC"
 
     srcfile = netCDF4.Dataset(filename=ncfilein, mode="r", format=ncfrmtin)
-    dstfile = netCDF4.Dataset(
-        filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
+    dstfile = netCDF4.Dataset(filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
 
     # Loop through each variable within the netCDF-formatted file and
     # copy the specified variables to the destination netCDF-formatted
     # file.
     for (name, variable) in srcfile.variables.items():
         if ncvarname == name:
-            dstfile.createVariable(
-                name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
             dstfile[name][:] = ncvar
 
@@ -1407,8 +1398,7 @@ def ncwrite(
                         object_in=var, key=attr, value=value
                     )
 
-            vallist = numpy.reshape(
-                list(map(datatype, var_dict["values"])), var.shape)
+            vallist = numpy.reshape(list(map(datatype, var_dict["values"])), var.shape)
             var[:] = numpy.array(vallist, dtype=datatype)
 
         except TypeError:
