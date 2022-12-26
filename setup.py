@@ -58,27 +58,37 @@ from setuptools import setup
 # ----
 
 # Define the package attributes.
-AUTHOR = 'Henry R. Winterbottom'
-AUTHOR_EMAIL = 'henry.winterbottom@noaa.gov'
+AUTHOR = "Henry R. Winterbottom"
+AUTHOR_EMAIL = "henry.winterbottom@noaa.gov"
 LICENSE = "License :: OSI Approved :: LGPL-2.0 License"
-NAME = 'ufs_pyutils'
-URL = 'https://github.com/HenryWinterbottom-NOAA/ufs_pytils'
-VERSION = '0.0.0'
+NAME = "ufs_pyutils"
+URL = "https://github.com/HenryWinterbottom-NOAA/ufs_pytils"
+VERSION = "0.0.0"
 
 DESCRIPTION = "Unified Forecast System Python utilities package."
 
-classifiers = [f"Development Status :: Version {VERSION}",
-               "Programming Language :: Python :: >= 3.5",
-               "Intended Audience :: Science/Research",
-               "License :: OSI Approved :: LGPL-2.0 License",
-               "Topic :: Software Development :: Libraries :: Python Modules"]
+classifiers = [
+    f"Development Status :: Version {VERSION}",
+    "Programming Language :: Python :: >= 3.5",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: LGPL-2.0 License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 
 # ----
 
 # Define the package dependencies.
-install_requires = ["astropy==5.2", "boto3==1.24.28", "bs4==0.0.1", "croniter==1.3.8",
-                    "netcdf4==1.6.2", "numpy==1.22.4", "pytest==7.2.0",
-                    "pytest-order==1.0.1", "pyyaml==6.0"]
+install_requires = [
+    "astropy==5.2",
+    "boto3==1.24.28",
+    "bs4==0.0.1",
+    "croniter==1.3.8",
+    "netcdf4==1.6.2",
+    "numpy==1.22.4",
+    "pytest==7.2.0",
+    "pytest-order==1.0.1",
+    "pyyaml==6.0",
+]
 
 # ----
 
