@@ -3,7 +3,7 @@
 
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 
-![Dependencies](https://img.shields.io/badge/dependencies-bs4|croniter-blueviolet)
+![Dependencies](https://img.shields.io/badge/dependencies-astropy|boto3|bs4|croniter|netcdf4|numpy|pylint|pyyaml-blueviolet)
 
 
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
