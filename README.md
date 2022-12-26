@@ -5,7 +5,6 @@
 
 ![Dependencies](https://img.shields.io/badge/dependencies-astropy|boto3|bs4|croniter|netcdf4|numpy|pylint|pyyaml-blueviolet)
 
-
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
 
@@ -34,6 +33,18 @@ obtain the entire system, do as follows.
 ~~~
 user@host:$ git clone --recursive https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
 ~~~
+
+# Installing
+
+In order to install via the Python setup applications, do as follows.
+
+~~~
+user@host:$ cd ufs_pyutils
+user@host:$ python setup.py build
+user@host:$ python setup.py install
+~~~
+
+For additional information and options for building Python packages, see [here](https://docs.python.org/3.5/distutils/setupscript.html)
 
 # Forking
 
