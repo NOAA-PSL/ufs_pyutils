@@ -56,10 +56,10 @@ respective fork(s) to the authoritative repository, we request that
 the user first submit an issue and that the fork naming conventions
 follow those listed below.
 
-- `docs/user_branch_name`: Documenation additions and/or corrections for the application(s).
+- `docs/user_fork_name`: Documenation additions and/or corrections for the application(s).
 
-- `feature/user_branch_name`: Additions, enhancements, and/or upgrades for the application(s).
+- `feature/user_fork_name`: Additions, enhancements, and/or upgrades for the application(s).
 
-- `fix/user_branch_name`: Bug-type fixes for the application(s) that do not require immediate attention.
+- `fix/user_fork_name`: Bug-type fixes for the application(s) that do not require immediate attention.
 
-- `hotfix/user_branch_name`: Bug-type fixes which require immediate attention to fix issues that compromise the integrity of the respective application(s).  
+- `hotfix/user_fork_name`: Bug-type fixes which require immediate attention to fix issues that compromise the integrity of the respective application(s).  
