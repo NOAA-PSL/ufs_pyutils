@@ -130,13 +130,13 @@ RUN wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-p
     rm Miniconda3-py39_4.10.3-Linux-x86_64.sh
 
 # Patch the Miniconda install for the respective application.
-RUN /miniconda/bin/pip install netcdf4 && \
-    /miniconda/bin/conda install numpy && \
-    /miniconda/bin/pip install astropy && \
-    /miniconda/bin/pip install bs4 && \
-    /miniconda/bin/pip install croniter && \
-    /miniconda/bin/conda install -c anaconda pyyaml && \
-    /miniconda/bin/conda install -c anaconda boto3 && \
+RUN /miniconda/bin/pip install netcdf4==1.6.2 && \
+    /miniconda/bin/pip install numpy==1.22.4 && \
+    /miniconda/bin/pip install astropy==5.2 && \
+    /miniconda/bin/pip install bs4==0.0.1 && \
+    /miniconda/bin/pip install croniter==1.3.8 && \
+    /miniconda/bin/conda install -c anaconda pyyaml==6.0 && \
+    /miniconda/bin/conda install -c anaconda boto3==1.24.28 && \
     /miniconda/bin/conda clean --tarballs
 
 #----
