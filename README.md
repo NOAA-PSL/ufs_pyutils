@@ -1,6 +1,6 @@
 # Attributes
 
-[![License](https://img.shields.io/badge/license-lgpl_v2.1-lightgray)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/blob/develop/LICENSE)
+[![License](https://img.shields.io/badge/license-LGPL_v2.1-lightgray)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/blob/develop/LICENSE)
 
 ![Python Version](https://img.shields.io/badge/python-3.5|3.6|3.7-blue)
 
