@@ -54,7 +54,7 @@ Functions
         respective tarball file.
 
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 25 September 2022
 
@@ -64,6 +64,12 @@ History
     2022-09-25: Henry Winterbottom -- Initial implementation.
 
 """
+
+# ----
+
+# pylint: disable=consider-using-with
+# pylint: disable=raise-missing-from
+# pylint: disable=too-many-arguments
 
 # ----
 
@@ -117,7 +123,7 @@ class TarFileError(Error):
         Creates a new TarFileError object.
 
         """
-        super(TarFileError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -174,14 +180,14 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
     # Move to the working directory within which to extract the files
     # within the tarball archive.
-    msg = "The contents of tarball path {0} will be extracted to " "path {1}.".format(
-        tarball_path, path
+    msg = (
+        f"The contents of tarball path {tarball_path} will be extracted to path {path}."
     )
     logger.warn(msg=msg)
     os.chdir(path)
 
     # Open the existing tarball.
-    msg = "Opening tarball file {0}.".format(tarball_path)
+    msg = f"Opening tarball file {tarball_path}."
     logger.info(msg=msg)
     if mode is None:
         mode = "r"
@@ -194,14 +200,14 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
         # Extract all files in the tarball; proceed accordingly.
         try:
-            msg = "Extracting all files from tarball path {0}.".format(tarball_path)
+            msg = f"Extracting all files from tarball path {tarball_path}."
             logger.info(msg=msg)
             tarball.extractall()
 
         except Exception as error:
             msg = (
-                "The extraction of all files from tarball path {0} "
-                "failed with error {1}. Aborting!!!".format(tarball_path, error)
+                f"The extraction of all files from tarball path {tarball_path} "
+                f"failed with error {error}. Aborting!!!"
             )
             raise TarFileError(msg=msg)
 
@@ -210,21 +216,17 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
     if filelist is not None:
         for filename in filelist:
             try:
-                msg = "Determining tarball object path for file {0}.".format(filename)
+                msg = f"Determining tarball object path for file {filename}."
                 logger.info(msg=msg)
                 tarball_obj = tarball.getmember(filename)
-                msg = "Extracting file {0} from tarball path {1}.".format(
-                    filename, tarball_path
-                )
+                msg = f"Extracting file {filename} from tarball path {tarball_path}."
                 logger.info(msg=msg)
                 tarball.extract(tarball_obj)
 
             except Exception as error:
                 msg = (
-                    "The extraction of file {0} from tarball path {1} "
-                    "failed with error {2}. Aborting!!!".format(
-                        filename, tarball_path, error
-                    )
+                    f"The extraction of file {filename} from tarball path {tarball_path} "
+                    f"failed with error {error}. Aborting!!!"
                 )
                 raise TarFileError(msg=msg)
 
@@ -331,7 +333,7 @@ def write_tarfile(
 
     else:
         mode = "w"
-        kwargs = dict()
+        kwargs = {}
 
     # Open the tarball archive and proceed accordingly.
     os.chdir(path)
@@ -344,13 +346,13 @@ def write_tarfile(
         # Write the respective file names to the tarball archive path;
         # proceed accordingly.
         for filename in filelist:
-            msg = "Adding file {0} to tarball file {1}.".format(filename, tarball_path)
+            msg = f"Adding file {filename} to tarball file {tarball_path}."
             logger.info(msg=msg)
 
             # Define the tarball archive member file name attributes;
             # proceed accordingly.
             if ref_local:
-                tarball.add("./{0}".format(filename))
+                tarball.add(f"./{filename}")
             if not ref_local:
                 tarball.add(filename)
 
@@ -366,15 +368,13 @@ def write_tarfile(
             arcname = parser_interface.dict_key_value(
                 dict_in=filedict, key=filename, no_split=True
             )
-            msg = "Adding file {0} to tarball file {1} as {2}.".format(
-                filename, tarball_path, arcname
-            )
+            msg = f"Adding file {filename} to tarball file {tarball_path} as {arcname}."
             logger.info(msg=msg)
 
             # Define the tarball archive member file name attributes;
             # proceed accordingly.
             if ref_local:
-                kwargs = {"arcname": "./%s" % arcname}
+                kwargs = {"arcname": f"./{arcname}"}
             if not ref_local:
                 kwargs = {"arcname": arcname}
 

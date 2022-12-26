@@ -98,11 +98,11 @@ History
 # ----
 
 import subprocess
-
 from ast import literal_eval
+
+from tools import parser_interface, system_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
-from tools import parser_interface
 
 # ----
 
@@ -181,15 +181,9 @@ def _check_awscli_env() -> str:
 
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
-    cmd = ["which", "aws"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, _) = proc.communicate()
+    awscli = system_interface.get_app_path(app="aws")
 
-    # Define the AWS CLI executable path; proceed accordingly.
-    if len(out) > 0:
-        awscli = out.rstrip().decode("utf-8")
-
-    else:
+    if awscli is None:
         msg = (
             "The AWS CLI executable could not be determined for your "
             "system; please check that the appropriate AWS CLI "
