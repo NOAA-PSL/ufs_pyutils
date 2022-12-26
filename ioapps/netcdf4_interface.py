@@ -541,7 +541,8 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
         # Collect and define the destination netCDF-formatted file
         # attributes.
         for (name, variable) in srcfile.variables.items():
-            dstfile.createVariable(name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(
+                name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
         dstfile.setncatts(srcfile.__dict__)
 
@@ -1377,7 +1378,8 @@ def ncwrite(
                 datatype = str
 
             else:
-                datatype = getattr(numpy, var_dict["type"])
+                datatype = parser_interface.object_getattr(
+                    object_in=numpy, key=var_dict["type"])
 
             var = ncfile.createVariable(
                 varname=var_dict["varname"],
