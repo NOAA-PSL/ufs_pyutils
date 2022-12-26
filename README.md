@@ -51,7 +51,7 @@ installation attributes are provided in the table below.
 | [`bs4`](https://github.com/waylan/beautifulsoup) | `pip install bs4==0.0.1` | 
 | [`croniter`](https://github.com/kiorky/croniter) | `pip install croniter==1.3.8` | 
 | [`netcdf4`](https://github.com/Unidata/netcdf4-python) | `pip install netcdf4==1.6.2` |
-| [`numpy`]() | `conda install numpy==1.22.4` |
+| [`numpy`](https://github.com/numpy/numpy) | `conda install numpy==1.22.4` |
 
 </div>
 
