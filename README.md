@@ -3,7 +3,7 @@
 
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 
-[![Dependencies](https://img.shields.io/badge/dependencies-netcd4|https://github.com/kiorky/croniter-blueviolet)]
+[![Dependencies](https://img.shields.io/badge/dependencies-netcdf4|(https://img.shields.io/badge/dependencies-croniter|)]
 
 #(https://github.com/Unidata/netcdf4-python)|(https://img.shields.io/badge/dependencies-croniter-blueviolet)](https://github.com/Unidata/netcdf4-python)]
 
