@@ -50,7 +50,7 @@ Functions
         TC-vitals format.
 
 Author(s)
---------- 
+---------
 
     Henry R. Winterbottom; 03 December 2022
 
@@ -60,6 +60,10 @@ History
     2022-12-02: Henry Winterbottom -- Initial implementation.
 
 """
+
+# ----
+
+# pylint: disable=consider-using-f-string
 
 # ----
 
@@ -112,7 +116,7 @@ class TCVitalsError(Error):
         Creates a new TCVitalsError object.
 
         """
-        super(TCVitalsError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -141,10 +145,10 @@ def write_tcvfile(filepath: str, tcvstr: str) -> None:
     """
 
     # Write the TC-vitals record(s) to the specified filepath.
-    msg = "Writing TC-Vitals file {0}.".format(filepath)
+    msg = f"Writing TC-Vitals file {filepath}."
     logger.info(msg=msg)
-    with open(filepath, "w") as f:
-        f.write(tcvstr)
+    with open(filepath, "w", encoding="utf-8") as file:
+        file.write(tcvstr)
 
 
 # ----
@@ -284,7 +288,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
         if not parser_interface.object_hasattr(object_in=tcvit_obj, key=mand_attr):
             msg = (
                 "The input TC-vitals variable object does not contain "
-                "the mandatory attribute {0}. Aborting!!!".format(mand_attr)
+                f"the mandatory attribute {mand_attr}. Aborting!!!"
             )
             raise TCVitalsError(msg=msg)
 
@@ -332,7 +336,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
 
     # Define the optional TC-vitals record attributes in accordance
     # with the values provided upon entry.
-    for opt_attr in opt_attr_dict.keys():
+    for (opt_attr, _) in opt_attr_dict.items():
 
         # Collect the TC-vitals record attribute; proceed accordingly.
         if parser_interface.object_hasattr(object_in=tcvit_obj, key=opt_attr):
@@ -379,7 +383,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
             tcvobj.NW34,
             tcvobj.stormdepth,
         )
-        msg = "Constructed the following TC-vitals record:\n{0}".format(tcvstr)
+        msg = f"Constructed the following TC-vitals record:\n{tcvstr}"
         logger.info(msg=msg)
 
     return tcvstr
