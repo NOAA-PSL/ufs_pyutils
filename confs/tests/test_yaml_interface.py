@@ -110,7 +110,8 @@ class TestYAMLMethods(TestCase):
 
         # Define the file paths required for the test method(s).
         dirpath = os.path.join(os.getcwd(), "tests")
-        self.yaml_template = os.path.join(dirpath, "test_files", "yaml.template")
+        self.yaml_template = os.path.join(
+            dirpath, "test_files", "yaml.template")
         self.yaml_check = os.path.join(dirpath, "test_files", "yaml.check")
         self.yaml_path = os.path.join(dirpath, "yaml.test")
 
@@ -151,7 +152,7 @@ class TestYAMLMethods(TestCase):
 
         # Write the YAML-formatted file.
         yaml = yaml_interface.YAML()
-        yaml.write_template(
+        yaml.write_tmpl(
             yaml_dict=self.yaml_test_dict,
             yaml_template=self.yaml_template,
             yaml_path=self.yaml_path,
