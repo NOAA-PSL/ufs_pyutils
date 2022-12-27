@@ -65,6 +65,10 @@ History
 
 # ----
 
+# pylint: disable=raise-missing-from
+
+# ----
+
 import json
 
 from utils.error_interface import Error
