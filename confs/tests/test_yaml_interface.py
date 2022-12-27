@@ -110,8 +110,7 @@ class TestYAMLMethods(TestCase):
 
         # Define the file paths required for the test method(s).
         dirpath = os.path.join(os.getcwd(), "tests")
-        self.yaml_template = os.path.join(
-            dirpath, "test_files", "yaml.template")
+        self.yaml_template = os.path.join(dirpath, "test_files", "yaml.template")
         self.yaml_check = os.path.join(dirpath, "test_files", "yaml.check")
         self.yaml_path = os.path.join(dirpath, "yaml.test")
 
