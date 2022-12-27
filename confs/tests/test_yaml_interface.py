@@ -63,11 +63,11 @@ History
 # ----
 
 import os
-import pytest
+from unittest import TestCase
 
+import pytest
 from confs import yaml_interface
 from tools import fileio_interface
-from unittest import TestCase
 
 # ----
 
