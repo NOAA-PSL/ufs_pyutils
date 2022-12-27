@@ -77,10 +77,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = [
-    "read_json",
-    "write_json"
-]
+__all__ = ["read_json", "write_json"]
 
 # ----
 
@@ -122,6 +119,7 @@ class JSONError(Error):
 
         """
         super().__init__(msg=msg)
+
 
 # ----
 
@@ -175,6 +173,7 @@ def read_json(json_file: str) -> dict:
         raise JSONError(msg=msg)
 
     return json_dict
+
 
 # ----
 
