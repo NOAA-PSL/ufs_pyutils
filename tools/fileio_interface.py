@@ -29,14 +29,6 @@ Description
     This module contains functions required to perform various file
     and directory tasks.
 
-Classes
--------
-
-    YAMLLoader()
-
-        This is the base-class object for all YAML file parsing
-        interfaces; it is a sub-class of yaml.SafeLoader.
-
 Functions
 ---------
 
@@ -88,18 +80,6 @@ Functions
         the directory tree (if needed) and the directory
         leaves/sub-directories.
 
-    read_json(json_file)
-
-        This function ingests a JavaScript Object Notation (e.g.,
-        JSON) formatted file and returns a Python dictionary
-        containing all attributes of the file.
-
-    read_yaml(yaml_file, return_obj=False)
-
-        This function ingests a YAML Ain't Markup Language (e.g.,
-        YAML) formatted file and returns a Python dictionary
-        containing all attributes of the file.
-
     removefiles(filelist)
 
         This function ingests a list of filenames. The function then
@@ -128,21 +108,6 @@ Functions
 
         This function emulates the POSIX UNIX touch application.
 
-    write_jinja2(jinja2_file, in_dict)
-
-        This function writes a Jinja2 formatted file using the
-        specified Python dictionary.
-
-    write_json(json_file, in_dict, indent=4)
-
-        This function writes a JavaScript Object Notation (e.g., JSON)
-        formatted file using the specified Python dictionary.
-
-    write_yaml(yaml_file, in_dict, default_flow_style=False):
-
-        This function writes a YAML Ain't Markup Language (e.g., YAML)
-        formatted file using the specified Python dictionary.
-
 Requirements
 ------------
 
@@ -167,19 +132,17 @@ History
 # pylint: disable=broad-except
 # pylint: disable=too-many-ancestors
 # pylint: disable=unspecified-encoding
-# pylint: disable=wrong-import-order
 
 # ----
 
-import json
 import os
 import re
 import shutil
 import subprocess
-import numpy
-
-from tools import parser_interface
 from typing import Union
+
+import numpy
+from tools import parser_interface
 from utils.logger_interface import Logger
 
 # ----
@@ -194,14 +157,12 @@ __all__ = [
     "filepermission",
     "filesize",
     "makedirs",
-    "read_json",
     "removefiles",
     "rename",
     "rmdir",
     "symlink",
     "touch",
     "write_jinja2",
-    "write_json"
 ]
 
 # ----
@@ -534,44 +495,6 @@ def makedirs(path: str, force: bool = False) -> None:
     except OSError:
         pass
 
-
-# ----
-
-
-def read_json(json_file: str) -> dict:
-    """
-    Description
-    -----------
-
-    This function ingests a JavaScript Object Notation (e.g., JSON)
-    formatted file and returns a Python dictionary containing all
-    attributes of the file.
-
-    Parameters
-    ----------
-
-    json_file: str
-
-        A Python string containing the full-path to the JSON file to
-        be parsed.
-
-    Returns
-    -------
-
-    json_dict: dict
-
-        A Python dictionary containing all attributes contained within
-        the ingested JSON file.
-
-    """
-
-    # Open and read the contents of the specified JSON-formatted file
-    # path.
-    with open(json_file, "r") as stream:
-        json_dict = json.load(stream)
-
-    return json_dict
-
 # ----
 
 
@@ -727,84 +650,3 @@ def touch(path: str):
     # Open and append to the file path specified upon entry.
     with open(path, "a"):
         os.utime(path, None)
-
-
-# ----
-
-
-def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a Jinja2 formatted file using the specified
-    Python dictionary.
-
-    Parameters
-    ----------
-
-    jinja2_file: str
-
-        A Python string containing the full-path to the Jinja2 file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the Jinja2 file.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # Jinja2-formatted file path.
-    with open(jinja2_file, "w") as file:
-        file.write("#!Jinja2\n")
-        for key in in_dict.keys():
-            value = in_dict[key]
-
-            if isinstance(value, str):
-                string = f'set {key} = "{value}"'
-            else:
-                string = f"set {key} = {value}"
-
-            file.write("{%% %s %%}\n" % string)
-
-
-# ----
-
-
-def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a JavaScript Object Notation (e.g., JSON)
-    formatted file using the specified Python dictionary.
-
-    Parameters
-    ----------
-
-    json_file: str
-
-        A Python string containing the full-path to the JSON file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the JSON file.
-
-    Keywords
-    --------
-
-    indent: int, optional
-
-        A Python integer defining the indentation level for the
-        attributes within the JSON-formatted file.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # JSON-formatted file path.
-    with open(json_file, "w") as file:
-        json.dump(in_dict, file, indent=indent)
