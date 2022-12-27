@@ -59,7 +59,6 @@ History
 # ----
 
 # pylint: disable=undefined-variable
-# pylint: disable=wrong-import-order
 
 # ----
 
@@ -153,7 +152,7 @@ class TestYAMLMethods(TestCase):
 
         # Write the YAML-formatted file.
         yaml = yaml_interface.YAML()
-        yaml.run(
+        yaml.write_template(
             yaml_dict=self.yaml_test_dict,
             yaml_template=self.yaml_template,
             yaml_path=self.yaml_path,
