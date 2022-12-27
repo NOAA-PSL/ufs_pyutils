@@ -113,6 +113,7 @@ class Jinja2Error(Error):
         """
         super().__init__(msg=msg)
 
+
 # ----
 
 
