@@ -50,6 +50,10 @@ History
 
 # ----
 
+# pylint: raise-missing-from
+
+# ----
+
 from collections.abc import Callable
 from typing import TypeVar
 from typing_extensions import ParamSpec
@@ -72,8 +76,8 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 # Define the type hint attributes.
-params = ParamSpec("params")
-returns = TypeVar("returns")
+Params = ParamSpec("Params")
+Returns = TypeVar("Returns")
 
 # ----
 
@@ -109,6 +113,7 @@ class Error(Exception):
         logger.error(msg=msg)
         super().__init__()
 
+
 # ----
 
 
@@ -141,8 +146,7 @@ def gen_except_handle(err_cls: object):
     def decorator(func: Callable):
 
         # Execute the caller function; proceed accordingly.
-        def call_function(*args: params.args,
-                          **kwargs: params.kwargs) -> returns:
+        def call_function(*args: Params.args, **kwargs: Params.kwargs) -> Returns:
             try:
 
                 # Execute the callable function/method.
@@ -151,7 +155,7 @@ def gen_except_handle(err_cls: object):
             except Exception as error:
 
                 # Raise the specified Error class.
-                raise(err_cls(msg=error))
+                raise err_cls(msg=error)
 
         return call_function
 
