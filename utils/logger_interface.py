@@ -50,6 +50,7 @@ History
 
 # ----
 
+# pylint: disable=eval-used
 # pylint: disable=unused-variable
 
 # ----
@@ -57,7 +58,6 @@ History
 import logging
 import sys
 import types
-from ast import literal_eval
 
 # ----
 
@@ -128,8 +128,7 @@ class Logger:
 
         self.colors_obj = types.SimpleNamespace()
         for item in colors_list:
-            value = literal_eval(item)
-            setattr(self.colors_obj, item, value)
+            setattr(self.colors_obj, item, eval(item))
 
     def debug(self, msg: str):
         """
