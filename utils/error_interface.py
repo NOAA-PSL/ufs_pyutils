@@ -50,7 +50,7 @@ History
 
 # ----
 
-# pylint: raise-missing-from
+# pylint: disable=raise-missing-from
 
 # ----
 
