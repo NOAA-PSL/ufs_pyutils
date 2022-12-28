@@ -64,6 +64,20 @@ user@host:$ python setup.py install
 
 For additional information and options for building Python packages, see [here](https://docs.python.org/3.5/distutils/setupscript.html)
 
+A Docker image exist containing the applications in this repository and can be collected as follows.
+
+~~~
+user@host:$ docker pull noaaufsrnr/el7-miniconda.ufs_pyutils:latest
+~~~
+
+A corresponding Singularity image may be built as follows.
+
+~~~
+user@host:$ singularity build ufs_pyutils_latest.sif docker://noaaufsrnr/noaaufsrnr/ufs_pyutils:latest
+~~~
+
+The attribute `latest` refers to the respective tag. For a specific tag, replace `latest` with the desired tag.
+
 # Forking
 
 If a user wishes to contribute modifications done within their
