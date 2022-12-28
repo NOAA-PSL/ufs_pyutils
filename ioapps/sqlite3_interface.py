@@ -107,10 +107,15 @@ History
 
 # ----
 
-import sqlite3
+# pylint: disable=raise-missing-from
+# pylint: disable=too-many-locals
 
-from tools import fileio_interface
-from tools import parser_interface
+# ----
+
+import sqlite3
+from typing import Union
+
+from tools import fileio_interface, parser_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 
@@ -164,7 +169,7 @@ class SQLite3Error(Error):
         Creates a new SQLite3Error object.
 
         """
-        super(SQLite3Error, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
@@ -262,8 +267,8 @@ def _database_connect(path: str) -> tuple:
 
     except Exception as error:
         msg = (
-            "Initializing the SQLite3 database path {0} failed "
-            "with error {1}. Aborting!!!".format(path, error)
+            f"Initializing the SQLite3 database path {path} failed "
+            f"with error {error}. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -273,7 +278,9 @@ def _database_connect(path: str) -> tuple:
 # ----
 
 
-def _database_execute(cursor: object, exec_str: str, is_read: bool = False) -> dict:
+def _database_execute(
+    cursor: object, exec_str: str, is_read: bool = False
+) -> Union[dict, dict]:
     """
     Description
     -----------
@@ -335,12 +342,12 @@ def _database_execute(cursor: object, exec_str: str, is_read: bool = False) -> d
             # Execute the SQLite3 database table command.
             cursor.execute(exec_str)
 
-            return None
+        return None
 
     except Exception as error:
         msg = (
-            "Executing SQLite3 statement {0} failed with error "
-            "{1}. Aborting!!!".format(exec_str, error)
+            f"Executing SQLite3 statement {exec_str} failed with error "
+            f"{error}. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -375,11 +382,11 @@ def _database_exist(path: str) -> bool:
     """
     exist = fileio_interface.fileexist(path=path)
     if exist:
-        msg = "Database file {0} exists and will be updated.".format(path)
+        msg = f"Database file {path} exists and will be updated."
         logger.info(msg=msg)
 
     if not exist:
-        msg = "The database file {0} does not exist.".format(path)
+        msg = f"The database file {path} does not exist."
         logger.info(msg=msg)
 
     return exist
@@ -434,8 +441,8 @@ def create_table(path: str, table_name: str, table_dict: dict) -> None:
         # Define the SQLite3 database table attributes; proceed
         # accordingly.
         try:
-            exec_str = "CREATE TABLE IF NOT EXISTS {0} ".format(table_name)
-            (column_name_list, column_info) = (list(table_dict.keys()), list())
+            exec_str = f"CREATE TABLE IF NOT EXISTS {table_name} "
+            (column_name_list, column_info) = (list(table_dict.keys()), [])
 
             # Define the respective column names for the respective
             # SQLite3 database table; proceed accordingly.
@@ -446,14 +453,12 @@ def create_table(path: str, table_name: str, table_dict: dict) -> None:
 
                 if column_type is None:
                     msg = (
-                        "The data type for column {0} could not be determined "
-                        "from the specified table attributes. Aborting!!!".format(
-                            column_name
-                        )
+                        f"The data type for column {column_name} could not be determined "
+                        "from the specified table attributes. Aborting!!!"
                     )
                     raise SQLite3Error(msg=msg)
 
-                column_info.append("{0} {1}".format(column_name, column_type))
+                column_info.append(f"{column_name} {column_type}")
 
             # Write the database table to the SQLite3 database file
             # path; proceed accordingly.
@@ -461,7 +466,7 @@ def create_table(path: str, table_name: str, table_dict: dict) -> None:
             try:
 
                 # Build the SQLite3 API execution string.
-                exec_str = exec_str + "({0})".format(column_string)
+                exec_str = exec_str + f"({column_string})"
 
                 # Execute the SQLite3 database table command.
                 _database_execute(cursor=cursor, exec_str=exec_str)
@@ -469,28 +474,28 @@ def create_table(path: str, table_name: str, table_dict: dict) -> None:
             except sqlite3.OperationalError:
 
                 # Build the SQLite3 API execution string.
-                exec_str = exec_str + "({0})".format(column_string + ";")
+                exec_str = exec_str + f"({column_string})" + ";"
 
                 # Execute the SQLite3 database table command.
                 _database_execute(cursor=cursor, exec_str=exec_str)
 
             # Commit/update the respetive SQLite database table.
             _database_commit(connect=connect)
-            msg = "Created table {0} in database {1}.".format(table_name, path)
+            msg = f"Created table {table_name} in database {path}."
             logger.info(msg=msg)
 
         except Exception as error:
             msg = (
-                "Creating SQLite3 database table {0} for database path "
-                "{1} failed with error {2}. Aborting!!!".format(table_name, path, error)
+                f"Creating SQLite3 database table {table_name} for database path "
+                f"{path} failed with error {error}. Aborting!!!"
             )
             raise SQLite3Error(msg=msg)
 
     # If the SQLite3 database exists proceed accordingly.
     except sqlite3.OperationalError:
         msg = (
-            "Table {0} already exists in database {1} and will not be "
-            "created.".format(table_name, path)
+            f"Table {table_name} already exists in database {path} and will not be "
+            f"created."
         )
         logger.warn(msg=msg)
 
@@ -541,15 +546,15 @@ def delete_row(path: str, table_name: str, rmcond: str) -> None:
     # accordingly.
     try:
         msg = (
-            'Removing any occurrences of row condition "{0}" from '
-            "table {1}.".format(rmcond, table_name)
+            f'Removing any occurrences of row condition "{rmcond}" from '
+            f"table {table_name}."
         )
         logger.info(msg=msg)
 
         # Define the SQLite3 database path connection and SQLite3
         # library API database table command.
         (connect, cursor) = _database_connect(path=path)
-        exec_str = "DELETE from {0} where {1}".format(table_name, rmcond)
+        exec_str = f"DELETE from {table_name} where {rmcond}"
 
         # Execute the SQLite3 database table command.
         _database_execute(cursor=cursor, exec_str=exec_str)
@@ -560,10 +565,8 @@ def delete_row(path: str, table_name: str, rmcond: str) -> None:
 
     except Exception as error:
         msg = (
-            "Deleting database file path {0} table {1} using removal "
-            "condition {2} failed with error {3}. Aborting!!!".format(
-                path, table_name, rmcond, error
-            )
+            f"Deleting database file path {path} table {table_name} using removal "
+            f"condition {rmcond} failed with error {error}. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -619,7 +622,7 @@ def read_columns(path: str, table_name: str) -> list:
 
         # Execite the SQLite3 library API strong and collect the
         # SQLite3 database table names.
-        exec_str = "SELECT * from {0}".format(table_name)
+        exec_str = f"SELECT * from {table_name}"
         cursor = connect.execute(exec_str)
         columns = list(map(lambda x: x[0], cursor.description))
 
@@ -628,10 +631,8 @@ def read_columns(path: str, table_name: str) -> list:
 
     except Exception as error:
         msg = (
-            "The query of SQLite3 database file {0} for table {1} "
-            "column names failed with error {2}. Aborting!!!".format(
-                path, table_name, error
-            )
+            f"The query of SQLite3 database file {path} for table {table_name} "
+            f"column names failed with error {error}. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -686,8 +687,8 @@ def read_table(path: str, table_name: str) -> dict:
     exist = _database_exist(path=path)
     if not exist:
         msg = (
-            "The SQLite3 database path {0} does not exist and "
-            "therefore cannot be read. Aborting!!!".format(path)
+            f"The SQLite3 database path {path} does not exist and "
+            "therefore cannot be read. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -697,12 +698,12 @@ def read_table(path: str, table_name: str) -> dict:
 
         # Define the SQLite3 database path connection.
         (connect, cursor) = _database_connect(path=path)
-        exec_str = "SELECT * FROM {0}".format(table_name)
+        exec_str = f"SELECT * FROM {table_name}"
         table = _database_execute(cursor=cursor, exec_str=exec_str, is_read=True)
 
         # Build the Python dictionary containing the SQLite3 database
         # table contents
-        table_dict = dict()
+        table_dict = {}
         for i, row in enumerate(table):
             table_dict[i] = list(row)
 
@@ -711,9 +712,9 @@ def read_table(path: str, table_name: str) -> dict:
 
     except Exception as error:
         msg = (
-            "Reading SQLite3 database table {0} from SQLite3 "
-            "database file path {1} failed with error {2}. "
-            "Aborting!!!".format(table_name, path, error)
+            f"Reading SQLite3 database table {table_name} from SQLite3 "
+            f"database file path {path} failed with error {error}. "
+            "Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
@@ -766,13 +767,13 @@ def read_tablenames(path: str, format_list: bool = False) -> list:
     exist = _database_exist(path=path)
     if not exist:
         msg = (
-            "The SQLite3 database path {0} does not exist and "
-            "therefore cannot be read. Aborting!!!".format(path)
+            f"The SQLite3 database path {path} does not exist and "
+            "therefore cannot be read. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)
 
     # Define the SQLite3 database path connection.
-    (connect, cursor) = _database_connect(path=path)
+    (_, cursor) = _database_connect(path=path)
 
     # Collect the table names within the respective database path.
     cursor.execute("SELECT name from sqlite_master WHERE type='table';")
@@ -781,7 +782,7 @@ def read_tablenames(path: str, format_list: bool = False) -> list:
     # Create a list of table names from the tuple returned by the
     # SQLite3 command.
     if format_list:
-        tablenames = list()
+        tablenames = []
         for (i, item) in enumerate(tables):
             tablenames.append(item[i])
 
@@ -795,8 +796,7 @@ def read_tablenames(path: str, format_list: bool = False) -> list:
 
 
 def write_table(path: str, table_name: str, row_dict: dict) -> None:
-    """
-    Description
+    """Description
     -----------
 
     This function writes values into an existing SQLite3 database.
@@ -819,10 +819,20 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
         A Python dictionary containing the variable fields to be
         written to the SQLite3 database table.
 
+    Raises
+    ------
+
+    SQLite3Error:
+
+        * raised if the database file path does not exist upon entry.
+
     """
 
     # Check that the SQLite3 database file path exists.
     exist = _database_exist(path=path)
+    if not exist:
+        msg = f"The database file path {path} does not exist. Aborting!!!"
+        raise SQLite3Error(msg=msg)
 
     # Write the specified variable fields to the SQLite3 database file
     # path; proceed accordingly.
@@ -830,9 +840,9 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
 
         # Compile the SQLite3 database base table contents; proceed
         # accordingly.
-        exec_str = "INSERT INTO {0} ".format(table_name)
+        exec_str = f"INSERT INTO {table_name} "
         column_name_list = list(row_dict.keys())
-        (column_names, column_values) = [list() for i in range(2)]
+        (column_names, column_values) = [[] for i in range(2)]
         for column_name in column_name_list:
             column_names.append(column_name)
             column_value = parser_interface.dict_key_value(
@@ -843,9 +853,7 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
         column_names_string = ",".join(column_names)
         column_values_string = ",".join([str(value) for value in column_values])
         exec_str = (
-            exec_str
-            + "({0})".format(column_names_string)
-            + " VALUES ({0});".format(column_values_string)
+            exec_str + f"({column_names_string})" + f" VALUES ({column_values_string});"
         )
 
         # Execute the SQLite3 database table command; if database is
@@ -869,10 +877,8 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
                 # Print message to user and repeat the process
                 # (indefinitely) until success.
                 msg = (
-                    "Database path {0} is locked; another attempt "
-                    "will be made to update database table {1}.".format(
-                        path, table_name
-                    )
+                    f"Database path {path} is locked; another attempt "
+                    f"will be made to update database table {table_name}."
                 )
                 logger.warn(msg=msg)
 
@@ -881,8 +887,8 @@ def write_table(path: str, table_name: str, row_dict: dict) -> None:
 
     except Exception as error:
         msg = (
-            "Writing to SQLite3 database table {0} within "
-            "SQLite3 database file path {1} failed with error "
-            "{2}. Aborting!!!".format(table_name, path, error)
+            f"Writing to SQLite3 database table {table_name} within "
+            f"SQLite3 database file path {path} failed with error "
+            f"{error}. Aborting!!!"
         )
         raise SQLite3Error(msg=msg)

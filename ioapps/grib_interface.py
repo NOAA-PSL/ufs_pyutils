@@ -19,7 +19,7 @@
 
 """
 Module
------- 
+------
 
     grib_interface.py
 
@@ -40,37 +40,10 @@ Classes
 Functions
 ---------
 
-    _check_cnvgrib_env()
+    _get_app_path(app)
 
-        This function checks whether the cnvgrib environment has been
-        loaded; if not, a GRIBError will be thrown; if so, the path to
-        the cnvgrib executable will be defined and returned.
-
-    _check_grbindex_env()
-
-        This function checks whether the grbindex application for GRIB
-        version 1 environment has been loaded; if not, a GRIBError
-        will be thrown; if so, the path to the grbindex executable
-        will be defined and returned.
-
-    _check_grb2index_env()
-
-        This function checks whether the grbindex application for GRIB
-        version 2 environment has been loaded; if not, a GRIBError
-        will be thrown; if so, the path to the grbindex executable
-        will be defined and returned.
-
-    _check_wgrib_env()
-
-        This function checks whether the wgrib environment has been
-        loaded; if not, a GRIBError will be thrown; if so, the path to
-        the wgrib executable will be defined and returned.
-
-    _check_wgrib2_env()
-
-        This function checks whether the wgrib2 environment has been
-        loaded; if not, a GRIBError will be thrown; if so, the path to
-        the wgrib2 executable will be defined and returned.
+        This function checks whether the requested application path
+        exists.
 
     cnvgribg21(in_grib_file, out_grib_file)
 
@@ -89,7 +62,7 @@ Functions
         This function generates a GRIB index file from an input
         GRIB-formatted (version 1 or 2) file.
 
-    parse_file(in_grib_file, parse_str, out_grib_file, is_grib2 = False, 
+    parse_file(in_grib_file, parse_str, out_grib_file, is_grib2 = False,
                tmp_out_path = None):
 
        This function parses a GRIB-formatted (version 1 or 2) file and
@@ -126,7 +99,7 @@ Requirements
 - wgrib2; https://github.com/NOAA-EMC/NCEPLIBS-grib_util
 
 Author(s)
---------- 
+---------
 
    Henry R. Winterbottom; 29 November 2022
 
@@ -139,9 +112,15 @@ History
 
 # ----
 
+# pylint: disable=consider-using-with
+# pylint: disable=unused-variable
+
+# ----
+
 import os
 import subprocess
 
+from tools import system_interface
 from utils.error_interface import Error
 
 # ----
@@ -158,13 +137,13 @@ __all__ = [
     "grbindex",
     "parse_file",
     "read_file",
-    "wgrib_remap",
+    "wgrib2_remap",
 ]
 
 # ----
 
 
-class GRIBError(Exception):
+class GRIBError(Error):
     """
     Description
     -----------
@@ -190,27 +169,36 @@ class GRIBError(Exception):
         Creates a new GRIBError object.
 
         """
-        super(GRIBError, self).__init__(msg=msg)
+        super().__init__(msg=msg)
 
 
 # ----
 
 
-def _check_cnvgrib_env() -> str:
+def _get_app_path(app: str) -> str:
     """
     Description
     -----------
 
-    This function checks whether the cnvgrib environment has been
-    loaded; if not, a GRIBError will be thrown; if so, the path to the
-    cnvgrib executable will be defined and returned.
+    This function checks whether the requested application path has
+    been loaded; if not, a GRIBError will be thrown.
+
+    Parameters
+    ----------
+
+    app: str
+
+        A Python string specifying the name of the application for
+        which to return the respective path.
 
     Returns
     -------
 
-    cnvgrib: str
+    app_path: str
 
-        A Python string specifying the path to the cnvgrib executable.
+        A Python string specifying the path to the application name
+        provided upon entry; if the application path cannot be
+        determined, this value is NoneType.
 
     Raises
     ------
@@ -223,228 +211,14 @@ def _check_cnvgrib_env() -> str:
     """
 
     # Define the cnvgrib executable path for the respective platform;
-    # throw a GRIBError exception if it cannot be determined.
-    cmd = ["which", "cnvgrib"]
+    # proceed accordingly.
+    app_path = system_interface.get_app_path(app=app)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    if len(out) > 0:
-        cnvgrib = out.rstrip().decode("utf-8")
-    else:
-        msg = (
-            "\n\nThe cnvgrib executable could not be determined for your "
-            "system; please check that the appropriate GRIB "
-            "libaries/modules are loaded prior to calling this function. "
-            "Aborting!!!"
-        )
+    if app_path is None:
+        msg = f"The {app} path could not be determined for your " "system. Aborting!!!"
         raise GRIBError(msg=msg)
 
-    return cnvgrib
-
-
-# ----
-
-
-def _check_grbindex_env() -> str:
-    """
-    Description
-    -----------
-
-    This function checks whether the grbindex application for GRIB
-    version 1 environment has been loaded; if not, a GRIBError will be
-    thrown; if so, the path to the grbindex executable will be defined
-    and returned.
-
-    Returns
-    -------
-
-    grbindex: str
-
-        A Python string specifying the path to the grbindex for GRIB
-        version 1 executable.
-
-    Raises
-    ------
-
-    GRIBError:
-
-        * raised if the grbindex executable path cannot be determined
-          for the run-time platform.
-
-    """
-
-    # Define the grbindex executable path for the respective platform;
-    # throw a GRIBError exception if it cannot be determined.
-    cmd = ["which", "grbindex"]
-
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    if len(out) > 0:
-        grbindex = out.rstrip().decode("utf-8")
-    else:
-        msg = (
-            "\n\nThe grbindex executable could not be determined for "
-            "your system; please check that the appropriate GRIB "
-            "libaries/modules are loaded prior to calling this function. "
-            "Aborting!!!"
-        )
-        raise GRIBError(msg=msg)
-
-    return grbindex
-
-
-# ----
-
-
-def _check_grb2index_env() -> str:
-    """
-    Description
-    -----------
-
-    This function checks whether the grbindex application for GRIB
-    version 2 environment has been loaded; if not, a GRIBError will be
-    thrown; if so, the path to the grbindex executable will be defined
-    and returned.
-
-    Returns
-    -------
-
-    grb2index: str
-
-        A Python string specifying the path to the grbindex for GRIB
-        version 2 executable.
-
-    Raises
-    ------
-
-    GRIBError:
-
-        * raised if the grb2index executable path cannot be determined
-          for the run-time platform.
-
-    """
-
-    # Define the grb2index executable path for the respective
-    # platform; throw a GRIBError exception if it cannot be
-    # determined.
-    cmd = ["which", "grb2index"]
-
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    if len(out) > 0:
-        grb2index = out.rstrip().decode("utf-8")
-    else:
-        msg = (
-            "\n\nThe grb2index executable could not be determined for "
-            "your system; please check that the appropriate GRIB 2 "
-            "libaries/modules are loaded prior to calling this script. "
-            "Aborting!!!"
-        )
-        raise GRIBError(msg=msg)
-
-    return grb2index
-
-
-# ----
-
-
-def _check_wgrib_env() -> str:
-    """
-    Description
-    -----------
-
-    This function checks whether the wgrib environment has been
-    loaded; if not, a GRIBError will be thrown; if so, the path to the
-    wgrib executable will be defined and returned.
-
-    Returns
-    -------
-
-    wgrib: str
-
-        A Python string specifying the path to the wgrib executable.
-
-    Raises
-    ------
-
-    GRIBError:
-
-        * raised if the wgrib executable path cannot be determined for
-          the run-time platform.
-
-    """
-
-    # Define the wgrib executable path for the respective platform;
-    # throw a GRIBError exception if it cannot be determined.
-    cmd = ["which", "wgrib"]
-
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    if len(out) > 0:
-        wgrib = out.rstrip().decode("utf-8")
-    else:
-        msg = (
-            "\n\nThe wgrib executable could not be determined for "
-            "your system; please check that the appropriate wgrib "
-            "libaries/modules are loaded prior to calling this script. "
-            "Aborting!!!"
-        )
-        raise GRIBError(msg=msg)
-
-    return wgrib
-
-
-# ----
-
-
-def _check_wgrib2_env() -> str:
-    """
-    Description
-    -----------
-
-    This function checks whether the wgrib2 environment has been
-    loaded; if not, a GRIBError will be thrown; if so, the path to the
-    wgrib2 executable will be defined and returned.
-
-    Returns
-    -------
-
-    wgrib: str
-
-        A Python string specifying the path to the wgrib executable.
-
-    Raises
-    ------
-
-    GRIBError:
-
-        * raised if the wgrib2 executable path cannot be determined
-          for the run-time platform.
-
-    """
-
-    # Define the wgrib2 executable path for the respective platform;
-    # throw a GRIBError exception if it cannot be determined.
-    cmd = ["which", "wgrib2"]
-
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    if len(out) > 0:
-        wgrib = out.rstrip().decode("utf-8")
-    else:
-        msg = (
-            "\n\nThe wgrib2 executable could not be determined for your system; "
-            "please check that the appropriate wgrib libaries/modules are "
-            "loaded prior to calling this script. Aborting!!!"
-        )
-        raise GRIBError(msg=msg)
-
-    return wgrib
+    return app_path
 
 
 # ----
@@ -475,11 +249,11 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
 
     # Convert the GRIB-formatted input file to the output file path
     # specified upon entry.
-    cnvgrib = _check_cnvgrib_env()
-    cmd = ["{0}".format(cnvgrib), "-g21", in_grib_file, out_grib_file]
+    cnvgrib = _get_app_path(app="cnvgrib")
+    cmd = [f"{cnvgrib}", "-g21", in_grib_file, out_grib_file]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (grbindex_out, grbindex_err) = proc.communicate()
+    proc.communicate()
     proc.wait()
 
 
@@ -526,14 +300,16 @@ def get_timestamp(grib_file: str, grib_var: str = None) -> list:
     # accordance with the specified keyword arguments.
     wgrib_out = read_file(grib_file=grib_file)
 
-    timestamp_list = list()
+    timestamp_list = []
     for item in wgrib_out.rsplit():
         if grib_var is None:
             timestamp = item.split(":")[2].split("d=")[1]
+
         if grib_var is not None:
             if grib_var.lower() in item.lower():
                 timestamp = item.split(":")[2].split("d=")[1]
         timestamp_list.append(timestamp)
+
     timestamp_list = list(set(timestamp_list))
 
     return timestamp_list
@@ -575,19 +351,16 @@ def grbindex(in_grib_file: str, out_gribidx_file: str, is_grib2: bool = False) -
     """
 
     # Define the cnvgrib executable path for the respective platform;
-    # throw a GRIBError exception if it cannot be determined.
+    # proceed accordingly.
     if is_grib2:
-        grbindex_exe = _check_grb2index_env()
-    if not is_grib2:
-        grbindex_exe = _check_grbindex_env()
-    cmd = [
-        "{0}".format(grbindex_exe),
-        "{0}".format(in_grib_file),
-        "{0}".format(out_gribidx_file),
-    ]
+        grbindex_exe = _get_app_path(app="grb2index")
 
+    if not is_grib2:
+        grbindex_exe = _get_app_path(app="grbindex")
+
+    cmd = [f"{grbindex_exe}", f"{in_grib_file}", f"{out_gribidx_file}"]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (grbindex_out, grbindex_err) = proc.communicate()
+    proc.communicate()
     proc.wait()
 
 
@@ -644,7 +417,7 @@ def parse_file(
     tmp_out_path: str, optional
 
         A Python string specifying the path to the output
-        GRIB-formatted (version 1 or 2) file; is not specified, the
+        GRIB-formatted (version 1 or 2) file; if not specified, the
         output file will be written to the directory in which this
         function was called.
 
@@ -653,37 +426,36 @@ def parse_file(
     # Specify the wgrib application in accordance with the input
     # GRIB-formatted file format upon entry.
     if is_grib2:
-        wgrib = _check_wgrib2_env()
+        wgrib = _get_app_path(app="wgrib2")
         cmd_base = [wgrib, in_grib_file, "-match"]
 
     if not is_grib2:
-        wgrib = _check_wgrib_env()
+        wgrib = _get_app_path(app="wgrib")
         cmd_base = [wgrib]
 
     if tmp_out_path is None:
         out_path = os.path.dirname(out_grib_file)
+
     if tmp_out_path is not None:
         out_path = tmp_out_path
 
     # Parse the input GRIB-formatted file accordingly.
     if is_grib2:
-        cmd = ["{0}".format(parse_str), "-grib", out_grib_file]
-
+        cmd = [f"{parse_str}", "-grib", out_grib_file]
         cmd = cmd_base + cmd
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (wgrib_out, wgrib_err) = proc.communicate()
+        proc.communicate()
         proc.wait()
 
     if not is_grib2:
         cmd = [
-            "{0} {1} | {2} | {3} -i {4} -grib -o {5}".format(
-                wgrib, in_grib_file, parse_str, wgrib, in_grib_file, out_grib_file
-            )
+            f"{wgrib} {in_grib_file} | {parse_str} | {wgrib} -i "
+            f"{in_grib_file} -grib -o {out_grib_file}"
         ]
         proc = subprocess.Popen(
             cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
-        (wgrib_out, wgrib_err) = proc.communicate()
+        proc.communicate()
         proc.wait()
 
 
@@ -727,15 +499,16 @@ def read_file(grib_file: str, is_4yr: bool = True) -> list:
 
     # Collect and return the records contained within the
     # GRIB-formatted file on entry.
-    wgrib = _check_wgrib_env()
-    cmd = ["{0}".format(wgrib)]
+    wgrib = _get_app_path(app="wgrib")
+    cmd = [f"{wgrib}"]
 
     if is_4yr:
         cmd.append("-4yr")
     cmd.append(grib_file)
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (wgrib_out, wgrib_err) = proc.communicate()
+    (wgrib_out, _) = proc.communicate()
+    proc.wait()
     wgrib_out = wgrib_out.decode("utf-8")
 
     return wgrib_out
@@ -782,26 +555,26 @@ def wgrib2_remap(remap_obj: object, gribfile: str) -> str:
     # Parse the GRIB-formatted (version 2) file and project (i.e.,
     # remap) to the grid projection specified on entry.
     gribremap_file = gribfile + ".remap"
-    wgrib = _check_wgrib2_env()
+    wgrib = _get_app_path(app="wgrib2")
     cmd_base = [wgrib, gribfile]
 
     if remap_obj.new_grid.lower() == "latlon":
         if remap_obj.new_grid_winds is not None:
-            cmd = ["-new_grid_winds", "{0}".format(remap_obj.new_grid_winds)]
+            cmd = ["-new_grid_winds", f"{remap_obj.new_grid_winds}"]
 
             cmd_base = cmd_base + cmd
 
         cmd = [
             "-new_grid",
-            "{0}".format(remap_obj.new_grid),
-            "{0}:{1}:{2}".format(remap_obj.lon0, remap_obj.nlons, remap_obj.dlon),
-            "{0}:{1}:{2}".format(remap_obj.lat0, remap_obj.nlats, remap_obj.dlat),
-            "{0}".format(gribremap_file),
+            f"{remap_obj.new_grid}",
+            f"{remap_obj.lon0}:{remap_obj.nlons}:{remap_obj.dlon}",
+            f"{remap_obj.lat0}:{remap_obj.nlats}:{remap_obj.dlat}",
+            f"{gribremap_file}",
         ]
 
         cmd = cmd_base + cmd
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (wgrib_out, wgrib_err) = proc.communicate()
+    proc.communicate()
     proc.wait()
 
     return gribremap_file
