@@ -57,7 +57,6 @@ History
 import logging
 import sys
 import types
-
 from ast import literal_eval
 
 # ----
