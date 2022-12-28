@@ -142,8 +142,9 @@ import subprocess
 from typing import Union
 
 import numpy
-from tools import parser_interface
 from utils.logger_interface import Logger
+
+from tools import parser_interface
 
 # ----
 

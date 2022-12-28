@@ -83,8 +83,7 @@ import os
 import subprocess
 
 from bs4 import BeautifulSoup
-from tools import fileio_interface
-from tools import system_interface
+from tools import fileio_interface, system_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 

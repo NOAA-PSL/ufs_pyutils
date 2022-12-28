@@ -66,11 +66,10 @@ History
 
 import os
 import re
-import yaml
-
-from tools import fileio_interface
-from tools import parser_interface
 from typing import Union
+
+import yaml
+from tools import fileio_interface, parser_interface
 from utils.error_interface import Error
 from utils.logger_interface import Logger
 from yaml import SafeLoader

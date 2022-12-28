@@ -145,8 +145,9 @@ History
 # ----
 
 import datetime
-import time
 import sqlite3
+import time
+
 import croniter
 
 from tools import parser_interface
