@@ -70,8 +70,7 @@ History
 
 import re
 
-from tools import datetime_interface
-from tools import fileio_interface
+from tools import datetime_interface, fileio_interface
 from utils.error_interface import Error
 
 # ----

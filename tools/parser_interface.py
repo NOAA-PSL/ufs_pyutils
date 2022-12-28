@@ -172,19 +172,17 @@ History
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
-# pylint: disable=wrong-import-order
 
 # ----
 
 import collections
 import copy
-import numpy
 import os
 import sys
 import types
+from typing import Generator, Union
 
-from typing import Generator
-from typing import Union
+import numpy
 from utils.error_interface import Error
 
 # ----
