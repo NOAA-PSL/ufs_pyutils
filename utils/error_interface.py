@@ -36,6 +36,14 @@ Classes
         This is the base-class for all exceptions; it is a sub-class
         of Exceptions.
 
+Functions
+---------
+
+    msg_except_handle(err_cls):
+
+        This function provides a decorator to be used to raise
+        specified exceptions
+
 Author(s)
 ---------
 
@@ -118,7 +126,7 @@ class Error(Exception):
 # ----
 
 
-def msg_except_handle(err_cls: object):
+def msg_except_handle(err_cls: object) -> Callable:
     """
     Description
     -----------
