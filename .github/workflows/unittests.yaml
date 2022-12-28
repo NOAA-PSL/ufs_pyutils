@@ -76,6 +76,8 @@ jobs:
         pip install croniter
         pip install pytest==7.2.0
         pip install pytest-order
+        pip install schema
+        pip install typing_extensions
         conda install -c anaconda pyyaml
         conda install -c anaconda boto3
 
