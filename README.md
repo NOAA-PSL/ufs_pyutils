@@ -48,7 +48,7 @@ installation attributes are provided in the table below.
 | [`netcdf4`](https://github.com/Unidata/netcdf4-python) | <div align="left">`pip install netcdf4==1.6.2`</div> |
 | [`numpy`](https://github.com/numpy/numpy) | <div align="left">`pip install numpy==1.22.4`</div> |
 | [`pyyaml`](https://github.com/yaml/pyyaml) | <div align="left">`conda install -c anaconda pyyaml==6.0`</div> |
-| [`schema`](https://github.com/keleshev/schema) | div align="left">pip install schema==0.7.5</div> | 
+| [`schema`](https://github.com/keleshev/schema) | <div align="left">pip install schema==0.7.5</div> | 
 
 </div>
 
