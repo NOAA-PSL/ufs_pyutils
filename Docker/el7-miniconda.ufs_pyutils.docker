@@ -33,9 +33,9 @@
 
 #    user@host:$ docker build -f el7-miniconda.ufs_pyutils.docker --tag el7-miniconda.ufs_pyutils:<TAG> .
 
-#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
 
-#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils/<TAG>
+#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
 
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
@@ -137,6 +137,7 @@ RUN /miniconda/bin/pip install netcdf4==1.6.2 && \
     /miniconda/bin/pip install croniter==1.3.8 && \
     /miniconda/bin/conda install -c anaconda pyyaml==6.0 && \
     /miniconda/bin/conda install -c anaconda boto3==1.24.28 && \
+    /miniconda/bin/pip install schema==0.7.5 && \
     /miniconda/bin/conda clean --tarballs
 
 #----
