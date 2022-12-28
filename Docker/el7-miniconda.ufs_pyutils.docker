@@ -131,10 +131,12 @@ RUN wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-p
 
 # Patch the Miniconda install for the respective application.
 RUN /miniconda/bin/pip install netcdf4 && \
-    /miniconda/bin/conda install numpy && \
+    /miniconda/bin/pip install numpy==1.22.4 && \
     /miniconda/bin/pip install astropy && \
     /miniconda/bin/pip install bs4 && \
     /miniconda/bin/pip install croniter && \
+    /miniconda/bin/pip install schema && \
+    /miniconda/bin/pip install typing_extensions && \
     /miniconda/bin/conda install -c anaconda pyyaml && \
     /miniconda/bin/conda install -c anaconda boto3 && \
     /miniconda/bin/conda clean --tarballs
