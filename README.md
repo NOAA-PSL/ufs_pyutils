@@ -1,7 +1,7 @@
 [![License](https://img.shields.io/badge/license-LGPL_v2.1-lightgray)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/blob/develop/LICENSE)
 ![Linux](https://img.shields.io/badge/linux-ubuntu%7Ccentos-black)
 ![Python Version](https://img.shields.io/badge/python-3.5|3.6|3.7-blue)
-![Dependencies](https://img.shields.io/badge/dependencies-astropy_boto3_bs4_croniter_netcdf4_numpy_pyyaml-orange)
+![Dependencies](https://img.shields.io/badge/dependencies-astropy_boto3_bs4_croniter_netcdf4_numpy_pyyaml_schema-orange)
 
 [![Unit Tests](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/unittests.yaml)
 [![Python Coding Standards](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml/badge.svg)](https://github.com/HenryWinterbottom-NOAA/ufs_pyutils/actions/workflows/pycodestyle.yaml)
@@ -48,6 +48,7 @@ installation attributes are provided in the table below.
 | [`netcdf4`](https://github.com/Unidata/netcdf4-python) | <div align="left">`pip install netcdf4==1.6.2`</div> |
 | [`numpy`](https://github.com/numpy/numpy) | <div align="left">`pip install numpy==1.22.4`</div> |
 | [`pyyaml`](https://github.com/yaml/pyyaml) | <div align="left">`conda install -c anaconda pyyaml==6.0`</div> |
+| [`schema`](https://github.com/keleshev/schema) | <div align="left">`pip install schema==0.7.5`</div> | 
 
 </div>
 
@@ -62,6 +63,20 @@ user@host:$ python setup.py install
 ~~~
 
 For additional information and options for building Python packages, see [here](https://docs.python.org/3.5/distutils/setupscript.html)
+
+A Docker image exist containing the applications in this repository and can be collected as follows.
+
+~~~
+user@host:$ docker pull noaaufsrnr/el7-miniconda.ufs_pyutils:latest
+~~~
+
+A corresponding Singularity image may be built as follows.
+
+~~~
+user@host:$ singularity build ufs_pyutils_latest.sif docker://noaaufsrnr/noaaufsrnr/ufs_pyutils:latest
+~~~
+
+The attribute `latest` refers to the respective tag. For a specific tag, replace `latest` with the desired tag.
 
 # Forking
 
