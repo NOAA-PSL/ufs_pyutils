@@ -83,7 +83,6 @@ jobs:
         cd $GITHUB_WORKSPACE/ufs_pyutils
         pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle confs
         pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle ioapps
-        pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle launch
         pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle scripts
         pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle tools
         pycodestyle -v --config $GITHUB_WORKSPACE/ufs_pyutils/.pycodestyle utils
