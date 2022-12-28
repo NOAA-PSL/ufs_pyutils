@@ -128,7 +128,8 @@ class Logger:
 
         self.colors_obj = types.SimpleNamespace()
         for item in colors_list:
-            setattr(self.colors_obj, item, literal_eval(item))
+            value = literal_eval(item)
+            setattr(self.colors_obj, item, value)
 
     def debug(self, msg: str):
         """
