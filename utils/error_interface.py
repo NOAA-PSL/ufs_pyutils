@@ -58,16 +58,15 @@ from collections.abc import Callable
 from typing import TypeVar
 
 from typing_extensions import ParamSpec
-
 from utils.logger_interface import Logger
 
 # ----
 
-__all__ = ["gen_except_handle"]
+logger = Logger()
 
 # ----
 
-logger = Logger()
+__all__ = ["msg_except_handle"]
 
 # ----
 
@@ -115,32 +114,31 @@ class Error(Exception):
         logger.error(msg=msg)
         super().__init__()
 
-
 # ----
 
 
-def gen_except_handle(err_cls: object):
+def msg_except_handle(err_cls: object):
     """
     Description
     -----------
 
-    This function provides a decorator for general exceptions.
+    This function provides a decorator to be used to raise specified
+    exceptions.
 
     Parameters
     ----------
 
     err_cls: object
 
-        A Python object specifying the error class to be raised when
-        an exception is encountered.
+        A Python object containing the Error subclass to be used for
+        exception raises.
 
-    Returns
-    -------
+    Parameters
+    ----------
 
-    decorate: object
+    decorator: Callable
 
-        A Python object containing the respetive general exception
-        handler decorator.
+        A Python decorator.
 
     """
 
@@ -148,16 +146,15 @@ def gen_except_handle(err_cls: object):
     def decorator(func: Callable):
 
         # Execute the caller function; proceed accordingly.
-        def call_function(*args: Params.args, **kwargs: Params.kwargs) -> Returns:
-            try:
+        def call_function(msg, *args: Params.args, **kwargs: Params.kwargs) -> Returns:
 
-                # Execute the callable function/method.
-                func(*args, **kwargs)
+            # Execute the callable function/method; proceed
+            # accordingly.
+            func(*args, **kwargs)
 
-            except Exception as error:
-
-                # Raise the specified Error class.
-                raise err_cls(msg=error)
+            # If an exception is encountered, raise the respective
+            # exception.
+            raise err_cls(msg=msg)
 
         return call_function
 
