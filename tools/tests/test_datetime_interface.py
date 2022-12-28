@@ -55,13 +55,12 @@ History
 # pylint: disable=consider-iterating-dictionary
 # pylint: disable=consider-using-dict-items
 # pylint: disable=undefined-variable
-# pylint: disable=wrong-import-order
 
 # ----
 
-from tools import datetime_interface
-from tools import parser_interface
 from unittest import TestCase
+
+from tools import datetime_interface, parser_interface
 
 # ----
 
@@ -140,7 +139,8 @@ class TestDateTimeMethods(TestCase):
             result = parser_interface.dict_key_value(
                 dict_in=test_dict, key=key, force=True, no_split=True
             )
-            value = parser_interface.object_getattr(object_in=date_comps_obj, key=key)
+            value = parser_interface.object_getattr(
+                object_in=date_comps_obj, key=key)
 
             assert result == value, (
                 self.unit_test_msg.format("datestrcomps")
