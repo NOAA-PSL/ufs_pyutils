@@ -56,7 +56,9 @@ History
 
 from collections.abc import Callable
 from typing import TypeVar
+
 from typing_extensions import ParamSpec
+
 from utils.logger_interface import Logger
 
 # ----
