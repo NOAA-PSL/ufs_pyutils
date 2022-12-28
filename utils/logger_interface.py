@@ -58,6 +58,8 @@ import logging
 import sys
 import types
 
+from ast import literal_eval
+
 # ----
 
 __author__ = "Henry R. Winterbottom"
@@ -67,7 +69,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Logger():
+class Logger:
     """
     Description
     -----------
@@ -89,11 +91,15 @@ class Logger():
         self.colors()
 
         # Define the logging object attributes.
-        log_format = '%(asctime)s %(message)s'
-        date_format = '%Y-%m-%d %H:%M:%S'
+        log_format = "%(asctime)s %(message)s"
+        date_format = "%Y-%m-%d %H:%M:%S"
         self.logger = logging
-        self.logger.basicConfig(stream=sys.stdout, level=logging.INFO,
-                                format=log_format, datefmt=date_format)
+        self.logger.basicConfig(
+            stream=sys.stdout,
+            level=logging.INFO,
+            format=log_format,
+            datefmt=date_format,
+        )
 
     def colors(self):
         """
@@ -108,26 +114,22 @@ class Logger():
         # Assign the terminal colors for the respective logger message
         # types.
         def cyan(text):
-            return '\033[0;36m' + text + '\033[0m'
+            return "\033[0;36m" + text + "\033[0m"
 
         def green(text):
-            return '\033[0;32m' + text + '\033[0m'
+            return "\033[0;32m" + text + "\033[0m"
 
         def red(text):
-            return '\033[0;31m' + text + '\033[0m'
+            return "\033[0;31m" + text + "\033[0m"
 
         def yellow(text):
-            return '\033[0;33m' + text + '\033[0m'
+            return "\033[0;33m" + text + "\033[0m"
 
-        colors_list = ['cyan',
-                       'green',
-                       'red',
-                       'yellow'
-                       ]
+        colors_list = ["cyan", "green", "red", "yellow"]
 
         self.colors_obj = types.SimpleNamespace()
         for item in colors_list:
-            setattr(self.colors_obj, item, eval(item))
+            setattr(self.colors_obj, item, literal_eval(item))
 
     def debug(self, msg: str):
         """
@@ -148,7 +150,7 @@ class Logger():
         """
 
         # Print the DEBUG level message to the user terminal.
-        self.logger.info(self.colors_obj.yellow(f'DEBUG: {msg}'))
+        self.logger.info(self.colors_obj.yellow(f"DEBUG: {msg}"))
 
     def error(self, msg: str):
         """
@@ -169,7 +171,7 @@ class Logger():
         """
 
         # Print the ERROR level message to the user terminal.
-        self.logger.error(self.colors_obj.red(f'ERROR: {msg}'))
+        self.logger.error(self.colors_obj.red(f"ERROR: {msg}"))
 
     def info(self, msg: str):
         """
@@ -190,7 +192,7 @@ class Logger():
         """
 
         # Print the INFO level message to the user terminal.
-        self.logger.info(self.colors_obj.cyan(f'INFO: {msg}'))
+        self.logger.info(self.colors_obj.cyan(f"INFO: {msg}"))
 
     def warn(self, msg: str):
         """
@@ -211,4 +213,4 @@ class Logger():
         """
 
         # Print the WARNING level message to the user terminal.
-        self.logger.warning(self.colors_obj.green(f'WARNING: {msg}'))
+        self.logger.warning(self.colors_obj.green(f"WARNING: {msg}"))
