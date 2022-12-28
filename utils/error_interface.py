@@ -114,6 +114,7 @@ class Error(Exception):
         logger.error(msg=msg)
         super().__init__()
 
+
 # ----
 
 
