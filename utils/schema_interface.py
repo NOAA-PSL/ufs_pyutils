@@ -66,8 +66,8 @@ History
 # ----
 
 from schema import Schema
-from utils.error_interface import Error
-from utils.error_interface import gen_except_handle
+
+from utils.error_interface import Error, gen_except_handle
 
 # ----
 
@@ -110,6 +110,7 @@ class SchemaError(Error):
 
         """
         super().__init__(msg=msg)
+
 
 # ----
 
