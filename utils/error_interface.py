@@ -50,13 +50,30 @@ History
 
 # ----
 
+from collections.abc import Callable
+from typing import TypeVar
+from typing_extensions import ParamSpec
 from utils.logger_interface import Logger
+
+# ----
+
+__all__ = ["gen_except_handle"]
+
+# ----
+
+logger = Logger()
 
 # ----
 
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
+
+# ----
+
+# Define the type hint attributes.
+params = ParamSpec("params")
+returns = TypeVar("returns")
 
 # ----
 
@@ -89,6 +106,53 @@ class Error(Exception):
         """
 
         # Define the base-class attributes.
-        logger = Logger()
         logger.error(msg=msg)
         super().__init__()
+
+# ----
+
+
+def gen_except_handle(err_cls: object):
+    """
+    Description
+    -----------
+
+    This function provides a decorator for general exceptions.
+
+    Parameters
+    ----------
+
+    err_cls: object
+
+        A Python object specifying the error class to be raised when
+        an exception is encountered.
+
+    Returns
+    -------
+
+    decorate: object
+
+        A Python object containing the respetive general exception
+        handler decorator.
+
+    """
+
+    # Define the decorator function.
+    def decorator(func: Callable):
+
+        # Execute the caller function; proceed accordingly.
+        def call_function(*args: params.args,
+                          **kwargs: params.kwargs) -> returns:
+            try:
+
+                # Execute the callable function/method.
+                func(*args, **kwargs)
+
+            except Exception as error:
+
+                # Raise the specified Error class.
+                raise(err_cls(msg=error))
+
+        return call_function
+
+    return decorator
