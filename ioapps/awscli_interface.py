@@ -134,6 +134,7 @@ def __error__(msg: str = None) -> None:
 
     """
 
+
 # ----
 
 
@@ -239,8 +240,7 @@ def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> b
         cmd.append(f"{profile}")
 
     # Query the AWS path; proceed accordingly.
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (contents, _) = proc.communicate()
     proc.wait()
 
@@ -325,8 +325,7 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
     try:
 
         # Collect a list of the AWS resource path contents.
-        proc = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (path_list, _) = proc.communicate()
         proc.wait()
 
@@ -497,8 +496,7 @@ def put_awsfile(
                     "entry; wildcards are not supported by the "
                     "parameters provided upon entry; resetting to "
                     "NoneType.".format(
-                        parser_interface.object_getattr(
-                            object_in=aws_obj, key=item),
+                        parser_interface.object_getattr(object_in=aws_obj, key=item),
                     )
                 )
                 logger.warn(msg=msg)
@@ -522,8 +520,7 @@ def put_awsfile(
             strval = parser_interface.dict_key_value(
                 dict_in=aws_kwargs_dict, key=aws_kwarg, no_split=True
             )
-            value = parser_interface.object_getattr(
-                object_in=aws_obj, key=aws_kwarg)
+            value = parser_interface.object_getattr(object_in=aws_obj, key=aws_kwarg)
 
             # Check that the keyword argument value is not NoneType;
             # proceed accordingly.
