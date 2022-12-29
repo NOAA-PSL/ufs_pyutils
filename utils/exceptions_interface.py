@@ -61,6 +61,21 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/hashlib_interface module; it is a sub-class of Error.
 
+    Jinja2InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        confs/jinja2_interface module; it is a sub-class of Error.    
+
+    JSONInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        confs/json_interface module; it is a sub-class of Error.     
+
+    NamelistInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        confs/namelist_interface module; it is a sub-class of Error.
+
     NetCDF4InterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -85,6 +100,16 @@ Classes
 
         This is the base-class for exceptions encountered within the
         ioapps/sqlite3_interface module; it is a sub-class of Error.
+
+    TarFileInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/tarfile_interface module; it is a sub-class of Error.
+
+    TCVitalsInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/tcvitalsinterface module; it is a sub-class of Error.
 
     TimestampsInterfaceError()
 
@@ -125,6 +150,13 @@ __all__ = [
     "AWSCLIInterfaceError",
     "Boto3InterfaceError",
     "CurlInterfaceError",
+    "GRIBInterfaceError",
+    "HashLibInterfaceError",
+    "Jinja2InterfaceError",
+    "JSONInterfaceError",
+    "NamelistInterfaceError",
+    "NetCDF4InterfaceError",
+    "NOAAHPSSInterfaceError",
     "ParserInterfaceError",
     "SchemaInterfaceError",
     "SQLite3InterfaceError",
@@ -133,6 +165,7 @@ __all__ = [
     "TimestampsInterfaceError",
     "URLInterfaceError",
     "WgetInterfaceError",
+    "YAMLInterfaceError"
 ]
 
 # ----
@@ -224,6 +257,44 @@ class HashLibInterfaceError(Error):
 
     """
 
+# ----
+
+
+class Jinja2InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    confs/jinja2_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class JSONInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    confs/json_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class NamelistInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    confs/namelist_interface module; it is a sub-class of Error.
+
+    """
 
 # ----
 
@@ -238,7 +309,6 @@ class NetCDF4InterfaceError(Error):
 
     """
 
-
 # ----
 
 
@@ -251,7 +321,6 @@ class NOAAHPSSInterfaceError(Error):
     ioapps/noaahpss_interface module; it is a sub-class of Error.
 
     """
-
 
 # ----
 
@@ -266,7 +335,6 @@ class ParserInterfaceError(Error):
 
     """
 
-
 # ----
 
 
@@ -279,7 +347,6 @@ class SchemaInterfaceError(Error):
     utils/schema_interface module; it is a sub-class of Error.
 
     """
-
 
 # ----
 
@@ -294,7 +361,6 @@ class SQLite3InterfaceError(Error):
 
     """
 
-
 # ----
 
 
@@ -307,7 +373,6 @@ class TarFileInterfaceError(Error):
     ioapps/tarfile_interface module; it is a sub-class of Error.
 
     """
-
 
 # ----
 
@@ -322,7 +387,6 @@ class TCVitalsInterfaceError(Error):
 
     """
 
-
 # ----
 
 
@@ -335,7 +399,6 @@ class TimestampsInterfaceError(Error):
     utils/timestamp_interface module; it is a sub-class of Error.
 
     """
-
 
 # ----
 
@@ -350,7 +413,6 @@ class URLInterfaceError(Error):
 
     """
 
-
 # ----
 
 
@@ -361,5 +423,18 @@ class WgetInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/wget_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class YAMLInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    confs/yaml_interface module; it is a sub-class of Error.
 
     """
