@@ -238,6 +238,7 @@ def __error__(msg: str = None) -> None:
 
     """
 
+
 # ----
 
 
@@ -517,6 +518,7 @@ def dict_key_value(
 
     return value
 
+
 # ----
 
 
@@ -578,6 +580,7 @@ def dict_merge(dict1: dict, dict2: dict) -> Generator[dict, dict, dict]:
 
             # Update the second Python dictionary accordingly.
             yield (k, dict2[k])
+
 
 # ----
 
@@ -781,8 +784,7 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(
-        object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -1015,8 +1017,7 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower()
-                  and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
@@ -1382,8 +1383,7 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(
-        x for x in in_list if x not in out_list)
+    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):
