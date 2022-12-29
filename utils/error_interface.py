@@ -59,6 +59,7 @@ History
 # ----
 
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
@@ -72,7 +73,7 @@ logger = Logger()
 
 # ----
 
-__all__ = ["Error"
+__all__ = ["Error",
            "msg_except_handle"]
 
 # ----
