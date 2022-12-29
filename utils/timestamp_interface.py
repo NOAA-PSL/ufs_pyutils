@@ -37,16 +37,13 @@ Globals
         Global timestamp format; this is the format from which all
         others should be defined/determined.
 
-Classes
--------
-
-    TimestampInterfaceError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     check_frmt(datestr, in_frmttyp = GLOBAL, out_frmttyp = GLOBAL)
 
@@ -67,9 +64,14 @@ History
 
 # ----
 
+# pylint: disable=unused-argument
+
+# ----
+
 from tools import datetime_interface
 
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import TimestampsInterfaceError
 
 # ----
 
@@ -86,32 +88,23 @@ GLOBAL = "%Y%m%d%H%M%S"
 # ----
 
 
-class TimestampInterfaceError(Error):
+@msg_except_handle(TimestampsInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new TimestampInterfaceError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -170,4 +163,4 @@ def check_frmt(
             f"The timestamp string {datestr} does not match the format "
             f"{out_frmttyp}. Aborting!!!"
         )
-        raise TimestampInterfaceError(msg=msg)
+        __error__(msg=msg)

@@ -59,13 +59,12 @@ History
 # ----
 
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
 from collections.abc import Callable
-from typing import TypeVar
 
-from typing_extensions import ParamSpec
 from utils.logger_interface import Logger
 
 # ----
@@ -74,19 +73,13 @@ logger = Logger()
 
 # ----
 
-__all__ = ["msg_except_handle"]
+__all__ = ["Error", "msg_except_handle"]
 
 # ----
 
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-# Define the type hint attributes.
-Params = ParamSpec("Params")
-Returns = TypeVar("Returns")
 
 # ----
 
@@ -155,11 +148,7 @@ def msg_except_handle(err_cls: object) -> Callable:
     def decorator(func: Callable):
 
         # Execute the caller function; proceed accordingly.
-        def call_function(msg, *args: Params.args, **kwargs: Params.kwargs) -> Returns:
-
-            # Execute the callable function/method; proceed
-            # accordingly.
-            func(*args, **kwargs)
+        def call_function(msg: str) -> None:
 
             # If an exception is encountered, raise the respective
             # exception.

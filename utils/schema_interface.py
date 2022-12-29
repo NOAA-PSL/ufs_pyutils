@@ -29,16 +29,13 @@ Description
     This module contains functions to validate calling class and/or
     function attributes.
 
-Classes
--------
-
-    SchemaError(msg=msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     validate_opts(cls_schema, cls_opts)
 
@@ -65,13 +62,19 @@ History
 
 # ----
 
-from schema import Schema
-
-from utils.error_interface import Error, gen_except_handle
+# pylint: disable=broad-except
+# pylint: disable=unused-argument
 
 # ----
 
-# Define all available functions.
+from schema import Schema
+
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import SchemaInterfaceError
+
+# ----
+
+# Define all available attributes.
 __all__ = ["validate_opts"]
 
 # ----
@@ -83,13 +86,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class SchemaError(Error):
+@msg_except_handle(SchemaInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -101,21 +104,10 @@ class SchemaError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new SchemaError object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
 
-@gen_except_handle(SchemaError)
 def validate_opts(cls_schema: dict, cls_opts: dict) -> None:
     """
     Description
@@ -138,10 +130,26 @@ def validate_opts(cls_schema: dict, cls_opts: dict) -> None:
         arguments, keyword arguments, etc.,) passed to the respective
         calling class.
 
+    Raises
+    ------
+
+    SchemaInterfaceError:
+
+        * raised if an exception is encountered while validating the
+          schema.
+
     """
 
     # Define the schema.
     schema = Schema([cls_schema])
 
     # Check that the class attributes are valid; proceed accordingly.
-    schema.validate([cls_opts])
+    try:
+
+        # Validate the schema.
+        schema.validate([cls_opts])
+
+    except Exception as error:
+
+        msg = f"Schema validation failed with error {error}. Aborting!!!"
+        __error__(msg=msg)
