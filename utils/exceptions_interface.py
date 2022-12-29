@@ -65,9 +65,11 @@ from utils.error_interface import Error
 # ----
 
 # Define all available attributes.
-__all__ = ["ArgumentsInterfaceError",
-           "SchemaInterfaceError",
-           "TimestampsInterfaceError"]
+__all__ = [
+    "ArgumentsInterfaceError",
+    "SchemaInterfaceError",
+    "TimestampsInterfaceError",
+]
 
 # ----
 
@@ -88,6 +90,7 @@ class ArgumentsInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -101,6 +104,7 @@ class SchemaInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -113,5 +117,6 @@ class TimestampsInterfaceError(Error):
     utils/timestamp_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
