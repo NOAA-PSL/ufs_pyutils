@@ -57,6 +57,11 @@ History
 
 # ----
 
+# pylint: disable=broad-except
+# pylint: disable=unused-argument
+
+# ----
+
 from schema import Schema
 
 from utils.error_interface import msg_except_handle
@@ -93,7 +98,6 @@ def __error__(msg: str = None) -> None:
         exception.
 
     """
-    pass
 
 # ----
 
