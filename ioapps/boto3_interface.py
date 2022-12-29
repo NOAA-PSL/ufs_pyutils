@@ -29,16 +29,13 @@ Description
     This module contains functions for various Amazon Web Services
     (AWS) storage interfaces provided by the Python boto3 library.
 
-Classes
--------
-
-    Boto3Error(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _aws_credentials(profile_name=None)
 
@@ -135,6 +132,8 @@ import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
 from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exception_interface import Boto3InterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -155,13 +154,13 @@ logger = Logger()
 # ----
 
 
-class Boto3Error(Error):
+@msg_except_handle(Boto3InterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -172,17 +171,6 @@ class Boto3Error(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new Boto3Error object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
@@ -223,7 +211,7 @@ def _aws_credentials(profile_name: str = None) -> tuple:
     Raises
     ------
 
-    Boto3Error:
+    Boto3InterfaceError:
 
         * raised if an exception is encountered establishing the boto3
           Session object for non-NoneType entry values for the
@@ -254,7 +242,7 @@ def _aws_credentials(profile_name: str = None) -> tuple:
                 f"Establishing the boto3 session for profile name {profile_name} "
                 f"failed with error {error}. Aborting!!!"
             )
-            raise Boto3Error(msg=msg)
+            __error__(msg=msg)
 
     return (unsigned, session)
 
@@ -318,7 +306,7 @@ def _client(
             "using neither UNSIGNED credentials of a valid "
             "~/.aws/credentials profile name. Aborting!!!"
         )
-        raise Boto3Error(msg=msg)
+        __error__(msg=msg)
 
     if unsigned and session is not None:
         msg = (
@@ -326,7 +314,7 @@ def _client(
             "UNSIGNED credentials are specified and the profile_name "
             "parameter value upon entry is not NoneType. Aborting!!!"
         )
-        raise Boto3Error(msg=msg)
+        __error__(msg=msg)
 
     # Establish the boto3 resource bucket client object in accordance
     # with the upon entry parameter values.
@@ -720,7 +708,7 @@ def get(
     Raises
     ------
 
-    Boto3Error:
+    Boto3InterfaceError:
 
         * raised if parameter values provided upon entry are invalid.
 
@@ -746,7 +734,7 @@ def get(
                 "For into memory retrievals, the parameter variable "
                 "object_path value cannot be NoneType. Aborting!!!"
             )
-            raise Boto3Error(msg=msg)
+            __error__(msg=msg)
 
         # Define the Python boto3 bucket resource object.
         resource_obj = _resource(
@@ -770,7 +758,7 @@ def get(
                 f"Reading {resource} object path {object_path} into memory failed with "
                 f"error {error}. Aborting!!!"
             )
-            raise Boto3Error(msg=msg)
+            __error__(msg=msg)
 
     if not into_mem:
 
@@ -786,7 +774,7 @@ def get(
                 "parameter variable filedict cannot be NoneType upon "
                 "entry. Aborting!!!"
             )
-            raise Boto3Error(msg=msg)
+            __error__(msg=msg)
 
         # Define the Python boto3 bucket client object.
         client = _client(
@@ -817,7 +805,7 @@ def get(
                     f"Downloading of object {filedict[key]} from {resource} bucket "
                     f"{bucket} to {key} failed with error {error}. Aborting!!!"
                 )
-                raise Boto3Error(msg=msg)
+                __error__(msg=msg)
 
     return object_memory
 
@@ -867,7 +855,7 @@ def put(
     Raises
     ------
 
-    Boto3Error:
+    Boto3InterfaceError:
 
         * raised if the uploading of a specified object path
           encounters and exception.
@@ -898,4 +886,4 @@ def put(
                 f"Uploading of file {key} to {resource} bucket {bucket} object {filedict[key]} "
                 f"failed with error {error}. Aborting!!!"
             )
-            raise Boto3Error(msg=msg)
+            __error__(msg=msg)
