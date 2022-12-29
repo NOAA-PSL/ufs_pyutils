@@ -66,6 +66,11 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/netcdf4_interface module; it is a sub-class of Error.
 
+    NOAAHPSSInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/noaahpss_interface module; it is a sub-class of Error.
+
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -204,6 +209,19 @@ class NetCDF4InterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/netcdf4_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class NOAAHPSSInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/noaahpss_interface module; it is a sub-class of Error.
 
     """
 
