@@ -37,11 +37,6 @@ Classes
         This is the base-class object for all command line argument(s)
         parsing.
 
-    ArgumentsError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Author(s)
 ---------
 
@@ -63,8 +58,6 @@ History
 from argparse import ArgumentParser
 
 from tools import parser_interface
-
-from utils.error_interface import Error
 
 # ----
 
@@ -141,35 +134,3 @@ class Arguments:
             )
 
         return options_obj
-
-
-# ----
-
-
-class ArgumentsError(Error):
-    """
-    Description
-    -----------
-
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new ArgumentsError object.
-
-        """
-        super().__init__(msg=msg)

@@ -36,6 +36,14 @@ Classes
         This is the base-class for all exceptions; it is a sub-class
         of Exceptions.
 
+Functions
+---------
+
+    msg_except_handle(err_cls):
+
+        This function provides a decorator to be used to raise
+        specified exceptions
+
 Author(s)
 ---------
 
@@ -51,19 +59,13 @@ History
 # ----
 
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
 from collections.abc import Callable
-from typing import TypeVar
-
-from typing_extensions import ParamSpec
 
 from utils.logger_interface import Logger
-
-# ----
-
-__all__ = ["gen_except_handle"]
 
 # ----
 
@@ -71,15 +73,13 @@ logger = Logger()
 
 # ----
 
-__author__ = "Henry R. Winterbottom"
-__maintainer__ = "Henry R. Winterbottom"
-__email__ = "henry.winterbottom@noaa.gov"
+__all__ = ["Error", "msg_except_handle"]
 
 # ----
 
-# Define the type hint attributes.
-Params = ParamSpec("Params")
-Returns = TypeVar("Returns")
+__author__ = "Henry R. Winterbottom"
+__maintainer__ = "Henry R. Winterbottom"
+__email__ = "henry.winterbottom@noaa.gov"
 
 # ----
 
@@ -119,28 +119,28 @@ class Error(Exception):
 # ----
 
 
-def gen_except_handle(err_cls: object):
+def msg_except_handle(err_cls: object) -> Callable:
     """
     Description
     -----------
 
-    This function provides a decorator for general exceptions.
+    This function provides a decorator to be used to raise specified
+    exceptions.
 
     Parameters
     ----------
 
     err_cls: object
 
-        A Python object specifying the error class to be raised when
-        an exception is encountered.
+        A Python object containing the Error subclass to be used for
+        exception raises.
 
-    Returns
-    -------
+    Parameters
+    ----------
 
-    decorate: object
+    decorator: Callable
 
-        A Python object containing the respetive general exception
-        handler decorator.
+        A Python decorator.
 
     """
 
@@ -148,16 +148,11 @@ def gen_except_handle(err_cls: object):
     def decorator(func: Callable):
 
         # Execute the caller function; proceed accordingly.
-        def call_function(*args: Params.args, **kwargs: Params.kwargs) -> Returns:
-            try:
+        def call_function(msg: str) -> None:
 
-                # Execute the callable function/method.
-                func(*args, **kwargs)
-
-            except Exception as error:
-
-                # Raise the specified Error class.
-                raise err_cls(msg=error)
+            # If an exception is encountered, raise the respective
+            # exception.
+            raise err_cls(msg=msg)
 
         return call_function
 

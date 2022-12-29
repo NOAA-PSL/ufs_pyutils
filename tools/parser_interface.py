@@ -30,16 +30,13 @@ Description
     involve the parsing of dictionaries, lists, and other Python type
     comprehensions.
 
-Classes
--------
-
-    ParserInterfaceError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     dict_formatter(in_dict)
 
@@ -172,6 +169,7 @@ History
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
+# pylint: disable=unused-argument
 
 # ----
 
@@ -183,7 +181,8 @@ import types
 from typing import Generator, Union
 
 import numpy
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import ParserInterfaceError
 
 # ----
 
@@ -220,13 +219,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class ParserInterfaceError(Error):
+@msg_except_handle(ParserInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -237,16 +236,6 @@ class ParserInterfaceError(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new ParserInterfaceError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -480,7 +469,7 @@ def dict_key_value(
             "values. Please check that only one threshold value is "
             "is to be sought from the list. Aborting!!!"
         )
-        raise ParserInterfaceError(msg=msg)
+        __error__(msg=msg)
 
     if index_value is not None:
         if max_value:
@@ -489,7 +478,7 @@ def dict_key_value(
                 "the specified index) and the maximum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
         if min_value:
             msg = (
@@ -497,7 +486,7 @@ def dict_key_value(
                 "the specified index) and the minimum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
     try:
         value = dict_in[key]
         if no_split:
@@ -515,18 +504,19 @@ def dict_key_value(
         except AttributeError:
             value = dict_in[key]
 
-    except KeyError as error:
+    except KeyError:
         if not force:
             msg = (
                 f"Key {key} could not be found in user provided dictionary. "
                 "Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg) from error
+            __error__(msg=msg)
 
         if force:
             value = None
 
     return value
+
 
 # ----
 
@@ -589,6 +579,7 @@ def dict_merge(dict1: dict, dict2: dict) -> Generator[dict, dict, dict]:
 
             # Update the second Python dictionary accordingly.
             yield (k, dict2[k])
+
 
 # ----
 
@@ -792,8 +783,7 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(
-        object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -963,7 +953,7 @@ def object_getattr(
                 f"The object {object_in} does not contain attribute "
                 "{key}. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
     return value
 
@@ -1026,8 +1016,7 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower()
-                  and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
@@ -1393,8 +1382,7 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(
-        x for x in in_list if x not in out_list)
+    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):

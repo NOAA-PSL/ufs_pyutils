@@ -29,16 +29,13 @@ Description
     This module contains functions to create and read local host
     tarball files.
 
-Classes
--------
-
-    TarFileError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     read_tarfile(path, tarball_path, mode=None, filelist=None):
 
@@ -67,9 +64,11 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=consider-using-with
 # pylint: disable=raise-missing-from
 # pylint: disable=too-many-arguments
+# pylint: disable=unused-argument
 
 # ----
 
@@ -77,7 +76,8 @@ import os
 import tarfile
 
 from tools import parser_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import TarFileInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -98,32 +98,23 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class TarFileError(Error):
+@msg_except_handle(TarFileInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new TarFileError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -167,7 +158,7 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
     Raises
     ------
 
-    TarballError:
+    TarFileInterfaceError:
 
         * raised if an exception is encountered while extracting files
           from the tarball file path specified upon entry.
@@ -209,7 +200,7 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
                 f"The extraction of all files from tarball path {tarball_path} "
                 f"failed with error {error}. Aborting!!!"
             )
-            raise TarFileError(msg=msg)
+            __error__(msg=msg)
 
     # Extract only the files specified within the filelist attribute
     # upon entry; proceed accordingly.
@@ -228,7 +219,7 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
                     f"The extraction of file {filename} from tarball path {tarball_path} "
                     f"failed with error {error}. Aborting!!!"
                 )
-                raise TarFileError(msg=msg)
+                __error__(msg=msg)
 
     # Close the open tarball archive.
     tarball.close()
@@ -302,7 +293,7 @@ def write_tarfile(
     Raises
     ------
 
-    TarFileError:
+    TarFileInterfaceError:
 
         * raised if an exception is encountered while validating the
           parameter values provided upon entry.
@@ -324,7 +315,7 @@ def write_tarfile(
             "lists (filelist) and file and archive file mapping "
             "names (filedict) simultaneously. Aborting!!!"
         )
-        raise TarFileError(msg=msg)
+        __error__(msg=msg)
 
     # Define the tarball archive attributes accordingly.
     if gzip:

@@ -30,16 +30,13 @@ Description
     (world-wide web; WWW) files using the respective platform curl
     application executable..
 
-Classes
--------
-
-    CurlError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_curl_env()
 
@@ -90,7 +87,8 @@ import subprocess
 import requests
 from bs4 import BeautifulSoup
 from tools import system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import CurlInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -111,32 +109,23 @@ logger = Logger()
 # ----
 
 
-class CurlError(Error):
+@msg_except_handle(CurlInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new CurlError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -163,7 +152,7 @@ def _check_curl_env() -> str:
     Raises
     ------
 
-    CurlError:
+    CurlInterfaceError:
 
         * raised if the curl application executable path cannot be
           determined.
@@ -179,7 +168,7 @@ def _check_curl_env() -> str:
             "The curl application executable could not be determined "
             "from the run-time environment. Aborting!!!"
         )
-        raise CurlError(msg=msg)
+        __error__(msg=msg)
 
     return curl_exec
 
@@ -223,13 +212,13 @@ def get_webfile(
     ignore_missing: bool, optional
 
         A Python boolean valued variable specifying whether to ignore
-        missing files (True) or raise CurlError for missing files
-        (False).
+        missing files (True) or raise CurlInterfaceError for missing
+        files (False).
 
     Raises
     ------
 
-    CurlError:
+    CurlInterfaceError:
 
         * raised if an exception is raised related to a missing URL
           path is encountered.
@@ -292,7 +281,7 @@ def get_webfile(
                 f"Collecting of internet path {url} failed with error {error}. "
                 "Aborting!!!"
             )
-            raise CurlError(msg=msg)
+            __error__(msg=msg)
 
 
 # ----
@@ -336,7 +325,7 @@ def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
     Raises
     ------
 
-    CurlError:
+    CurlInterfaceError:
 
         * raised if an Exception is encountered; the respective error
           message accompanys the message string passed to the
@@ -369,6 +358,6 @@ def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
             f"Collection of files available at internet path {url} failed "
             f"with error {error}. Aborting!!!"
         )
-        raise CurlError(msg=msg)
+        __error__(msg=msg)
 
     return weblist

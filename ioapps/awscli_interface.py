@@ -30,16 +30,13 @@ Description
     Services (AWS) command-line interface (CLI) for AWS resource
     bucket and object paths.
 
-Classes
--------
-
-    AWSCLIError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_awscli_env()
 
@@ -88,6 +85,7 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=consider-using-with
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
@@ -101,7 +99,8 @@ import subprocess
 from ast import literal_eval
 
 from tools import parser_interface, system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import AWSCLIInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -122,13 +121,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class AWSCLIError(Error):
+@msg_except_handle(AWSCLIInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -140,17 +139,6 @@ class AWSCLIError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new AWSCLIError object.
-
-        """
-        super().__init__(msg=msg)
-
-
 # ----
 
 
@@ -160,8 +148,8 @@ def _check_awscli_env() -> str:
     -----------
 
     This function checks whether the AWS CLI environment has been
-    loaded; if not, an AWSCLIError will be thrown; if so, the path to
-    the AWS CLI executable will be defined and returned.
+    loaded; if not, an AWSCLIInterfaceError will be thrown; if so, the
+    path to the AWS CLI executable will be defined and returned.
 
     Returns
     -------
@@ -190,7 +178,7 @@ def _check_awscli_env() -> str:
             "libaries/modules are loaded prior to calling this script. "
             "Aborting!!!"
         )
-        raise AWSCLIError(msg=msg)
+        __error__(msg=msg)
 
     return awscli
 
@@ -256,7 +244,8 @@ def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> b
         cmd.append(f"{profile}")
 
     # Query the AWS path; proceed accordingly.
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (contents, _) = proc.communicate()
     proc.wait()
 
@@ -317,7 +306,7 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
     Raises
     ------
 
-    AWSCLIError:
+    AWSCLIInterfaceError:
 
         * raised if an exception is encountered while creating the
           list of files within the specified AWS resource bucket and
@@ -341,7 +330,8 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
     try:
 
         # Collect a list of the AWS resource path contents.
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (path_list, _) = proc.communicate()
         proc.wait()
 
@@ -363,7 +353,7 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
             f"Determining the files in AWS path {aws_path} for AWS "
             f"resource {resource} failed with error {error}. Aborting!!!"
         )
-        raise AWSCLIError(msg=msg) from error
+        __error__(msg=msg)
 
     return awspath_list
 
@@ -462,7 +452,7 @@ def put_awsfile(
     Raises
     ------
 
-    AWSCLIError:
+    AWSCLIInterfaceError:
 
         * raised if the parameter values specified upon entry are
           non-compliant with the wildcards attribute.
@@ -498,7 +488,7 @@ def put_awsfile(
                 "aws_exclude and/or aws_include must not be "
                 "NoneType. Aborting!!!"
             )
-            raise AWSCLIError(msg=msg)
+            __error__(msg=msg)
 
     if not aws_obj.is_wildcards:
         for item in ["aws_exclude", "aws_include"]:
@@ -512,7 +502,8 @@ def put_awsfile(
                     "entry; wildcards are not supported by the "
                     "parameters provided upon entry; resetting to "
                     "NoneType.".format(
-                        parser_interface.object_getattr(object_in=aws_obj, key=item),
+                        parser_interface.object_getattr(
+                            object_in=aws_obj, key=item),
                     )
                 )
                 logger.warn(msg=msg)
@@ -536,7 +527,8 @@ def put_awsfile(
             strval = parser_interface.dict_key_value(
                 dict_in=aws_kwargs_dict, key=aws_kwarg, no_split=True
             )
-            value = parser_interface.object_getattr(object_in=aws_obj, key=aws_kwarg)
+            value = parser_interface.object_getattr(
+                object_in=aws_obj, key=aws_kwarg)
 
             # Check that the keyword argument value is not NoneType;
             # proceed accordingly.
@@ -585,7 +577,7 @@ def put_awsfile(
 
     except Exception as error:
         msg = f"The AWS CLI application failed with error {error}. Aborting!!!"
-        raise AWSCLIError(msg=msg) from error
+        __error__(msg=msg)
 
     # Check the subprocess stderr and stdout attributes; proceed
     # accordingly.
