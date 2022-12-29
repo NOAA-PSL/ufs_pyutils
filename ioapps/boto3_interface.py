@@ -172,6 +172,7 @@ def __error__(msg: str = None) -> None:
 
     """
 
+
 # ----
 
 
@@ -319,8 +320,7 @@ def _client(
     # Establish the boto3 resource bucket client object in accordance
     # with the upon entry parameter values.
     if unsigned:
-        client = boto3.client(
-            resource, config=Config(signature_version=UNSIGNED))
+        client = boto3.client(resource, config=Config(signature_version=UNSIGNED))
 
     if session is not None:
         session = _session(profile_name=profile_name)
