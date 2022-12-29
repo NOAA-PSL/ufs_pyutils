@@ -29,16 +29,13 @@ Description
     This module contains classes and functions to read and write
     Jinja2-formatted files.
 
-Classes
--------
-
-    Jinja2Error(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     write_jinja2(jinja2_file, in_dict)
 
@@ -59,12 +56,15 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=consider-using-f-string
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import Jinja2InterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -85,13 +85,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class Jinja2Error(Error):
+@msg_except_handle(Jinja2InterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -102,16 +102,6 @@ class Jinja2Error(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new Jinja2Error object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -138,6 +128,14 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
         A Python dictionary containing the attributes to be written to
         the Jinja2 file.
 
+    Raises
+    ------
+
+    Jinja2InterfaceError:
+
+        * raised if an exception is encountered while writing the
+          Jinja2-formatted file.
+
     """
 
     # Open and write the dictionary contents to the specified
@@ -160,4 +158,4 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
 
     except Exception as error:
         msg = f"Writing Jinja2-formatted file {jinja2_file} failed with error {error}. Aborting!!!"
-        raise Jinja2Error(msg=msg)
+        __error__(msg=msg)
