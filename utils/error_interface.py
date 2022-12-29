@@ -73,8 +73,7 @@ logger = Logger()
 
 # ----
 
-__all__ = ["Error",
-           "msg_except_handle"]
+__all__ = ["Error", "msg_except_handle"]
 
 # ----
 
