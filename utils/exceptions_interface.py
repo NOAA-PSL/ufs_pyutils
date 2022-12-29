@@ -41,6 +41,16 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/awscli_interface module; it is a sub-class of Error.
 
+    Boto3InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/boto3_interface module; it is a sub-class of Error.
+
+    CurlInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/curl_interface module; it is a sub-class of Error.
+
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -77,6 +87,9 @@ from utils.error_interface import Error
 # Define all available attributes.
 __all__ = [
     "ArgumentsInterfaceError",
+    "AWSCLIInterfaceError",
+    "Boto3InterfaceError",
+    "CurlInterfaceError",
     "ParserInterfaceError",
     "SchemaInterfaceError",
     "TimestampsInterfaceError",
@@ -111,6 +124,45 @@ class AWSCLIInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/awscli_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class Boto3InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/boto3_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class CurlInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/curl_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class GRIBInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/grib_interface module; it is a sub-class of Error.
 
     """
 
