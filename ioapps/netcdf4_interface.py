@@ -29,16 +29,13 @@ Description
     This module contains functions which interface with the Python
     netCDF4 library.
 
-Classes
--------
-
-    NCError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _get_ncapp_path(ncapp):
 
@@ -170,6 +167,7 @@ History
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-locals
+# pylint: disable=unused-argument
 
 # ----
 
@@ -179,7 +177,8 @@ from typing import Union
 import netCDF4
 import numpy
 from tools import parser_interface, system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import NetCDF4InterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -213,33 +212,23 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class NCError(Error):
+@msg_except_handle(NetCDF4InterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str) -> None:
-        """
-        Description
-        -----------
-
-        Creates a new NCError object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
@@ -271,7 +260,7 @@ def _get_ncapp_path(ncapp: str) -> str:
     Raises
     ------
 
-    NCError:
+    NetCDFInterfaceError:
 
         * raised if the netCDF application path cannot be determined.
 
@@ -288,7 +277,7 @@ def _get_ncapp_path(ncapp: str) -> str:
             "libaries/modules are loaded prior to calling this script. "
             "Aborting!!!"
         )
-        raise NCError(msg=msg)
+        __error__(msg=msg)
 
     return ncapp_path
 
@@ -632,6 +621,14 @@ def nccopy(
         netCDF nccopy utility to produce a direct copy of the
         netCDF-formatted file specified upon entry.
 
+    Raises
+    ------
+
+    NetCDF4InterfaceError:
+
+        * raised if the netCDF nccopy application output file form is
+          not supported.
+
     """
 
     # Use the netCDF applications on the local platform to produce a
@@ -661,7 +658,7 @@ def nccopy(
                 "The netCDF nccopy application output file formatted "
                 f"type {ncfrmtout} is not supported. Aborting!!!"
             )
-            raise NCError(msg=msg)
+            __error__(msg=msg)
 
         # Create a direct copy of the netCDF-formatted file provided
         # upon entry.
@@ -670,9 +667,11 @@ def nccopy(
             f"as {ncfileout} and format {ncfrmtout.upper()}."
         )
         logger.info(msg=msg)
-        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}", f"{ncfilein}", f"{ncfileout}"]
+        cmd = [f"{nccopy_app}", f"-{nccopy_app_str}",
+               f"{ncfilein}", f"{ncfileout}"]
 
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
 
     # Create a direct copy of the netCDF formatted file provided upon
@@ -691,10 +690,12 @@ def nccopy(
         # array dimensions for the destination netCDF-formatted file.
         for (name, dimension) in srcfile.dimensions.items():
             if ncunlimval is None:
-                dimsize = len(dimension) if not dimension.isunlimited() else None
+                dimsize = len(
+                    dimension) if not dimension.isunlimited() else None
 
             if ncunlimval is not None:
-                dimsize = len(dimension) if not dimension.isunlimited() else ncunlimval
+                dimsize = len(
+                    dimension) if not dimension.isunlimited() else ncunlimval
 
             dstfile.createDimension(name, dimsize)
 
@@ -702,14 +703,16 @@ def nccopy(
         # accordingly.
         if ncvarlist is None:
             for (name, variable) in srcfile.variables.items():
-                dstfile.createVariable(name, variable.datatype, variable.dimensions)
+                dstfile.createVariable(
+                    name, variable.datatype, variable.dimensions)
                 dstfile[name][:] = srcfile[name][:]
                 dstfile[name].setncatts(srcfile[name].__dict__)
 
         if ncvarlist is not None:
             for (name, variable) in srcfile.variables.items():
                 if name in ncvarlist:
-                    dstfile.createVariable(name, variable.datatype, variable.dimensions)
+                    dstfile.createVariable(
+                        name, variable.datatype, variable.dimensions)
                     dstfile[name][:] = srcfile[name][:]
                     dstfile[name].setncatts(srcfile[name].__dict__)
 
@@ -795,14 +798,16 @@ def nccopyvar(
         ncfrmtout = "NETCDF4_CLASSIC"
 
     srcfile = netCDF4.Dataset(filename=ncfilein, mode="r", format=ncfrmtin)
-    dstfile = netCDF4.Dataset(filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
+    dstfile = netCDF4.Dataset(
+        filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
 
     # Loop through each variable within the netCDF-formatted file and
     # copy the specified variables to the destination netCDF-formatted
     # file.
     for (name, variable) in srcfile.variables.items():
         if ncvarname == name:
-            dstfile.createVariable(name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(
+                name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
             dstfile[name][:] = ncvar
 
@@ -1098,7 +1103,7 @@ def ncreadvar(
     Raises
     ------
 
-    NCError:
+    NetCDF4InterfaceError:
 
         * raised if the squeeze attribute is implement without
           specifying the variable axis along which to apply the
@@ -1121,7 +1126,7 @@ def ncreadvar(
                 "axis about which to squeeze the ingested variable "
                 "must be specified. Aborting!!!"
             )
-            raise NCError(msg=msg)
+            __error__(msg=msg)
 
     # Open the netCDF-formatted files.
     if ncfrmt is None:
@@ -1141,7 +1146,7 @@ def ncreadvar(
                 "NoneType upon entry if attempting to read a netCDF "
                 "variable from a netCDF group container. Aborting!!!"
             )
-            raise NCError(msg=msg)
+            __error__(msg=msg)
 
         # Define the netCDF groups contained within the
         # netCDF-formatted file provided upon entry.
@@ -1153,7 +1158,7 @@ def ncreadvar(
                 f"The netCDF group {ncgroupname} could not be determined from the "
                 f"contents of netCDF-formatted file {ncfile}. Aborting!!!"
             )
-            raise NCError(msg=msg)
+            __error__(msg=msg)
 
     # Collect the netCDF variable; proceed accordingly.
     if level is None:
@@ -1400,7 +1405,8 @@ def ncwrite(
                         object_in=var, key=attr, value=value
                     )
 
-            vallist = numpy.reshape(list(map(datatype, var_dict["values"])), var.shape)
+            vallist = numpy.reshape(
+                list(map(datatype, var_dict["values"])), var.shape)
             var[:] = numpy.array(vallist, dtype=datatype)
 
         except TypeError:
