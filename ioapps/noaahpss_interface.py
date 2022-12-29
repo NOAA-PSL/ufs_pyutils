@@ -30,21 +30,18 @@ Description
     National Oceanographic and Atmospheric Administration (NOAA)
     High-Performance Storage System (HPSS).
 
-Classes
--------
-
-    NOAAHPSSError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
--------
+---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_hpss_env()
 
         This function checks whether the HPSS environment has been
-        loaded; if not, a NOAAHPSSError will be thrown; if so, the
+        loaded; if not, a NOAAHPSSInterfaceError will be thrown; if so, the
         paths to the htar and hsi executables will be defined
         respectively as the base-class attributes htar and hsi.
 
@@ -64,7 +61,7 @@ Functions
     path_build(path)
 
         This function attempts to build a path on the NOAA HPSS; if a
-        path cannot be created, this function throws a NOAAHPSSError.
+        path cannot be created, this function throws a NOAAHPSSInterfaceError.
 
     path_exist(path)
 
@@ -95,7 +92,7 @@ Functions
 
         This function will attempt to write a tarball and
         corresponding tarball index file to the NOAA HPSS; if one
-        cannot be written, this function will thrown a NOAAHPSSError;
+        cannot be written, this function will thrown a NOAAHPSSInterfaceError;
         a returncode of 70, meaning the HPSS tarball file path is too
         long, is ignored as it is erroneous.
 
@@ -119,6 +116,7 @@ History
 # pylint: disable=simplifiable-if-statement
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
+# pylint: disable=unused-argument
 
 # ----
 
@@ -127,7 +125,8 @@ import subprocess
 
 import numpy
 from tools import fileio_interface, system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import NOAAHPSSInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -157,13 +156,13 @@ logger = Logger()
 # ----
 
 
-class NOAAHPSSError(Error):
+@msg_except_handle(NOAAHPSSInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -175,17 +174,6 @@ class NOAAHPSSError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new NOAAHPSSError object.
-
-        """
-        super().__init__(msg=msg)
-
-
 # ----
 
 
@@ -195,9 +183,9 @@ def _check_hpss_env() -> tuple:
     -----------
 
     This function checks whether the HPSS environment has been loaded;
-    if not, a NOAAHPSSError will be thrown; if so, the paths to the
-    htar and hsi executables will be defined respectively as the
-    base-class attributes htar and hsi.
+    if not, a NOAAHPSSInterfaceError will be thrown; if so, the paths
+    to the htar and hsi executables will be defined respectively as
+    the base-class attributes htar and hsi.
 
     Returns
     -------
@@ -213,7 +201,7 @@ def _check_hpss_env() -> tuple:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the htar executable path cannot be determined.
 
@@ -229,7 +217,7 @@ def _check_hpss_env() -> tuple:
         msg = (
             "The htar executable could not be determined for your system. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
     # Check the run-time environment in order to determine the hsi
     # executable path.
@@ -239,7 +227,7 @@ def _check_hpss_env() -> tuple:
         msg = (
             "The hsi executable could not be determined for your system. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
     return (hsi, htar)
 
@@ -338,7 +326,7 @@ def get_hpssfile(hpss_filepath: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if an exception is encountered during the HPSS file
           collection.
@@ -359,7 +347,7 @@ def get_hpssfile(hpss_filepath: str) -> None:
             f"Collecting file {hpss_filepath} from the NOAA HPSS failed with "
             f"error {error}. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
 
 # ----
@@ -371,7 +359,7 @@ def path_build(path: str) -> None:
     -----------
 
     This function attempts to build a path on the NOAA HPSS; if a path
-    cannot be created, this function throws a NOAAHPSSError.
+    cannot be created, this function throws a NOAAHPSSInterfaceError.
 
     Parameters
     ----------
@@ -383,7 +371,7 @@ def path_build(path: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the specified HPSS path cannot be created.
 
@@ -399,7 +387,7 @@ def path_build(path: str) -> None:
 
     if proc.returncode != 0:
         msg = f"The NOAA HPSS path {path} could not be created. Aborting!!!"
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
 
 # ----
@@ -479,7 +467,7 @@ def path_filelist(path: str) -> list:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the NOAA HPSS path does not exist.
 
@@ -491,7 +479,7 @@ def path_filelist(path: str) -> list:
 
     if not exist:
         msg = "The NOAA HPSS path does not exist. Aborting!!!"
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
     cmd = [f"{hsi}", "-q", "ls", "-l", f"{path}"]
 
@@ -533,7 +521,7 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if an exception is encountered while archiving the
           respective file path to the NOAA HPSS.
@@ -554,7 +542,7 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
             f"The archiving of file {filepath} to the NOAA HPSS failed with "
             f"error {error}. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
 
 # ----
@@ -601,8 +589,8 @@ def read_tarball(
 
         A Python boolean variable; if False and the user-specified
         filename is not found in the tarball (tarball_path), a
-        NOAAHPSSError will be thrown; if True, this function carries on
-        gracefully.
+        NOAAHPSSInterfaceError will be thrown; if True, this function
+        carries on gracefully.
 
     strip_dir: bool, optional
 
@@ -680,9 +668,9 @@ def write_tarball(
 
     This function will attempt to write a tarball and corresponding
     tarball index file to the NOAA HPSS; if one cannot be written,
-    this function will thrown a NOAAHPSSError; a returncode of 70,
-    meaning the HPSS tarball file path is too long, is ignored as it
-    is erroneous.
+    this function will thrown a NOAAHPSSInterfaceError; a returncode
+    of 70, meaning the HPSS tarball file path is too long, is ignored
+    as it is erroneous.
 
     Parameters
     ----------
@@ -714,7 +702,7 @@ def write_tarball(
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the return code from the NOAA HPSS is neither 0 or
           70; this indicates that the file was most likely not created
@@ -774,4 +762,4 @@ def write_tarball(
             f"The HPSS archive creation failed with returncode {proc.returncode}. "
             "Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
