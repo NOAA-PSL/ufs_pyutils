@@ -33,6 +33,11 @@ Description
 Functions
 ---------
 
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
+
     _check_awscli_env()
 
         This function checks whether the AWS CLI environment has been
@@ -240,7 +245,8 @@ def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> b
         cmd.append(f"{profile}")
 
     # Query the AWS path; proceed accordingly.
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (contents, _) = proc.communicate()
     proc.wait()
 
@@ -325,7 +331,8 @@ def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> li
     try:
 
         # Collect a list of the AWS resource path contents.
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         (path_list, _) = proc.communicate()
         proc.wait()
 
