@@ -40,15 +40,18 @@ Classes
         template and the user-specified template variable key and
         value pairs.
 
-    YAMLError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
     YAMLLoader()
 
         This is the base-class object for all YAML file parsing
         interfaces; it is a sub-class of SafeLoader.
+
+Functions
+---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
 Author(s)
 ---------
@@ -64,13 +67,20 @@ History
 
 # ----
 
+# pylint: disable=broad-except
+# pylint: disable=too-many-ancestors
+# pylint: disable=unused-argument
+
+# ----
+
 import os
 import re
 from typing import Union
 
 import yaml
 from tools import fileio_interface, parser_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import YAMLInterfaceError
 from utils.logger_interface import Logger
 from yaml import SafeLoader
 
@@ -107,9 +117,13 @@ class YAML:
         # Define the base-class attributes.
         self.logger = Logger()
 
-    def concat_yaml(self, yaml_file_list: list, yaml_file_out: str,
-                    fail_nonvalid: bool = True,
-                    ignore_missing: bool = False) -> None:
+    def concat_yaml(
+        self,
+        yaml_file_list: list,
+        yaml_file_out: str,
+        fail_nonvalid: bool = True,
+        ignore_missing: bool = False,
+    ) -> None:
         """
         Description
         -----------
@@ -136,19 +150,19 @@ class YAML:
         fail_nonvalid: bool, optional
 
             A Python boolean valued variable specifying whether to
-            raise a YAMLError exception if a YAML file path for
-            concatenation is not a valid YAML-formatted file.
+            raise a YAMLInterfaceError exception if a YAML file path
+            for concatenation is not a valid YAML-formatted file.
 
         ignore_missing: bool, optional
 
             A Python boolean valued variable specifying whether to
-            raise a YAMLError exception if a YAML file path does not
-            exist.
+            raise a YAMLInterfaceError exception if a YAML file path
+            does not exist.
 
         Raises
         ------
 
-        YAMLError:
+        YAMLInterfaceError:
 
             * raised if a specified file is not a YAML-formatted
               and/or valid YAML file; invoked only if the respective
@@ -176,8 +190,13 @@ class YAML:
 
                     try:
 
-                        yaml_dict_concat.update(dict(parser_interface.dict_merge(
-                            dict1=yaml_dict_concat, dict2=yaml_dict)))
+                        yaml_dict_concat.update(
+                            dict(
+                                parser_interface.dict_merge(
+                                    dict1=yaml_dict_concat, dict2=yaml_dict
+                                )
+                            )
+                        )
 
                     except Exception:
                         pass
@@ -185,33 +204,36 @@ class YAML:
                 except ValueError:
 
                     if fail_nonvalid:
-                        msg = (f"{yaml_file} is not a valid YAML file. Aborting!!!"
-                               )
-                        raise YAMLError(msg=msg)
+                        msg = f"{yaml_file} is not a valid YAML file. Aborting!!!"
+                        __error__(msg=msg)
 
                     if not fail_nonvalid:
-                        msg = (f"{yaml_file} is not a valid YAML file and will not "
-                               "be processed.")
+                        msg = (
+                            f"{yaml_file} is not a valid YAML file and will not "
+                            "be processed."
+                        )
                         self.logger.warn(msg=msg)
 
             if not exist:
 
                 if ignore_missing:
-                    msg = (f"The file path {yaml_file} does not exist and "
-                           "will not be processed.")
+                    msg = (
+                        f"The file path {yaml_file} does not exist and "
+                        "will not be processed."
+                    )
                     self.logger.warn(msg=msg)
 
                 if not ignore_missing:
-                    msg = (f"The file path {yaml_file} does not exist. "
-                           "Aborting!!!")
-                    raise YAMLError(msg=msg)
+                    msg = f"The file path {yaml_file} does not exist. " "Aborting!!!"
+                    __error__(msg=msg)
 
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
-    def read_yaml(self, yaml_file: str, return_obj:
-                  bool = False) -> Union[dict, object]:
+    def read_yaml(
+        self, yaml_file: str, return_obj: bool = False
+    ) -> Union[dict, object]:
         """
         Description
         -----------
@@ -258,13 +280,12 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver(
-            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
         # file path.
-        with open(yaml_file, "r") as stream:
+        with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
         # Define the Python data type to be returned; proceed
@@ -288,8 +309,7 @@ class YAML:
 
         return yaml_return
 
-    def write_tmpl(self, yaml_dict: dict, yaml_path: str,
-                   yaml_template: str) -> None:
+    def write_tmpl(self, yaml_dict: dict, yaml_path: str, yaml_template: str) -> None:
         """
         Description
         -----------
@@ -339,8 +359,9 @@ class YAML:
                 if not any(x in item for x in template_matches):
                     file.write(f"{item}\n")
 
-    def write_yaml(self, yaml_file: str, in_dict: dict,
-                   default_flow_style: bool = False) -> None:
+    def write_yaml(
+        self, yaml_file: str, in_dict: dict, default_flow_style: bool = False
+    ) -> None:
         """
         Description
         -----------
@@ -373,39 +394,9 @@ class YAML:
 
         # Open and write the dictionary contents to the specified
         # YAML-formatted file path.
-        with open(yaml_file, "w") as file:
+        with open(yaml_file, "w", encoding="utf-8") as file:
             yaml.dump(in_dict, file, default_flow_style=default_flow_style)
 
-# ----
-
-
-class YAMLError(Error):
-    """
-    Description
-    -----------
-
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new YAMLError object.
-
-        """
-        super().__init__(msg=msg)
 
 # ----
 
@@ -435,3 +426,25 @@ class YAMLLoader(SafeLoader):
         """
 
         return os.path.expandvars(node.value)
+
+
+# ----
+
+
+@msg_except_handle(YAMLInterfaceError)
+def __error__(msg: str = None) -> None:
+    """
+    Description
+    -----------
+
+    This function is the exception handler for the respective module.
+
+    Parameters
+    ----------
+
+    msg: str
+
+        A Python string containing a message to accompany the
+        exception.
+
+    """
