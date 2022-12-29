@@ -315,14 +315,6 @@ def dirpath_tree(path: str) -> None:
         A Python string specifying the directory tree path to be
         created if it does not (yet) exist.
 
-    Raises
-    ------
-
-    StagingError:
-
-        * raised if an exception is encountered while attempting to
-          build the specified directory tree.
-
     """
 
     # Check whether the directory tree exists; proceed accordingly.
