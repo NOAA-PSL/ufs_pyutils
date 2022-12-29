@@ -29,16 +29,13 @@ Description
     This module contains classes and functions to read and write
     JSON-formatted files.
 
-Classes
--------
-
-    JSONError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     read_json(json_file)
 
@@ -65,13 +62,16 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
 import json
 
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import JSONInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -92,13 +92,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class JSONError(Error):
+@msg_except_handle(JSONInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -109,16 +109,6 @@ class JSONError(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new JSONError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -152,7 +142,7 @@ def read_json(json_file: str) -> dict:
     Raises
     ------
 
-    JSONError:
+    JSONInterfaceError:
 
         * raised is an exception is encountered while reading from the
           JSON-formatted file specified upon entry.
@@ -170,7 +160,7 @@ def read_json(json_file: str) -> dict:
 
     except Exception as error:
         msg = f"Reading JSON-formatted file {json_file} failed with error {error}. Aborting!!!"
-        raise JSONError(msg=msg)
+        __error__(msg=msg)
 
     return json_dict
 
@@ -210,7 +200,7 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
     Raises
     ------
 
-    JSONError:
+    JSONInterfaceError:
 
         * raised is an exception is encountered while writing to the
           JSON-formatted file specified upon entry.
@@ -228,4 +218,4 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
 
     except Exception as error:
         msg = f"Writing JSON-formatted file {json_file} failed with error {error}. Aborting!!!"
-        raise JSONError(msg=msg)
+        __error__(msg=msg)
