@@ -36,6 +36,11 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/arguments_interface module; it is a sub-class of Error.
 
+    AWSCLIInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/awscli_interface module; it is a sub-class of Error.
+
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -93,6 +98,19 @@ class ArgumentsInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     utils/arguments_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class AWSCLIInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/awscli_interface module; it is a sub-class of Error.
 
     """
 
