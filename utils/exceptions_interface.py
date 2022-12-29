@@ -91,6 +91,16 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/timestamp_interface module; it is a sub-class of Error.
 
+    URLInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/url_interface module; it is a sub-class of Error.
+
+    WgetInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/wget_interface module; it is a sub-class of Error.
+
 Author(s)
 ---------
 
@@ -121,6 +131,8 @@ __all__ = [
     "TarFileInterfaceError",
     "TCVitalsInterfaceError",
     "TimestampsInterfaceError",
+    "URLInterfaceError",
+    "WgetInterfaceError"
 ]
 
 # ----
@@ -322,5 +334,18 @@ class URLInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/url_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class WgetInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/wget_interface module; it is a sub-class of Error.
 
     """
