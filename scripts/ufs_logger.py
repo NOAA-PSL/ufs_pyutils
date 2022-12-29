@@ -73,8 +73,6 @@ History
 
 # ----
 
-import os
-
 from tools import parser_interface
 from utils.arguments_interface import Arguments
 from utils.error_interface import Error
@@ -123,8 +121,7 @@ class UFSLogger:
         # Define the base-class attributes.
         self.options_obj = options_obj
 
-        self.logger_opts = {"msg": options_obj.msg,
-                            "msgtype": options_obj.msgtype}
+        self.logger_opts = {"msg": options_obj.msg, "msgtype": options_obj.msgtype}
 
         self.msgtype_opts = {
             "info": logger.info,
@@ -165,7 +162,7 @@ class UFSLogger:
             object_in=self.options_obj, key="msg", force=True
         )
         if logger_msg is None:
-            msg = "The logger message cannot be NoneType. " "Aborting!!!"
+            msg = "The logger message cannot be NoneType. Aborting!!!"
             raise UFSLoggerError(msg=msg)
 
         # Determine the logging level from the command line
@@ -174,13 +171,11 @@ class UFSLogger:
             object_in=self.options_obj, key="msgtype", force=True
         )
         if logger_level is None:
-            msg = "The logger level type cannot be NoneType. " "Aborting!!!"
+            msg = "The logger level type cannot be NoneType. Aborting!!!"
             raise UFSLoggerError(msg=msg)
 
         if logger_level.lower() not in self.msgtype_opts:
-            msg = (
-                f"The logger level type {logger_level} is not supported. " "Aborting!!!"
-            )
+            msg = f"The logger level type {logger_level} is not supported. Aborting!!!"
             raise UFSLoggerError(msg=msg)
 
         # Create the logger message using the respective logging
@@ -211,16 +206,6 @@ class UFSLoggerError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new UFSLoggerError object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
@@ -241,6 +226,7 @@ def main():
     # Launch the task.
     task = UFSLogger(options_obj=options_obj)
     task.run()
+
 
 # ----
 
