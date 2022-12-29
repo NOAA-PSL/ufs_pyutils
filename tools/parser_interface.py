@@ -169,6 +169,7 @@ History
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
+# pylint: disable=unused-argument
 
 # ----
 
@@ -503,7 +504,7 @@ def dict_key_value(
         except AttributeError:
             value = dict_in[key]
 
-    except KeyError as error:
+    except KeyError:
         if not force:
             msg = (
                 f"Key {key} could not be found in user provided dictionary. "
