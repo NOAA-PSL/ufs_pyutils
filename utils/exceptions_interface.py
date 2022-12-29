@@ -117,6 +117,9 @@ __all__ = [
     "CurlInterfaceError",
     "ParserInterfaceError",
     "SchemaInterfaceError",
+    "SQLite3InterfaceError",
+    "TarFileInterfaceError",
+    "TCVitalsInterfaceError",
     "TimestampsInterfaceError",
 ]
 
@@ -272,6 +275,32 @@ class SQLite3InterfaceError(Error):
 # ----
 
 
+class TarFileInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/tarfile_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class TCVitalsInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/tcvitals_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
 class TimestampsInterfaceError(Error):
     """
     Description
@@ -284,3 +313,14 @@ class TimestampsInterfaceError(Error):
 
 
 # ----
+
+
+class URLInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/url_interface module; it is a sub-class of Error.
+
+    """
