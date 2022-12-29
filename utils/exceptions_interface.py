@@ -81,6 +81,11 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/schema_interface module; it is a sub-class of Error.
 
+    SQLite3InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/sqlite3_interface module; it is a sub-class of Error.
+
     TimestampsInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -251,6 +256,18 @@ class SchemaInterfaceError(Error):
 
     """
 
+# ----
+
+
+class SQLite3InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/sqlite3_interface module; it is a sub-class of Error.
+
+    """
 
 # ----
 
