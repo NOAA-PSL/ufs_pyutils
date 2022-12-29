@@ -115,6 +115,7 @@ def _get_stack() -> list:
 
     return stack
 
+
 # ----
 
 
@@ -149,6 +150,7 @@ def get_app_path(app: str) -> str:
     app_path = shutil.which(app)
 
     return app_path
+
 
 # ----
 
