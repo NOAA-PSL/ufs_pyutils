@@ -51,6 +51,21 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/curl_interface module; it is a sub-class of Error.
 
+    GRIBInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/grib_interface module; it is a sub-class of Error.
+
+    HashLibInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/hashlib_interface module; it is a sub-class of Error.
+
+    NetCDF4InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/netcdf4_interface module; it is a sub-class of Error.
+
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -163,6 +178,32 @@ class GRIBInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/grib_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class HashLibInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/hashlib_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class NetCDF4InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/netcdf4_interface module; it is a sub-class of Error.
 
     """
 
