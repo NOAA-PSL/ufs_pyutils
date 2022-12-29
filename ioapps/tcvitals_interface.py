@@ -108,6 +108,7 @@ def __error__(msg: str = None) -> None:
 
     """
 
+
 # ----
 
 
@@ -270,8 +271,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
 
     # Check that all mandatory TC-vitals record attributes are
     # specified; proceed accordingly.
-    mand_attr_list = ["lat", "lon", "mslp",
-                      "tcid", "time_hm", "time_ymd", "vmax"]
+    mand_attr_list = ["lat", "lon", "mslp", "tcid", "time_hm", "time_ymd", "vmax"]
 
     for mand_attr in mand_attr_list:
         if not parser_interface.object_hasattr(object_in=tcvit_obj, key=mand_attr):
@@ -282,8 +282,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
             __error__(msg=msg)
 
         # Build the TC-vitals record object.
-        value = parser_interface.object_getattr(
-            object_in=tcvit_obj, key=mand_attr)
+        value = parser_interface.object_getattr(object_in=tcvit_obj, key=mand_attr)
         tcvobj = parser_interface.object_setattr(
             object_in=tcvobj, key=mand_attr, value=value
         )
@@ -329,8 +328,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
 
         # Collect the TC-vitals record attribute; proceed accordingly.
         if parser_interface.object_hasattr(object_in=tcvit_obj, key=opt_attr):
-            value = parser_interface.object_getattr(
-                object_in=tcvit_obj, key=opt_attr)
+            value = parser_interface.object_getattr(object_in=tcvit_obj, key=opt_attr)
         else:
             value = parser_interface.dict_key_value(
                 dict_in=opt_attr_dict, key=opt_attr, no_split=True
