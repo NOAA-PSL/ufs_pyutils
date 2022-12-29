@@ -123,6 +123,7 @@ History
 # pylint: disable=too-many-locals
 # pylint: disable=raise-missing-from
 # pylint: disable=redefined-outer-name
+# pylint: disable=unused-argument
 
 # ----
 
@@ -131,9 +132,8 @@ from tempfile import NamedTemporaryFile
 import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
-from utils.error_interface import Error
 from utils.error_interface import msg_except_handle
-from utils.exception_interface import Boto3InterfaceError
+from utils.exceptions_interface import Boto3InterfaceError
 from utils.logger_interface import Logger
 
 # ----
