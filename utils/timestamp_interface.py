@@ -40,6 +40,11 @@ Globals
 Functions
 ---------
 
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
+
     check_frmt(datestr, in_frmttyp = GLOBAL, out_frmttyp = GLOBAL)
 
         This function checks that the format for a provided timestamp
@@ -59,10 +64,14 @@ History
 
 # ----
 
+# pylint: disable=unused-argument
+
+# ----
+
 from tools import datetime_interface
 
 from utils.error_interface import msg_except_handle
-from utils.exceptions_interface import TimestampInterfaceError
+from utils.exceptions_interface import TimestampsInterfaceError
 
 # ----
 
@@ -79,7 +88,7 @@ GLOBAL = "%Y%m%d%H%M%S"
 # ----
 
 
-@msg_except_handle(TimestampInterfaceError)
+@msg_except_handle(TimestampsInterfaceError)
 def __error__(msg: str = None) -> None:
     """
     Description
@@ -96,8 +105,6 @@ def __error__(msg: str = None) -> None:
         exception.
 
     """
-    pass
-
 
 # ----
 

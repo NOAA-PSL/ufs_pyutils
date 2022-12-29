@@ -32,6 +32,11 @@ Description
 Functions
 ---------
 
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
+
     validate_opts(cls_schema, cls_opts)
 
         This function validates the calling class schema; if the
