@@ -174,6 +174,7 @@ def __error__(msg: str = None) -> None:
 
     """
 
+
 # ----
 
 
@@ -214,9 +215,7 @@ def _check_hpss_env() -> tuple:
     htar = system_interface.get_app_path(app="htar")
 
     if htar is None:
-        msg = (
-            "The htar executable could not be determined for your system. Aborting!!!"
-        )
+        msg = "The htar executable could not be determined for your system. Aborting!!!"
         __error__(msg=msg)
 
     # Check the run-time environment in order to determine the hsi
@@ -224,9 +223,7 @@ def _check_hpss_env() -> tuple:
     hsi = system_interface.get_app_path(app="hsi")
 
     if hsi is None:
-        msg = (
-            "The hsi executable could not be determined for your system. Aborting!!!"
-        )
+        msg = "The hsi executable could not be determined for your system. Aborting!!!"
         __error__(msg=msg)
 
     return (hsi, htar)
@@ -283,8 +280,7 @@ def check_filepath(
     (_, htar) = _check_hpss_env()
     cmd = [f"{htar}", "-tvf", f"{tarball_path}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (out, _) = proc.communicate()
     out = list(out.rstrip().decode("utf-8").rsplit())
 
@@ -337,8 +333,7 @@ def get_hpssfile(hpss_filepath: str) -> None:
     (hsi, _) = _check_hpss_env()
     cmd = [f"{hsi}".format(hsi), "get", f"{hpss_filepath}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         proc.communicate()
 
@@ -381,8 +376,7 @@ def path_build(path: str) -> None:
     (hsi, _) = _check_hpss_env()
     cmd = [f"{hsi}", "mkdir", "-p", f"{path}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
 
     if proc.returncode != 0:
@@ -423,8 +417,7 @@ def path_exist(path: str) -> bool:
     (hsi, _) = _check_hpss_env()
     cmd = [f"{hsi}", "ls", f"{path}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
     if proc.returncode != 0:
         exist = False
@@ -483,8 +476,7 @@ def path_filelist(path: str) -> list:
 
     cmd = [f"{hsi}", "-q", "ls", "-l", f"{path}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (_, hpss_list) = list(proc.communicate())
 
     filelist = []
@@ -532,8 +524,7 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
     (hsi, _) = _check_hpss_env()
     cmd = [f"{hsi}", "put", "-P", f"{filepath} : {hpss_filepath}"]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
         proc.communicate()
 
@@ -612,12 +603,7 @@ def read_tarball(
     os.chdir(path)
 
     if include_slash:
-        cmd = [
-            f"{htar}"
-            "-xvf",
-            f"{tarball_path}",
-            f"./{filename}"
-        ]
+        cmd = [f"{htar}" "-xvf", f"{tarball_path}", f"./{filename}"]
 
     if not include_slash:
         cmd = [
