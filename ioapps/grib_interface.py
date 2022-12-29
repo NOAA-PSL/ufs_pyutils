@@ -29,16 +29,13 @@ Description
     This module contains functions and classes to interface with the
     various GRIB utilities on the respective platform.
 
-Classes
--------
-
-    GRIBError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Exceptions.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _get_app_path(app)
 
@@ -113,6 +110,7 @@ History
 # ----
 
 # pylint: disable=consider-using-with
+# pylint: disable=unused-argument
 # pylint: disable=unused-variable
 
 # ----
@@ -121,7 +119,8 @@ import os
 import subprocess
 
 from tools import system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import GRIBInterfaceError
 
 # ----
 
@@ -143,33 +142,23 @@ __all__ = [
 # ----
 
 
-class GRIBError(Error):
+@msg_except_handle(GRIBInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-       A Python string containing a message to accompany the
-       exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new GRIBError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -203,7 +192,7 @@ def _get_app_path(app: str) -> str:
     Raises
     ------
 
-    GRIBError:
+    GRIBInterfaceError:
 
         * raised if the cnvgrib executable path cannot be determined
           for the run-time platform.
@@ -216,7 +205,7 @@ def _get_app_path(app: str) -> str:
 
     if app_path is None:
         msg = f"The {app} path could not be determined for your " "system. Aborting!!!"
-        raise GRIBError(msg=msg)
+        __error__(msg=msg)
 
     return app_path
 

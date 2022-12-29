@@ -36,20 +36,70 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/arguments_interface module; it is a sub-class of Error.
 
+    AWSCLIInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/awscli_interface module; it is a sub-class of Error.
+
+    Boto3InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/boto3_interface module; it is a sub-class of Error.
+
+    CurlInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/curl_interface module; it is a sub-class of Error.
+
+    GRIBInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/grib_interface module; it is a sub-class of Error.
+
+    HashLibInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/hashlib_interface module; it is a sub-class of Error.
+
+    NetCDF4InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/netcdf4_interface module; it is a sub-class of Error.
+
+    NOAAHPSSInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/noaahpss_interface module; it is a sub-class of Error.
+
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
-        tools/parser_interface module; it is a sub-class of Error.        
+        tools/parser_interface module; it is a sub-class of Error.
 
     SchemaInterfaceError()
 
         This is the base-class for exceptions encountered within the
         utils/schema_interface module; it is a sub-class of Error.
 
+    SQLite3InterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/sqlite3_interface module; it is a sub-class of Error.
+
     TimestampsInterfaceError()
 
         This is the base-class for exceptions encountered within the
         utils/timestamp_interface module; it is a sub-class of Error.
+
+    URLInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/url_interface module; it is a sub-class of Error.
+
+    WgetInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        ioapps/wget_interface module; it is a sub-class of Error.
 
 Author(s)
 ---------
@@ -72,9 +122,17 @@ from utils.error_interface import Error
 # Define all available attributes.
 __all__ = [
     "ArgumentsInterfaceError",
+    "AWSCLIInterfaceError",
+    "Boto3InterfaceError",
+    "CurlInterfaceError",
     "ParserInterfaceError",
     "SchemaInterfaceError",
+    "SQLite3InterfaceError",
+    "TarFileInterfaceError",
+    "TCVitalsInterfaceError",
     "TimestampsInterfaceError",
+    "URLInterfaceError",
+    "WgetInterfaceError",
 ]
 
 # ----
@@ -96,6 +154,105 @@ class ArgumentsInterfaceError(Error):
 
     """
 
+
+# ----
+
+
+class AWSCLIInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/awscli_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class Boto3InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/boto3_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class CurlInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/curl_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class GRIBInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/grib_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class HashLibInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/hashlib_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class NetCDF4InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/netcdf4_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class NOAAHPSSInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/noaahpss_interface module; it is a sub-class of Error.
+
+    """
+
+
 # ----
 
 
@@ -109,6 +266,7 @@ class ParserInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -119,6 +277,48 @@ class SchemaInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     utils/schema_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class SQLite3InterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/sqlite3_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class TarFileInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/tarfile_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class TCVitalsInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/tcvitals_interface module; it is a sub-class of Error.
 
     """
 
@@ -138,3 +338,28 @@ class TimestampsInterfaceError(Error):
 
 
 # ----
+
+
+class URLInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/url_interface module; it is a sub-class of Error.
+
+    """
+
+
+# ----
+
+
+class WgetInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    ioapps/wget_interface module; it is a sub-class of Error.
+
+    """

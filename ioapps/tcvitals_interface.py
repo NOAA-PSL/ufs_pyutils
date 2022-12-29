@@ -28,16 +28,13 @@ Description
 
     This module contains functions to write TC-vitals records.
 
-Classes
--------
-
-    TCVitalsError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     write_tcvfile(filepath, tcvstr)
 
@@ -64,13 +61,15 @@ History
 # ----
 
 # pylint: disable=consider-using-f-string
+# pylint: disable=unused-argument
 
 # ----
 
 import numpy
 from tools import parser_interface
 from utils import constants_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import TCVitalsInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -91,32 +90,23 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class TCVitalsError(Error):
+@msg_except_handle(TCVitalsInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new TCVitalsError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -263,7 +253,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
     Raises
     ------
 
-    TCVitalsError:
+    TCVitalsInterfaceError:
 
         * raised if the TC-vitals attribute object provided upon entry
           does not contain a mandatory TC-vitals record
@@ -289,7 +279,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
                 "The input TC-vitals variable object does not contain "
                 f"the mandatory attribute {mand_attr}. Aborting!!!"
             )
-            raise TCVitalsError(msg=msg)
+            __error__(msg=msg)
 
         # Build the TC-vitals record object.
         value = parser_interface.object_getattr(object_in=tcvit_obj, key=mand_attr)

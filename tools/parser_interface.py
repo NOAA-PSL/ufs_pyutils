@@ -181,7 +181,6 @@ import types
 from typing import Generator, Union
 
 import numpy
-
 from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import ParserInterfaceError
 

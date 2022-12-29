@@ -29,16 +29,13 @@ Description
     This module contains functions to create and read local host
     tarball files.
 
-Classes
--------
-
-    HashLibError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     get_hash(filepath, hash_level=None):
 
@@ -59,10 +56,15 @@ History
 
 # ----
 
+# pylint: disable=unused-argument
+
+# ----
+
 import hashlib
 
 from tools import parser_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import HashLibInterfaceError
 
 # ----
 
@@ -78,32 +80,23 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class HashLibError(Error):
+@msg_except_handle(HashLibInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new HashLibError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -143,6 +136,14 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
         A Python string containing the hash index for the user
         specified file path.
 
+    Raises
+    ------
+
+    HashLibError:
+
+        * raise if the hash level specified upon entry is not
+          supported.
+
     """
 
     # Define the hash level/type.
@@ -157,7 +158,7 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
             f"The checksum/hash level type {hash_level} is not supported. "
             "Aborting!!!"
         )
-        raise HashLibError(msg=msg)
+        __error__(msg=msg)
 
     # Define the type of hash library object based on the hash
     # level/type and proceed accordingly.

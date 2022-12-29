@@ -29,16 +29,13 @@ Description
     This module contains functions to create and collect internet
     (world-wide web; WWW) files using the Python wget package.
 
-Classes
--------
-
-    WgetError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_wget_env()
 
@@ -84,7 +81,8 @@ import subprocess
 
 from bs4 import BeautifulSoup
 from tools import fileio_interface, system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import WgetInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -104,32 +102,23 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class WgetError(Error):
+@msg_except_handle(WgetInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new WgetError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -141,8 +130,8 @@ def _check_wget_env() -> str:
     -----------
 
     This function checks whether the run-time environment contains the
-    wget application executable; if not, an WgetError will be thrown;
-    if so, the path to the wget executable will be defined and
+    wget application executable; if not, an WgetInterfaceError will be
+    thrown; if so, the path to the wget executable will be defined and
     returned.
 
     Returns
@@ -156,7 +145,7 @@ def _check_wget_env() -> str:
     Raises
     ------
 
-    WgetError:
+    WgetInterfaceError:
 
         * raised if the wget application executable path cannot be
           determined.
@@ -172,7 +161,7 @@ def _check_wget_env() -> str:
             "The wget application executable could not be determined "
             "from the run-time environment. Aborting!!!"
         )
-        raise WgetError(msg=msg)
+        __error__(msg=msg)
 
     return wget_exec
 
@@ -213,11 +202,11 @@ def get_webfile(url: str, path: str, ignore_missing: bool = False):
     Raises
     ------
 
-    WgetError:
+    WgetInterfaceError:
 
         * raised if an Exception related to a missing URL path is
           encountered; the respective error message accompanys the
-          message string passed to the WgetError class.
+          message string passed to the WgetInterfaceError class.
 
     """
 
@@ -250,7 +239,7 @@ def get_webfile(url: str, path: str, ignore_missing: bool = False):
                 f"Collecting of internet path {url} failed with error {error}. "
                 "Aborting!!!"
             )
-            raise WgetError(msg=msg)
+            __error__(msg=msg)
 
 
 # ----
@@ -315,11 +304,11 @@ def get_weblist(
     Raises
     ------
 
-    WgetError:
+    WgetInterfaceError:
 
         * raised if an Exception is encountered; the respective error
           message accompanys the message string passed to the
-          WgetError class.
+          WgetInterfaceError class.
 
     """
 
@@ -376,6 +365,6 @@ def get_weblist(
             f"Collection of files available at internet path {url} failed "
             f"with error {error}. Aborting!!!"
         )
-        raise WgetError(msg=msg)
+        __error__(msg=msg)
 
     return weblist
