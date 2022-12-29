@@ -29,14 +29,6 @@ Description
     This module contains functions to parse a Uniform Resource Locator
     (URL) paths.
 
-Classes
--------
-
-    URLError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
 
@@ -71,7 +63,9 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
 
 # ----
 
@@ -79,7 +73,8 @@ import os
 import urllib
 
 from bs4 import BeautifulSoup
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import URLInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -100,33 +95,23 @@ logger = Logger()
 # ----
 
 
-class URLError(Error):
+@msg_except_handle(URLInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new URLError object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
@@ -172,7 +157,7 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
     Raises
     ------
 
-    URLError:
+    URLInterfaceError:
 
         * raised if an Exception is encountered while attempting to
           parse the URL path contents; the respective error message
@@ -190,7 +175,7 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
 
     except Exception as error:
         msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     # Compile a list of all URL file paths beneath the respective URL
     # file path provided upon entry; compile a list of the respective
@@ -219,7 +204,7 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
             f"Compilation of URL paths beneath URL {url} failed with "
             f"error {error}. Aborting!!!"
         )
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     return weblist
 
@@ -281,7 +266,7 @@ def read_webfile(
     Raises
     ------
 
-    URLError:
+    URLInterfaceError:
 
         * raised if an exception is encountered while establishing the
           URL path request.
@@ -302,7 +287,7 @@ def read_webfile(
 
     except Exception as error:
         msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     # Read the contents of the URL file path; proceed accordingly.
     try:
@@ -338,13 +323,13 @@ def read_webfile(
                 msg = (
                     f"Opening URL path {url} failed with error {error}. " "Aborting!!!"
                 )
-                raise URLError(msg=msg)
+                __error__(msg=msg)
 
     except Exception as error:
         msg = (
             f"Reading the contents of URL path {url} failed with error "
             f"{error}. Aborting!!!"
         )
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     return contents
