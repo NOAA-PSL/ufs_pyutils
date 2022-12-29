@@ -110,6 +110,7 @@ History
 # ----
 
 # pylint: disable=consider-using-with
+# pylint: disable=unused-argument
 # pylint: disable=unused-variable
 
 # ----
@@ -240,8 +241,7 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
     cnvgrib = _get_app_path(app="cnvgrib")
     cmd = [f"{cnvgrib}", "-g21", in_grib_file, out_grib_file]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -348,8 +348,7 @@ def grbindex(in_grib_file: str, out_gribidx_file: str, is_grib2: bool = False) -
         grbindex_exe = _get_app_path(app="grbindex")
 
     cmd = [f"{grbindex_exe}", f"{in_grib_file}", f"{out_gribidx_file}"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -433,8 +432,7 @@ def parse_file(
     if is_grib2:
         cmd = [f"{parse_str}", "-grib", out_grib_file]
         cmd = cmd_base + cmd
-        proc = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
         proc.wait()
 
@@ -497,8 +495,7 @@ def read_file(grib_file: str, is_4yr: bool = True) -> list:
         cmd.append("-4yr")
     cmd.append(grib_file)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (wgrib_out, _) = proc.communicate()
     proc.wait()
     wgrib_out = wgrib_out.decode("utf-8")
@@ -565,8 +562,7 @@ def wgrib2_remap(remap_obj: object, gribfile: str) -> str:
         ]
 
         cmd = cmd_base + cmd
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
