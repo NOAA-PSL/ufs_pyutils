@@ -29,16 +29,13 @@ Description
     This module contains functions and classes to interface with the
     various GRIB utilities on the respective platform.
 
-Classes
--------
-
-    GRIBError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Exceptions.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _get_app_path(app)
 
@@ -121,7 +118,8 @@ import os
 import subprocess
 
 from tools import system_interface
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import GRIBInterfaceError
 
 # ----
 
@@ -143,33 +141,23 @@ __all__ = [
 # ----
 
 
-class GRIBError(Error):
+@msg_except_handle(GRIBInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-       A Python string containing a message to accompany the
-       exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new GRIBError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -203,7 +191,7 @@ def _get_app_path(app: str) -> str:
     Raises
     ------
 
-    GRIBError:
+    GRIBInterfaceError:
 
         * raised if the cnvgrib executable path cannot be determined
           for the run-time platform.
@@ -216,7 +204,7 @@ def _get_app_path(app: str) -> str:
 
     if app_path is None:
         msg = f"The {app} path could not be determined for your " "system. Aborting!!!"
-        raise GRIBError(msg=msg)
+        __error__(msg=msg)
 
     return app_path
 
@@ -252,7 +240,8 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
     cnvgrib = _get_app_path(app="cnvgrib")
     cmd = [f"{cnvgrib}", "-g21", in_grib_file, out_grib_file]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -359,7 +348,8 @@ def grbindex(in_grib_file: str, out_gribidx_file: str, is_grib2: bool = False) -
         grbindex_exe = _get_app_path(app="grbindex")
 
     cmd = [f"{grbindex_exe}", f"{in_grib_file}", f"{out_gribidx_file}"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -443,7 +433,8 @@ def parse_file(
     if is_grib2:
         cmd = [f"{parse_str}", "-grib", out_grib_file]
         cmd = cmd_base + cmd
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
         proc.wait()
 
@@ -506,7 +497,8 @@ def read_file(grib_file: str, is_4yr: bool = True) -> list:
         cmd.append("-4yr")
     cmd.append(grib_file)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (wgrib_out, _) = proc.communicate()
     proc.wait()
     wgrib_out = wgrib_out.decode("utf-8")
@@ -573,7 +565,8 @@ def wgrib2_remap(remap_obj: object, gribfile: str) -> str:
         ]
 
         cmd = cmd_base + cmd
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
