@@ -99,9 +99,9 @@ import subprocess
 from ast import literal_eval
 
 from tools import parser_interface, system_interface
-from utils.logger_interface import Logger
 from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import AWSCLIInterfaceError
+from utils.logger_interface import Logger
 
 # ----
 
