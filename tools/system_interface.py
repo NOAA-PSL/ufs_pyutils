@@ -146,7 +146,7 @@ def get_app_path(app: str) -> str:
     """
 
     # Collect the application path.
-    app_path = shutil.which(path)
+    app_path = shutil.which(app)
 
     return app_path
 
