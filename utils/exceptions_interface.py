@@ -18,14 +18,49 @@
 # =========================================================================
 
 """
+Module
+------
 
+    exceptions_interface.py
+
+Description
+-----------
+
+    This module loads the exceptions package.
+
+Classes
+-------
+
+    ArgumentsInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/arguments_interface module; it is a sub-class of Error.
+
+    SchemaInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/schema_interface module; it is a sub-class of Error.
+
+    TimestampsInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        utils/timestamp_interface module; it is a sub-class of Error.
+
+Author(s)
+---------
+
+    Henry R. Winterbottom; 28 December 2022
+
+History
+-------
+
+    2022-12-28: Henry Winterbottom -- Initial implementation.
 
 """
 
 # ----
 
 from utils.error_interface import Error
-from utils.error_interface import msg_except_handle
 
 # ----
 
@@ -69,7 +104,7 @@ class SchemaInterfaceError(Error):
 # ----
 
 
-class TimestampInterfaceError(Error):
+class TimestampsInterfaceError(Error):
     """
     Description
     -----------
