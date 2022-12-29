@@ -30,16 +30,13 @@ Description
     involve the parsing of dictionaries, lists, and other Python type
     comprehensions.
 
-Classes
--------
-
-    ParserInterfaceError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     dict_formatter(in_dict)
 
@@ -183,7 +180,9 @@ import types
 from typing import Generator, Union
 
 import numpy
-from utils.error_interface import Error
+
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import ParserInterfaceError
 
 # ----
 
@@ -220,13 +219,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class ParserInterfaceError(Error):
+@msg_except_handle(ParserInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -237,17 +236,6 @@ class ParserInterfaceError(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new ParserInterfaceError object.
-
-        """
-        super().__init__(msg=msg)
-
 
 # ----
 
@@ -480,7 +468,7 @@ def dict_key_value(
             "values. Please check that only one threshold value is "
             "is to be sought from the list. Aborting!!!"
         )
-        raise ParserInterfaceError(msg=msg)
+        __error__(msg=msg)
 
     if index_value is not None:
         if max_value:
@@ -489,7 +477,7 @@ def dict_key_value(
                 "the specified index) and the maximum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
         if min_value:
             msg = (
@@ -497,7 +485,7 @@ def dict_key_value(
                 "the specified index) and the minimum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
     try:
         value = dict_in[key]
         if no_split:
@@ -521,7 +509,7 @@ def dict_key_value(
                 f"Key {key} could not be found in user provided dictionary. "
                 "Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg) from error
+            __error__(msg=msg)
 
         if force:
             value = None
@@ -963,7 +951,7 @@ def object_getattr(
                 f"The object {object_in} does not contain attribute "
                 "{key}. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
     return value
 
