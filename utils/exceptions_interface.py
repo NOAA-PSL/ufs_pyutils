@@ -36,6 +36,11 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/arguments_interface module; it is a sub-class of Error.
 
+    ParserInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        tools/parser_interface module; it is a sub-class of Error.        
+
     SchemaInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -67,6 +72,7 @@ from utils.error_interface import Error
 # Define all available attributes.
 __all__ = [
     "ArgumentsInterfaceError",
+    "ParserInterfaceError",
     "SchemaInterfaceError",
     "TimestampsInterfaceError",
 ]
@@ -90,6 +96,18 @@ class ArgumentsInterfaceError(Error):
 
     """
 
+# ----
+
+
+class ParserInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    tools/parser_interface module; it is a sub-class of Error.
+
+    """
 
 # ----
 
