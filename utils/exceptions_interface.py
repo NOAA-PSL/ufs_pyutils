@@ -74,7 +74,7 @@ Classes
     ParserInterfaceError()
 
         This is the base-class for exceptions encountered within the
-        tools/parser_interface module; it is a sub-class of Error.        
+        tools/parser_interface module; it is a sub-class of Error.
 
     SchemaInterfaceError()
 
@@ -132,7 +132,7 @@ __all__ = [
     "TCVitalsInterfaceError",
     "TimestampsInterfaceError",
     "URLInterfaceError",
-    "WgetInterfaceError"
+    "WgetInterfaceError",
 ]
 
 # ----
@@ -154,6 +154,7 @@ class ArgumentsInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -166,6 +167,7 @@ class AWSCLIInterfaceError(Error):
     ioapps/awscli_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -180,6 +182,7 @@ class Boto3InterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -192,6 +195,7 @@ class CurlInterfaceError(Error):
     ioapps/curl_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -206,6 +210,7 @@ class GRIBInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -218,6 +223,7 @@ class HashLibInterfaceError(Error):
     ioapps/hashlib_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -232,6 +238,7 @@ class NetCDF4InterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -244,6 +251,7 @@ class NOAAHPSSInterfaceError(Error):
     ioapps/noaahpss_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -258,6 +266,7 @@ class ParserInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -270,6 +279,7 @@ class SchemaInterfaceError(Error):
     utils/schema_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -284,6 +294,7 @@ class SQLite3InterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -297,6 +308,7 @@ class TarFileInterfaceError(Error):
 
     """
 
+
 # ----
 
 
@@ -309,6 +321,7 @@ class TCVitalsInterfaceError(Error):
     ioapps/tcvitals_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
@@ -336,6 +349,7 @@ class URLInterfaceError(Error):
     ioapps/url_interface module; it is a sub-class of Error.
 
     """
+
 
 # ----
 
