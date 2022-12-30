@@ -51,6 +51,7 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=too-few-public-methods
 
 # ----
@@ -58,6 +59,10 @@ History
 from argparse import ArgumentParser
 
 from tools import parser_interface
+
+from utils import schema_interface
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import ArgumentsInterfaceError
 
 # ----
 
@@ -72,7 +77,26 @@ class Arguments:
 
     """
 
-    def run(self) -> object:
+    @msg_except_handle(ArgumentsInterfaceError)
+    def __error__(self, msg: str = None) -> None:
+        """
+        Description
+        -----------
+
+        This function is the exception handler for the respective
+        module.
+
+        Keywords
+        --------
+
+        msg: str
+
+            A Python string containing a message to accompany the
+            exception.
+
+        """
+
+    def run(self, eval_schema=False, cls_schema=None) -> object:
         """
         Description
         -----------
@@ -132,5 +156,28 @@ class Arguments:
             options_obj = parser_interface.object_setattr(
                 object_in=options_obj, key=key, value=value
             )
+
+        # Check whether to evaluate the argument schema; proceed
+        # accordingly.
+        if eval_schema:
+
+            try:
+
+                # Build the Python dictionary containing the command
+                # line arguments.
+                cls_opts = {}
+                for option in vars(options_obj):
+                    cls_opts[option] = parser_interface.object_getattr(
+                        object_in=options_obj, key=option, force=True
+                    )
+                cls_opts = parser_interface.dict_formatter(in_dict=cls_opts)
+
+                # Evalute the schema; proceed accordingly.
+                schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
+
+            except Exception as error:
+
+                msg = f"Arguments validation failed with error {error}. Aborting!!!"
+                self.__error__(msg=msg)
 
         return options_obj
