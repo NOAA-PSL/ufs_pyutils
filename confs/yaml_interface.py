@@ -441,7 +441,6 @@ class YAML:
         # YAML-formatted file path.
         if append:
             fileopt = "a"
-            file = open(yaml_file, "a", encoding="utf-8")
         if not append:
             fileopt = "w"
 
