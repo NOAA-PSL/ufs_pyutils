@@ -37,6 +37,11 @@ Globals
         Global timestamp format; this is the format from which all
         others should be defined/determined.
 
+    INFO: str
+
+        Information timestamp format; this format is typically used
+        for informational purposes.
+
 Functions
 ---------
 
@@ -84,6 +89,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # Global timestamp format; this is the format from which all others
 # should be defined/determined.
 GLOBAL = "%Y%m%d%H%M%S"
+INFO = "%H:%M:%S UTC %d %B %Y"
 
 # ----
 
