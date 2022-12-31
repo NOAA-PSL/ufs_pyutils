@@ -91,9 +91,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = [
-    "run"
-]
+__all__ = ["run"]
 
 # ----
 
@@ -108,11 +106,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 # Define the supported job types.
-job_types_list = [
-    "app",
-    "python"
-    "slurm"
-]
+job_types_list = ["app", "python" "slurm"]
 
 # ----
 
@@ -134,6 +128,7 @@ def __error__(msg: str = None) -> None:
         exception.
 
     """
+
 
 # ----
 
@@ -198,37 +193,40 @@ def __job_type_info(job_type: str, app: str = None) -> tuple:
         __error__(msg=msg)
 
     # Define the job attributes for application job types.
-    if job_type.lower() == 'app':
+    if job_type.lower() == "app":
         launcher = system_interface.get_app_path(app=app)
         tasks = None
 
     # Define the job attributes for Python job types.
-    if job_type.lower() == 'python':
+    if job_type.lower() == "python":
         launcher = system_interface.get_app_path(app="python")
         tasks = None
 
     # Define job attributes for SLURM workload scheduler job types.
-    if job_type.lower() == 'slurm':
+    if job_type.lower() == "slurm":
 
         try:
             launcher = system_interface.get_app_path(app="srun")
             tasks = "--ntasks"
 
         except Exception as error:
-            msg = ("Determining the application launcher for SLURM "
-                   f"failed with error {error}. Aborting!!!"
-                   )
+            msg = (
+                "Determining the application launcher for SLURM "
+                f"failed with error {error}. Aborting!!!"
+            )
             __error__(msg=msg)
 
     # Check that the launcher type has been determined from the run
     # time environment; proceed accordingly.
     if launcher is None:
-        msg = (f"The path for job type {job_type} launcher could not be "
-               "determined for the respective platform. Aborting!!!"
-               )
+        msg = (
+            f"The path for job type {job_type} launcher could not be "
+            "determined for the respective platform. Aborting!!!"
+        )
         __error__(msg=msg)
 
     return (launcher, tasks)
+
 
 # ----
 
@@ -289,20 +287,20 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
     # Define and open the stdout (standard out) and stderr (standard
     # error) file paths.
     if outlog is None:
-        outlog = 'out.log'
-    stdout = open(outlog, 'w', encoding="utf-8")
+        outlog = "out.log"
+    stdout = open(outlog, "w", encoding="utf-8")
     if errlog is None:
-        errlog = 'err.log'
-    stderr = open(errlog, 'w', encoding="utf-8")
+        errlog = "err.log"
+    stderr = open(errlog, "w", encoding="utf-8")
 
     # Check whether the executable input file contains any
     # wildcard values.
     if infile is not None:
-        has_wildcards = re.search(r'[^.]\*', infile)
+        has_wildcards = re.search(r"[^.]\*", infile)
         if has_wildcards:
             stdin = glob.glob(infile)
         if not has_wildcards:
-            stdin = open(infile, 'r', encoding="utf-8")
+            stdin = open(infile, "r", encoding="utf-8")
 
     # Launch the respective executable and proceed accordingly.
     try:
@@ -323,14 +321,14 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
                     cmd_string = cmd_string + f"{item} "
 
                 # Execute the application accordingly.
-                proc = subprocess.Popen(cmd_string, stdout=stdout,
-                                        stderr=stderr, shell=True)
+                proc = subprocess.Popen(
+                    cmd_string, stdout=stdout, stderr=stderr, shell=True
+                )
 
             # Build the command line arguments assuming that no
             # wildcard values are included.
             if not has_wildcards:
-                proc = subprocess.Popen(
-                    cmd, stdin=stdin, stdout=stdout, stderr=stderr)
+                proc = subprocess.Popen(cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
         # Launch the executable and proceed accordingly.
         proc.wait()
@@ -347,17 +345,27 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         stdin.close()
 
     if proc.returncode != 0:
-        msg = (f"Executable failed! Please refer to {errlog} for more "
-               "information. Aborting!!!"
-               )
+        msg = (
+            f"Executable failed! Please refer to {errlog} for more "
+            "information. Aborting!!!"
+        )
         __error__(msg=msg)
 
 
 # ----
 
-def run(exe, job_type: str = "slurm", ntasks: int = 1, args: list = None,
-        infile: str = None, errlog: str = None, outlog: str = None,
-        multi_prog: bool = False, multi_prog_conf: str = None) -> None:
+
+def run(
+    exe,
+    job_type: str = "slurm",
+    ntasks: int = 1,
+    args: list = None,
+    infile: str = None,
+    errlog: str = None,
+    outlog: str = None,
+    multi_prog: bool = False,
+    multi_prog_conf: str = None,
+) -> None:
     """
     Description
     -----------
@@ -437,11 +445,12 @@ def run(exe, job_type: str = "slurm", ntasks: int = 1, args: list = None,
         # Reset the parameter and keywork values accordingly.
         if multi_prog:
 
-            msg = ("Multiple program support is not available for "
-                   "workload managers other than SLURM; resetting value "
-                   "for multi_prog to False; this may cause some unexpected "
-                   "results."
-                   )
+            msg = (
+                "Multiple program support is not available for "
+                "workload managers other than SLURM; resetting value "
+                "for multi_prog to False; this may cause some unexpected "
+                "results."
+            )
             logger.warn(msg=msg)
             multi_prog_conf = None
 
@@ -466,11 +475,12 @@ def run(exe, job_type: str = "slurm", ntasks: int = 1, args: list = None,
     # types.
     if multi_prog:
         if multi_prog_conf is None:
-            msg = ("For multiple program support (e.g., multi_prog implementation) "
-                   ", a configuration file containing the multi-task paritioning "
-                   f"required; got {multi_prog_conf} for parameter multi_prog_conf "
-                   "upon entry. Aborting!!!"
-                   )
+            msg = (
+                "For multiple program support (e.g., multi_prog implementation) "
+                ", a configuration file containing the multi-task paritioning "
+                f"required; got {multi_prog_conf} for parameter multi_prog_conf "
+                "upon entry. Aborting!!!"
+            )
             raise __error__(msg=msg)
 
         cmd.append("--multi-prog", f"{multi_prog_conf}")
