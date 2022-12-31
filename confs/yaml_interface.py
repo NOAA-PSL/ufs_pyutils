@@ -117,6 +117,43 @@ class YAML:
         # Define the base-class attributes.
         self.logger = Logger()
 
+    def check_yaml(self, attr_value: str) -> bool:
+        """
+        Description
+        -----------
+
+        This method checks whether the specified value for the
+        attr_value parameter is a YAML-formatted file.
+
+        Parameters
+        ----------
+
+        attr_value: str
+
+            A Python string containing an attribute value to be check
+            for YAML-formatting.
+
+        Returns
+        -------
+
+        check: bool
+
+            A Python boolean valued variable specifying whether the
+            attribute value is a YAML-formatted file.
+
+        """
+
+        # Check that the file is a YAML-formatted file; proceed
+        # accordingly.
+        try:
+            YAMLLoader(attr_value)
+            check = True
+
+        except AttributeError:
+            check = False
+
+        return check
+
     def concat_yaml(
         self,
         yaml_file_list: list,
@@ -280,7 +317,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -360,8 +398,8 @@ class YAML:
                     file.write(f"{item}\n")
 
     def write_yaml(
-        self, yaml_file: str, in_dict: dict, default_flow_style: bool = False
-    ) -> None:
+            self, yaml_file: str, in_dict: dict, default_flow_style: bool = False,
+            append: bool = False) -> None:
         """
         Description
         -----------
@@ -387,14 +425,27 @@ class YAML:
 
         default_flow_style: bool, optional
 
-            A Python boolean variable specifying the output YAML file
-            formatting.
+            A Python boolean valued variable specifying the output
+            YAML file formatting.
+
+        append: bool, optional
+
+            A Python boolean valued variable specifying whether to
+            append to an existing YAML-formatted file; if False upon
+            entry any existing YAML-formatted file of the same
+            yaml_file attribute name will be overwritten.
 
         """
 
         # Open and write the dictionary contents to the specified
         # YAML-formatted file path.
-        with open(yaml_file, "w", encoding="utf-8") as file:
+        if append:
+            fileopt = "a"
+            file = open(yaml_file, "a", encoding="utf-8")
+        if not append:
+            fileopt = "w"
+
+        with open(yaml_file, fileopt, encoding="utf-8") as file:
             yaml.dump(in_dict, file, default_flow_style=default_flow_style)
 
 
