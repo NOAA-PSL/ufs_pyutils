@@ -44,7 +44,7 @@ Functions
         whether the crontab string (specifying when to execute an
         action) and user-specified date match.
 
-    current_date(frmttyp)
+    current_date(frmttyp, is_utc=False)
 
         This function returns the current time (at invocation of this
         function) formatted according to the parameter values
@@ -84,10 +84,10 @@ Functions
         year_short)
 
         date string (date_string; formatted as %Y-%m-%d_%H:%M:%S,
-        assuming the UNIX POSIX convention)
+        assuming the POSIX convention)
 
         cycle string (cycle_string; formatted as %Y%m%d%H, assuming
-        the UNIX POSIX convention)
+        the POSIX convention)
 
         Julian date (julian_day)
 
@@ -99,8 +99,8 @@ Functions
 
     datestrfrmt(datestr, frmttyp, offset_seconds=None)
 
-        This function ingests a date string of format (assuming UNIX
-        POSIX convention) yyyy-mm-dd_HH:MM:SS; optional argument
+        This function ingests a date string of format (assuming POSIX
+        convention) yyyy-mm-dd_HH:MM:SS; optional argument
         'offset_seconds' defines a new datestr relative to the user
         provided datestr and the number of seconds.
 
@@ -192,7 +192,7 @@ def _get_dateobj(datestr: str, frmttyp: str) -> object:
     frmttyp: str
 
         A Python string specifying the format of the timestamps
-        string; this assumes UNIX POSIX convention date attribute
+        string; this assumes POSIX convention date attribute
         characters.
 
     Returns
@@ -237,8 +237,9 @@ def compare_crontab(datestr: str, cronstr: str, frmttyp: str) -> bool:
 
     frmttyp: str
 
-        A Python string specifying the format of the timestamps string;
-        this assumes UNIX POSIX convention date attribute characters.
+        A Python string specifying the format of the timestamps
+        string; this assumes POSIX convention date attribute
+        characters.
 
     Returns
     -------
@@ -262,7 +263,7 @@ def compare_crontab(datestr: str, cronstr: str, frmttyp: str) -> bool:
 # ----
 
 
-def current_date(frmttyp: str) -> str:
+def current_date(frmttyp: str, is_utc: bool = False) -> str:
     """
     Description
     -----------
@@ -276,9 +277,17 @@ def current_date(frmttyp: str) -> str:
 
     frmttyp: str
 
-        A Python string specifying the format of the timestamps
-        string; this assumes UNIX POSIX convention date attribute
+        A Python string specifying the format of the output timestamp
+        string; this assumes POSIX convention date attribute
         characters.
+
+    Keywords
+    --------
+
+    is_utc: bool, optional
+
+        A Python boolean valued variable specifying whether to return
+        the current date/timestamp in Coordinated Universal Time.
 
     Returns
     -------
@@ -291,8 +300,12 @@ def current_date(frmttyp: str) -> str:
     """
 
     # Determine the timestamp corresponding to the current time upon
-    # function entry.
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime(f"{frmttyp}")
+    # function entry; proceed accordingly.
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime(frmttyp)
+
+    if is_utc:
+        dateobj = _get_dateobj(datestr=timestamp, frmttyp=frmttyp).utcnow()
+        timestamp = datetime.datetime.strftime(dateobj, frmttyp)
 
     return timestamp
 
@@ -336,10 +349,10 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
     2-digit year (e.g., year without the century value; year_short)
 
     date string (date_string; formatted as %Y-%m-%d_%H:%M:%S, assuming
-    the UNIX POSIX convention)
+    the POSIX convention)
 
     cycle string (cycle_string; formatted as %Y%m%d%H, assuming the
-    UNIX POSIX convention)
+    POSIX convention)
 
     Julian date (julian_day)
 
@@ -415,8 +428,10 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
         parser_interface.object_getattr(object_in=date_comps_obj, key="month"),
         parser_interface.object_getattr(object_in=date_comps_obj, key="day"),
         parser_interface.object_getattr(object_in=date_comps_obj, key="hour"),
-        parser_interface.object_getattr(object_in=date_comps_obj, key="minute"),
-        parser_interface.object_getattr(object_in=date_comps_obj, key="second"),
+        parser_interface.object_getattr(
+            object_in=date_comps_obj, key="minute"),
+        parser_interface.object_getattr(
+            object_in=date_comps_obj, key="second"),
     )
 
     # Collect the Julian attribute using SQLite3 and proceed
@@ -450,8 +465,8 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
 
 
 def datestrfrmt(datestr: str, frmttyp: str, offset_seconds: int = None) -> str:
-    """
-    "Description
+    """"
+    Description
     -----------
 
     This function ingests a date string and computes and returns a
@@ -468,13 +483,13 @@ def datestrfrmt(datestr: str, frmttyp: str, offset_seconds: int = None) -> str:
     datestr: str
 
         A Python string containing a date string; the input date
-        string is assumed to have format % Y-%m-%d_ % H: % M: % S assuming
-        the UNIX POSIX convention.
+        string is assumed to have format % Y-%m-%d_%H:%M:%S assuming
+        the POSIX convention.
 
     frmttyp: str
 
         A Python string specifying the format of the timestamps
-        string; this assumes UNIX POSIX convention date attribute
+        string; this assumes POSIX convention date attribute
         characters.
 
     Keywords
@@ -536,12 +551,12 @@ def datestrupdate(
 
     in_frmttyp: str
 
-        A Python string specifying the UNIX POSIX convention for the
+        A Python string specifying the POSIX convention for the
         datestr variable upon input.
 
     out_frmttyp: str
 
-        A Python string specifying the UNIX POSIX convention for the
+        A Python string specifying the POSIX convention for the
         datestr variable upon output.
 
     Keywords
@@ -577,7 +592,8 @@ def datestrupdate(
 
     for item in comps_list:
         if f"<{item}>" in outdatestr:
-            time_attr = parser_interface.object_getattr(date_comps_obj, key=item)
+            time_attr = parser_interface.object_getattr(
+                date_comps_obj, key=item)
             outdatestr = outdatestr.replace(f"<{item}>", time_attr)
 
     return outdatestr
@@ -606,7 +622,7 @@ def elapsed_seconds(
 
     start_frmttyp: str
 
-       A Python string specifying the UNIX POSIX convention for the
+       A Python string specifying the POSIX convention for the
        start_datestr variable.
 
     stop_datestr: str
@@ -616,7 +632,7 @@ def elapsed_seconds(
 
     stop_frmttyp: str
 
-        A Python string specifying the UNIX POSIX convention for the
+        A Python string specifying the POSIX convention for the
         stop_datestr variable.
 
     Returns
