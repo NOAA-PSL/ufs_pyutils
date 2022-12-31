@@ -428,10 +428,8 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
         parser_interface.object_getattr(object_in=date_comps_obj, key="month"),
         parser_interface.object_getattr(object_in=date_comps_obj, key="day"),
         parser_interface.object_getattr(object_in=date_comps_obj, key="hour"),
-        parser_interface.object_getattr(
-            object_in=date_comps_obj, key="minute"),
-        parser_interface.object_getattr(
-            object_in=date_comps_obj, key="second"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="minute"),
+        parser_interface.object_getattr(object_in=date_comps_obj, key="second"),
     )
 
     # Collect the Julian attribute using SQLite3 and proceed
@@ -465,7 +463,7 @@ def datestrcomps(datestr: str, frmttyp: str) -> object:
 
 
 def datestrfrmt(datestr: str, frmttyp: str, offset_seconds: int = None) -> str:
-    """"
+    """ "
     Description
     -----------
 
@@ -592,8 +590,7 @@ def datestrupdate(
 
     for item in comps_list:
         if f"<{item}>" in outdatestr:
-            time_attr = parser_interface.object_getattr(
-                date_comps_obj, key=item)
+            time_attr = parser_interface.object_getattr(date_comps_obj, key=item)
             outdatestr = outdatestr.replace(f"<{item}>", time_attr)
 
     return outdatestr
