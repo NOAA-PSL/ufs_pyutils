@@ -307,10 +307,14 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         if not has_wildcards:
             stdin = open(infile, "r", encoding="utf-8")
 
+    print(outlog)
+    print(errlog)
+
     # Launch the respective executable and proceed accordingly.
     try:
         if infile is None:
             proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
+
         if infile is not None:
 
             # Build the command line arguments assuming that
@@ -341,7 +345,7 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         proc.communicate()
 
     except Exception as msg:
-        raise __error__(msg=msg)
+        __error__(msg=msg)
 
     # Close the stdout and stderr files and proceed accordingly.
     stderr.close()
@@ -466,15 +470,17 @@ def run(
             multi_prog_conf = None
 
     # Define the command line arguments for the respective
-    # parallel executables executable.
+    # launcher application; proceed accordingly.
     cmd = []
-
-    # Initialize the command line arguments with the launcher
-    # application for the respective job type; proceed accordingly.
     (launcher, tasks) = __job_info__(job_type=job_type)
 
     # Define the launcher for the respective job type; proceed
     # accordingly.
+    if launcher is None:
+        msg = ('The launcher application cannot be NoneType upon entry.'
+               'Aborting!!!')
+        __error__(msg=msg)
+
     if launcher is not None:
         if tasks is None:
             cmd.append(f"{launcher}")
@@ -482,7 +488,6 @@ def run(
         if tasks is not None:
             for item in [f"{launcher}", f"{tasks}", f"{ntasks}"]:
                 cmd.append(item)
-            #cmd.append(f"{launcher}", f"{tasks}", f"{ntasks}")
 
     # Check that the multi-prog capabilities are supported; proceed
     # accordingly; currently this is only supported for SLURM job
@@ -495,7 +500,7 @@ def run(
                 f"required; got {multi_prog_conf} for parameter multi_prog_conf "
                 "upon entry. Aborting!!!"
             )
-            raise __error__(msg=msg)
+            __error__(msg=msg)
 
         cmd.append("--multi-prog", f"{multi_prog_conf}")
 
