@@ -514,8 +514,6 @@ def run(
 #    cmd = list(filter(partial(is_not, None), cmd))
 
     cmd = list([item for item in cmd if item is not None])
-    print(cmd)
-    quit()
 
     # Launch the respective application.
     _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
