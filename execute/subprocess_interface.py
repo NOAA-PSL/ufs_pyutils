@@ -338,9 +338,8 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
                     cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
         # Launch the executable and proceed accordingly.
-        print(cmd)
-        # proc.wait()
-        # proc.communicate()
+        proc.wait()
+        proc.communicate()
 
     except Exception as msg:
         __error__(msg=msg)
