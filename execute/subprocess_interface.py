@@ -476,18 +476,18 @@ def run(
 
     # Define the launcher for the respective job type; proceed
     # accordingly.
-#    if launcher is None:
-#        msg = ('The launcher application cannot be NoneType upon entry.'
-#               'Aborting!!!')
-#        __error__(msg=msg)
+    if launcher is None:
+        msg = ('The launcher application cannot be NoneType upon entry.'
+               'Aborting!!!')
+        __error__(msg=msg)
 
-#    if launcher is not None:
-    if tasks is None:
-        cmd.append(f"{launcher}")
+    if launcher is not None:
+        if tasks is None:
+            cmd.append(f"{launcher}")
 
-    if tasks is not None:
-        for item in [f"{launcher}", f"{tasks}", f"{ntasks}"]:
-            cmd.append(item)
+        if tasks is not None:
+            for item in [f"{launcher}", f"{tasks}", f"{ntasks}"]:
+                cmd.append(item)
 
     # Check that the multi-prog capabilities are supported; proceed
     # accordingly; currently this is only supported for SLURM job
