@@ -505,7 +505,6 @@ def run(
         cmd.append("--multi-prog", f"{multi_prog_conf}")
 
     if not multi_prog:
-        cmd.append(f"{exe}")
 
         if args is not None:
             for item in args:
