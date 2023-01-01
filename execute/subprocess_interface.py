@@ -21,13 +21,13 @@
 Module
 ------
 
-    subprocess_interface
+    subprocess_interface.py
 
 Description
 -----------
 
     This module provides an interface to launch supported job types
-    for the respective platform.
+    for the respective platform using the Python subprocess library.
 
 Functions
 ---------
@@ -37,7 +37,7 @@ Functions
         This function is the exception handler for the respective
         module.
 
-    __job_type_info(job_type, app=None)
+    __job_info__(job_type, app=None)
 
         This function defines the launcher and task attributes for the
         job type specified upon entry.
@@ -79,7 +79,9 @@ History
 
 # ----
 
+from functools import partial
 import glob
+from operator import is_not
 import re
 import subprocess
 
@@ -133,7 +135,7 @@ def __error__(msg: str = None) -> None:
 # ----
 
 
-def __job_type_info(job_type: str, app: str = None) -> tuple:
+def __job_info__(job_type: str, app: str = None) -> tuple:
     """
     Description
     -----------
@@ -194,8 +196,7 @@ def __job_type_info(job_type: str, app: str = None) -> tuple:
 
     # Define the job attributes for application job types.
     if job_type.lower() == "app":
-        launcher = system_interface.get_app_path(app=app)
-        tasks = None
+        (launcher, tasks) = [None for i in range(2)]
 
     # Define the job attributes for Python job types.
     if job_type.lower() == "python":
@@ -218,12 +219,13 @@ def __job_type_info(job_type: str, app: str = None) -> tuple:
 
     # Check that the launcher type has been determined from the run
     # time environment; proceed accordingly.
-    if launcher is None:
-        msg = (
-            f"The path for job type {job_type} launcher could not be "
-            "determined for the respective platform. Aborting!!!"
-        )
-        __error__(msg=msg)
+    if job_type.lower() != "app":
+        if launcher is None:
+            msg = (
+                f"The path for job type {job_type} launcher could not be "
+                "determined for the respective platform. Aborting!!!"
+            )
+            __error__(msg=msg)
 
     return (launcher, tasks)
 
@@ -328,7 +330,8 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
             # Build the command line arguments assuming that no
             # wildcard values are included.
             if not has_wildcards:
-                proc = subprocess.Popen(cmd, stdin=stdin, stdout=stdout, stderr=stderr)
+                proc = subprocess.Popen(
+                    cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
         # Launch the executable and proceed accordingly.
         proc.wait()
@@ -383,6 +386,11 @@ def run(
 
     Keywords
     --------
+
+    job_type: str, optional
+
+        A Python string specifying the job type; this applies to
+        workload scheduler (e.g., SLURM, PBS, SGE, etc.,).
 
     ntasks: int, optional
 
@@ -460,15 +468,16 @@ def run(
 
     # Initialize the command line arguments with the launcher
     # application for the respective job type; proceed accordingly.
-    (launcher, tasks) = __job_type_info(job_type=job_type)
+    (launcher, tasks) = __job_info__(job_type=job_type)
 
     # Define the launcher for the respective job type; proceed
     # accordingly.
-    if tasks is None:
-        cmd.append(f"{launcher}")
+    if launcher is not None:
+        if tasks is None:
+            cmd.append(f"{launcher}")
 
-    if tasks is not None:
-        cmd.append(f"{launcher}", f"{tasks}", f"{ntasks}")
+        if tasks is not None:
+            cmd.append(f"{launcher}", f"{tasks}", f"{ntasks}")
 
     # Check that the multi-prog capabilities are supported; proceed
     # accordingly; currently this is only supported for SLURM job
@@ -491,6 +500,9 @@ def run(
         if args is not None:
             for item in args:
                 cmd.append(f"{item}")
+
+    # Remove any NoneType instances from the command line string.
+    cmd = list(filter(partial(is_not, None), cmd))
 
     # Launch the respective application.
     _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
