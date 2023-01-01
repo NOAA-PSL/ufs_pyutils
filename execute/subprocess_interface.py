@@ -503,7 +503,8 @@ def run(
             )
             __error__(msg=msg)
 
-        cmd.append("--multi-prog", f"{multi_prog_conf}")
+        for item in ["--multi-prog", f"{multi_prog_conf}", f"{exe}"]:
+            cmd.append(item)
 
     if not multi_prog:
         if args is not None:
@@ -512,6 +513,8 @@ def run(
 
     # Remove any NoneType instances from the command line string.
     cmd = list([item for item in cmd if item is not None])
+
+    print(cmd)
 
     # Launch the respective application.
     _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
