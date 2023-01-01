@@ -473,9 +473,6 @@ def run(
     # application for the respective job type; proceed accordingly.
     (launcher, tasks) = __job_info__(job_type=job_type)
 
-    print(launcher, tasks, ntasks)
-    quit()
-
     # Define the launcher for the respective job type; proceed
     # accordingly.
     if launcher is not None:
