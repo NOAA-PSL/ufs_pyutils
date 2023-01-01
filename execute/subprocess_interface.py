@@ -472,7 +472,7 @@ def run(
     # Define the command line arguments for the respective
     # launcher application; proceed accordingly.
     cmd = []
-    (launcher, tasks) = __job_info__(job_type=job_type)
+    (launcher, tasks) = __job_info__(job_type=job_type, app=exe)
 
     # Define the launcher for the respective job type; proceed
     # accordingly.
