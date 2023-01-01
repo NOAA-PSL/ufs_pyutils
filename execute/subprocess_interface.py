@@ -194,6 +194,9 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
         msg = f"The job type {job_type.lower()} is not supported. Aborting!!!"
         __error__(msg=msg)
 
+    msg = f"Configuring {job_type} type jobs."
+    logger.info(msg=msg)
+
     # Define the job attributes for application job types.
     if job_type.lower() == "app":
         (launcher, tasks) = [None for i in range(2)]
