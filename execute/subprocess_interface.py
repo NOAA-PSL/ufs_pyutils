@@ -337,9 +337,6 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
                 proc = subprocess.Popen(
                     cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
-        for arg in args:
-            cmd.append(args)
-
         # Launch the executable and proceed accordingly.
         print(cmd)
         # proc.wait()
@@ -489,6 +486,9 @@ def run(
         if tasks is not None:
             for item in [f"{launcher}", f"{tasks}", f"{ntasks}"]:
                 cmd.append(item)
+
+    if job_type.lower() != "app":
+        cmd.append(exe)
 
     # Check that the multi-prog capabilities are supported; proceed
     # accordingly; currently this is only supported for SLURM job
