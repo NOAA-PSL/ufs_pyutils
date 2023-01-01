@@ -513,5 +513,7 @@ def run(
     # Remove any NoneType instances from the command line string.
     cmd = list([item for item in cmd if item is not None])
 
+    print(cmd)
+
     # Launch the respective application.
-    _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
+    #_launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
