@@ -337,6 +337,9 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
             # Build the command line arguments assuming that no
             # wildcard values are included.
             if not has_wildcards:
+
+                print(cmd_string)
+
                 proc = subprocess.Popen(
                     cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
