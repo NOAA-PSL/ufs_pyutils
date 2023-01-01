@@ -337,6 +337,9 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
                 proc = subprocess.Popen(
                     cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
+        for arg in args:
+            cmd.append(args)
+
         # Launch the executable and proceed accordingly.
         print(cmd)
         # proc.wait()
