@@ -108,7 +108,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 # Define the supported job types.
-job_types_list = ["app", "python" "slurm"]
+global job_types_list = ["app", "python" "slurm"]
 
 # ----
 
