@@ -108,7 +108,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 # Define the supported job types.
-global job_types_list = ["app", "python" "slurm"]
+job_types_list = ["app", "python" "slurm"]
 
 # ----
 
@@ -190,7 +190,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
     """
 
     # Check that the job type is supported; proceed accordingly.
-    print(jobs_types_list)
+    print(job_types_list)
     quit()
     if job_type.lower() not in job_types_list:
         msg = f"The job type {job_type.lower()} is not supported. Aborting!!!"
