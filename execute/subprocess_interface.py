@@ -307,9 +307,6 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         if not has_wildcards:
             stdin = open(infile, "r", encoding="utf-8")
 
-    print(outlog)
-    print(errlog)
-
     # Launch the respective executable and proceed accordingly.
     try:
         if infile is None:
@@ -516,6 +513,9 @@ def run(
 
     # Remove any NoneType instances from the command line string.
     cmd = list(filter(partial(is_not, None), cmd))
+
+    print(cmd)
+    quit()
 
     # Launch the respective application.
     _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
