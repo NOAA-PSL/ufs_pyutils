@@ -334,15 +334,13 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
             # Build the command line arguments assuming that no
             # wildcard values are included.
             if not has_wildcards:
-
-                print(cmd_string)
-
                 proc = subprocess.Popen(
                     cmd, stdin=stdin, stdout=stdout, stderr=stderr)
 
         # Launch the executable and proceed accordingly.
-        proc.wait()
-        proc.communicate()
+        print(cmd)
+        # proc.wait()
+        # proc.communicate()
 
     except Exception as msg:
         __error__(msg=msg)
@@ -505,7 +503,6 @@ def run(
         cmd.append("--multi-prog", f"{multi_prog_conf}")
 
     if not multi_prog:
-
         if args is not None:
             for item in args:
                 cmd.append(f"{item}")
