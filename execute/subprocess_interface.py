@@ -199,7 +199,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
 
     # Define the job attributes for application job types.
     if job_type.lower() == "app":
-        (launcher, tasks) = [None for i in range(2)]
+        (launcher, tasks) = [app, None]
 
     # Define the job attributes for Python job types.
     if job_type.lower() == "python":
