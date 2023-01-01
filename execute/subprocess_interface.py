@@ -512,8 +512,9 @@ def run(
                 cmd.append(f"{item}")
 
     # Remove any NoneType instances from the command line string.
-    cmd = list(filter(partial(is_not, None), cmd))
+#    cmd = list(filter(partial(is_not, None), cmd))
 
+    cmd = list([item for item in cmd if item is not None])
     print(cmd)
     quit()
 
