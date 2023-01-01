@@ -480,7 +480,9 @@ def run(
             cmd.append(f"{launcher}")
 
         if tasks is not None:
-            cmd.append(f"{launcher}", f"{tasks}", f"{ntasks}")
+            for item in [f"{launcher}", f"{tasks}", f"{ntasks}"]:
+                cmd.append(item)
+            #cmd.append(f"{launcher}", f"{tasks}", f"{ntasks}")
 
     # Check that the multi-prog capabilities are supported; proceed
     # accordingly; currently this is only supported for SLURM job
