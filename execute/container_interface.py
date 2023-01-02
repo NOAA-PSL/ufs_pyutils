@@ -99,7 +99,31 @@ def __error__(msg: str = None) -> None:
 
 
 def _check_docker_env() -> str:
-    """ """
+    """
+    Description
+    -----------
+
+    This function checks whether the Docker environment has been
+    loaded; if not, an ContainerInterfaceError will be thrown; if so,
+    the path to the Docker executable (docker) will be defined and
+    returned.
+
+    Returns
+    -------
+
+    docker: str
+
+        A Python string specifying the path to the Docker executable
+        (docker).
+
+    Raises
+    ------
+
+    ContainerInterfaceError:
+
+        * raised if the Docker executable path cannot be determined.
+
+    """
 
     docker = system_interface.app_path(app="docker")
 
@@ -116,7 +140,32 @@ def _check_docker_env() -> str:
 
 
 def _check_singularity_env() -> str:
-    """ """
+    """
+    Description
+    -----------
+
+    This function checks whether the Singularity environment has been
+    loaded; if not, an ContainerInterfaceError will be thrown; if so,
+    the path to the Singularity executable (singularity) will be
+    defined and returned.
+
+    Returns
+    -------
+
+    singularity: str
+
+        A Python string specifying the path to the Singularity
+        executable (singularity).
+
+    Raises
+    ------
+
+    ContainerInterfaceError:
+
+        * raised if the Singularity executable path cannot be
+          determined.
+
+    """
 
     singularity = system_interface.app_path(app="singularity")
     if singularity is None:
@@ -165,6 +214,9 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     cls_opts = build_dict
 
     schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
+
+    print(build_dict)
+    quit()
 
     # Define the attributes and the respective default values required
     # to build the Singularity image from the respective Docker
