@@ -4,7 +4,7 @@ hello_world_sfd:
      update_owner: True
      docker_tag: latest
      docker_image: docker://noaaufsrnr/hello_world
-     build_sandbox: False
+     build_sandbox: True
 
 hello_world_run:
 
