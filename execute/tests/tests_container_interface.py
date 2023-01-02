@@ -54,8 +54,9 @@ class TestContainerMethods(TestCase):
 
         # Define the base-class attributes.
         self.dirpath = os.getcwd()
-        self.build_sfd_yaml = os.path.join(self.dirpath, "tests", "test_files",
-                                           "build.hello_world.yaml")
+        yaml_file = os.path.join(self.dirpath, "tests", "test_files",
+                                 "test.hello_world.yaml")
+        self.yaml_dict = YAML().read_yaml(yaml_file=yaml_file)
 
         # Define the message to accompany any unit-test failures.
         self.unit_test_msg = (
@@ -68,17 +69,16 @@ class TestContainerMethods(TestCase):
 
         # Build the Singularity image from the Docker containerized
         # image.
-        yaml_dict = YAML().read_yaml(yaml_file=self.build_sfd_yaml)
         build_dict = parser_interface.dict_key_value(
-            dict_in=yaml_dict, key='hello_world')
+            dict_in=self.yaml_dict, key='hello_world_sfd')
 
-        (stderr, stdout) = [os.path.join(self.dirpath, "tests", 'hello_world.err'),
+        (stderr, stdout) = [os.path.join(self.dirpath, "tests", 'hello_world_sfd.err'),
                             os.path.join(self.dirpath, "tests",
-                                         'hello_world.out')
+                                         'hello_world_sfd.out')
                             ]
 
-        sif_name = container_interface.build_sfd_local(build_dict=build_dict,
-                                                       stderr=stderr, stdout=stdout)
+        self.sif_name = container_interface.build_sfd_local(build_dict=build_dict,
+                                                            stderr=stderr, stdout=stdout)
 
         assert True
 
@@ -87,6 +87,25 @@ class TestContainerMethods(TestCase):
 
         self.assertTrue(exist, msg=(
             self.unit_test_msg.format('build_sfd_local')))
+
+    @pytest.mark.order(100)
+    def test_cleanup(self):
+        """
+        Description
+        -----------
+
+        This method removes the Singularity container image(s)
+        built/used for the respective container_interface function
+        unit-tests.
+
+        """
+
+        # Define the list of (the) netCDF-formatted file(s) to be
+        # removed.
+        filelist = [self.sif_name]
+
+        # Remove the specified netCDF-formatted file(s).
+        fileio_interface.removefiles(filelist=filelist)
 
 
 # ----

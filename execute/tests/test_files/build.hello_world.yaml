@@ -1,6 +1,14 @@
-hello_world:
+hello_world_sfd:
 
      sif_name: ./tests/hello_world.sif
      update_owner: True
      docker_tag: latest
      docker_image: docker://noaaufsrnr/hello_world
+
+hello_world_run:
+
+     sif_name: ./tests/hello_world.sif
+     create_sandbox: False
+     sif_app: Null
+     sif_launcher: Null
+     
