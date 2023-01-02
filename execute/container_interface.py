@@ -272,8 +272,6 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         sfd_obj = parser_interface.object_setattr(
             object_in=sfd_obj, key=sfd_key, value=attr_value)
 
-    quit()
-
     # Establish the respective platform singularity application
     # executable.
     singularity = _check_singularity_env()
