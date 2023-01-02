@@ -277,6 +277,8 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         sfd_obj = parser_interface.object_setattr(
             object_in=sfd_obj, key=sfd_key, value=attr_value)
 
+    quit()
+
     # Establish the respective platform singularity application
     # executable.
     singularity = _check_singularity_env()
@@ -284,8 +286,8 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     # Build the Singularity image locally.
     args = ['build']
     if sfd_obj.build_sandbox:
-        args = ['--sandbox', os.path.join
-    kwargs= {'args': args + [f'{sfd_obj.sif_name}',
+        args = ['--sandbox']
+    kwargs = {'args': args + [f'{sfd_obj.sif_name}',
                               f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
                               ],
               'job_type': "app",
@@ -302,11 +304,11 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         # Define the user to be defined as the container owner.
         if sfd_obj.sif_user is None:
 
-            sfd_obj.sif_user= system_interface.user()
+            sfd_obj.sif_user = system_interface.user()
 
         # Change the ownership of the container to the respective
         # user.
-        msg= (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
+        msg = (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
                f'to {sfd_obj.sif_user}.')
         logger.warn(msg=msg)
         system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
