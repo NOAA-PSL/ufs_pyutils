@@ -215,9 +215,6 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
 
     schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
 
-    print(build_dict)
-    quit()
-
     # Define the attributes and the respective default values required
     # to build the Singularity image from the respective Docker
     # containerized image.
