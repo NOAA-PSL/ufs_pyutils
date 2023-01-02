@@ -102,7 +102,7 @@ class TestContainerMethods(TestCase):
 
         # Define the list of (the) netCDF-formatted file(s) to be
         # removed.
-        filelist = [item for item in
+        filelist = [os.path.join(self.dirpath, "tests", item) for item in
                     fileio_interface.dircontents(
                         path=os.path.join(self.dirpath, "tests"))
                     if "hello_world_sfd" in item]
