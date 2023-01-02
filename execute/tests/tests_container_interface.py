@@ -108,7 +108,7 @@ class TestContainerMethods(TestCase):
                 dict_in=self.yaml_dict[yaml_key], key="sif_name",
                 force=True, no_split=True)
             if sif_name is not None:
-                filelist.append(os.path.join(self.dirpath, "tests", sif_name)
+                filelist.append(os.path.join(self.dirpath, "tests", sif_name))
 
 #        filelist = [os.path.join(self.dirpath, "tests", item) for item in
 #                    fileio_interface.dircontents(
