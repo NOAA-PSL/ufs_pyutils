@@ -46,9 +46,11 @@ History
 # ----
 
 import os
+from schema import Optional
 import subprocess
 
 from execute import subprocess_interface
+from utils import schema_interface
 from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import ContainerInterfaceError
 from utils.logger_interface import Logger
@@ -148,6 +150,21 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         containerized image.
 
     """
+
+    # Define and validate the schema for the Singularity container
+    # build configuration; proceed accordingly.
+    cls_schema = {Optional('docker_tag': default='latest'): str,
+                  Optional('docker_image': default=None): str,
+                  Optional('sif_group': default=None): str,
+                  Optional('sif_user': default=None): str,
+                  Optional('update_owner': default=False): str
+                  }
+
+    cls_opts = build_dict
+
+    schema_interface.validate(cls_schema=cls_schema, cls_opts=cls_opts)
+
+    quit()
 
     # Define the attributes and the respective default values required
     # to build the Singularity image from the respective Docker
