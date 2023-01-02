@@ -41,8 +41,9 @@ Functions
     _check_awscli_env()
 
         This function checks whether the AWS CLI environment has been
-        loaded; if not, an AWSCLIError will be thrown; if so, the path
-        to the AWS CLI executable will be defined and returned.
+        loaded; if not, an AWSCLIInterfaceError will be thrown; if so,
+        the path to the AWS CLI executable will be defined and
+        returned.
 
     exist_awspath(aws_path, resource='s3', profile=None)
 
@@ -161,7 +162,7 @@ def _check_awscli_env() -> str:
     Raises
     ------
 
-    AWSCLIError:
+    AWSCLIInterfaceError:
 
         * raised if the AWS CLI executable path cannot be determined.
 
