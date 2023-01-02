@@ -84,9 +84,6 @@ sfd_local_schema = {'docker_image': str,
                     Optional('update_owner', default=False): bool
                     }
 
-print(sfd_local_schema)
-quit()
-
 # ----
 
 logger = Logger()
@@ -266,16 +263,11 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         attr_value = parser_interface.dict_key_value(
             dict_in=build_dict, key=sfd_key, force=True, no_split=True)
 
-        if attr_value is None:
-            attr_value = parser_interface.dict_key_value(
-                dict_in=sfd_local_schema, key=sfd_key, no_split=True)
-            print(attr_value)
-
-        # if (sfd_key in sfd_manattrs_list) and (attr_value is None):
-        #    msg = (f'The attribute {sfd_key} must not be NoneType when '
-        #           'building Singularity images from Docker containerized '
-        #           'images. Aborting!!!')
-        #    __error__(msg=msg)
+        if (sfd_key in sfd_manattrs_list) and (attr_value is None):
+            msg = (f'The attribute {sfd_key} must not be NoneType when '
+                   'building Singularity images from Docker containerized '
+                   'images. Aborting!!!')
+            __error__(msg=msg)
 
         sfd_obj = parser_interface.object_setattr(
             object_in=sfd_obj, key=sfd_key, value=attr_value)
