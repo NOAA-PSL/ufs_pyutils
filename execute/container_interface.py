@@ -75,6 +75,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # Define the schema attributes for the respective functions.
 sfd_local_schema = {'docker_image': str,
                     'sif_name': str,
+                    Optional('build_sandbox', default=False): bool,
                     Optional('docker_tag', default='latest'): str,
                     Optional('docker_image', default=None): str,
                     Optional('sif_group', default=None): str,
@@ -235,7 +236,8 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     # Define the attributes and the respective default values required
     # to build the Singularity image from the respective Docker
     # containerized image.
-    sfd_attrs_dict = {'docker_tag': 'latest',
+    sfd_attrs_dict = {'build_sandbox': False,
+                      'docker_tag': 'latest',
                       'docker_image': None,
                       'sif_group': None,
                       'sif_name': None,
@@ -273,10 +275,12 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     singularity = _check_singularity_env()
 
     # Build the Singularity image locally.
-    kwargs = {'args': ['build',
-                       f'{sfd_obj.sif_name}',
-                       f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
-                       ],
+    args = ['build']
+    if sfd_obj.build_sandbox:
+        args.append('--sandbox')
+    kwargs = {'args': args + [f'{sfd_obj.sif_name}',
+                              f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
+                              ],
               'job_type': "app",
               'errlog': stderr,
               'outlog': stdout
