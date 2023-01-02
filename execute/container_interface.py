@@ -279,7 +279,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     # Build the Singularity image locally.
     args = ['build']
     if sfd_obj.build_sandbox:
-        args = ['--sandbox']
+        args = args + ['--sandbox']
     kwargs = {'args': args + [f'{sfd_obj.sif_name}',
                               f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
                               ],
