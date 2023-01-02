@@ -201,32 +201,6 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
 
     subprocess_interface.run(exe=singularity, **kwargs)
 
-    # Build the Singularity image locally.
-#    cmd = [f'{singularity}',
-#           'build',
-#           f'{sfd_obj.sif_name}',
-#           f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
-#           ]
-
-    # Build the Singularity containerized image.
-#    errlog = stderr
-#    if stderr is not None:
-#        errlog = open(stderr, 'w', encoding='utf-8')
-
-#    outlog = stdout
-#    if stdout is not None:
-#        outlog = open(stdout, 'w', encoding='utf-8')
-
-#    proc = subprocess.Popen(cmd, stderr=errlog, stdout=outlog)
-#    proc.communicate()
-#    proc.wait()
-
-#    if errlog is not None:
-#        errlog.close()
-
-#    if outlog is not None:
-#        outlog.close()
-
     # Check whether permissions are to be assigned for the respective
     # Singularity containerized image; proceed accordingly.
     if sfd_obj.update_owner:
@@ -241,7 +215,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         msg = (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
                f'to {sfd_obj.sif_user}.')
         logger.warn(msg=msg)
-        system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
-                               group=sfd_obj.sif_group)
+#        system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
+#                               group=sfd_obj.sif_group)
 
     return sfd_obj.sif_name
