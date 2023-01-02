@@ -78,6 +78,7 @@ sfd_local_schema = {'docker_image': str,
                     Optional('build_sandbox', default=False): bool,
                     Optional('docker_tag', default='latest'): str,
                     Optional('docker_image', default=None): str,
+                    Optional('sandbox_name', default=None): str,
                     Optional('sif_group', default=None): str,
                     Optional('sif_user', default=None): str,
                     Optional('update_owner', default=False): bool
@@ -239,6 +240,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     sfd_attrs_dict = {'build_sandbox': False,
                       'docker_tag': 'latest',
                       'docker_image': None,
+                      'sandbox_name': None,
                       'sif_group': None,
                       'sif_name': None,
                       'sif_user': None,
@@ -261,11 +263,16 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         attr_value = parser_interface.dict_key_value(
             dict_in=build_dict, key=sfd_key, force=True, no_split=True)
 
-        if (sfd_key in sfd_manattrs_list) and (attr_value is None):
-            msg = (f'The attribute {sfd_key} must not be NoneType when '
-                   'building Singularity images from Docker containerized '
-                   'images. Aborting!!!')
-            __error__(msg=msg)
+        if attr_value is None:
+            attr_value = parser_interface.dict_key_value(
+                dict_in=sfc_local_schema, key=sfd_key, no_split=True)
+            print(attr_value)
+
+        # if (sfd_key in sfd_manattrs_list) and (attr_value is None):
+        #    msg = (f'The attribute {sfd_key} must not be NoneType when '
+        #           'building Singularity images from Docker containerized '
+        #           'images. Aborting!!!')
+        #    __error__(msg=msg)
 
         sfd_obj = parser_interface.object_setattr(
             object_in=sfd_obj, key=sfd_key, value=attr_value)
@@ -277,8 +284,8 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     # Build the Singularity image locally.
     args = ['build']
     if sfd_obj.build_sandbox:
-        args.append('--sandbox')
-    kwargs = {'args': args + [f'{sfd_obj.sif_name}',
+        args = ['--sandbox', os.path.join
+    kwargs= {'args': args + [f'{sfd_obj.sif_name}',
                               f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
                               ],
               'job_type': "app",
@@ -295,11 +302,11 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         # Define the user to be defined as the container owner.
         if sfd_obj.sif_user is None:
 
-            sfd_obj.sif_user = system_interface.user()
+            sfd_obj.sif_user= system_interface.user()
 
         # Change the ownership of the container to the respective
         # user.
-        msg = (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
+        msg= (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
                f'to {sfd_obj.sif_user}.')
         logger.warn(msg=msg)
         system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
