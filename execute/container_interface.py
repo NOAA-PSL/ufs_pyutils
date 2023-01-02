@@ -153,11 +153,11 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
 
     # Define and validate the schema for the Singularity container
     # build configuration; proceed accordingly.
-    cls_schema = {Optional('docker_tag': default='latest'): str,
-                  Optional('docker_image': default=None): str,
-                  Optional('sif_group': default=None): str,
-                  Optional('sif_user': default=None): str,
-                  Optional('update_owner': default=False): str
+    cls_schema = {Optional('docker_tag', default='latest'): str,
+                  Optional('docker_image', default=None): str,
+                  Optional('sif_group', default=None): str,
+                  Optional('sif_user', default=None): str,
+                  Optional('update_owner', default=False): str
                   }
 
     cls_opts = build_dict
