@@ -294,6 +294,7 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
     if outlog is None:
         outlog = "out.log"
     stdout = open(outlog, "w", encoding="utf-8")
+
     if errlog is None:
         errlog = "err.log"
     stderr = open(errlog, "w", encoding="utf-8")
