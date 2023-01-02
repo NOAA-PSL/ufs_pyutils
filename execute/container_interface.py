@@ -265,7 +265,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
 
         if attr_value is None:
             attr_value = parser_interface.dict_key_value(
-                dict_in=sfc_local_schema, key=sfd_key, no_split=True)
+                dict_in=sfd_local_schema, key=sfd_key, no_split=True)
             print(attr_value)
 
         # if (sfd_key in sfd_manattrs_list) and (attr_value is None):
