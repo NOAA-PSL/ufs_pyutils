@@ -202,6 +202,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
                        f'{sfd_obj.sif_name}',
                        f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
                        ],
+              'job_type': "app"
               }
 #              'errlog': errlog,
 #              'outlog': outlog
