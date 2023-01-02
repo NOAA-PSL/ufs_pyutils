@@ -110,11 +110,6 @@ class TestContainerMethods(TestCase):
             if sif_name is not None:
                 filelist.append(os.path.join(self.dirpath, sif_name))
 
-#        filelist = [os.path.join(self.dirpath, "tests", item) for item in
-#                    fileio_interface.dircontents(
-#                        path=os.path.join(self.dirpath, "tests"))
-#                    if "hello_world_sfd" or "hello_world.sif" in item]
-
         # Remove the specified netCDF-formatted file(s).
         fileio_interface.removefiles(filelist=filelist)
 
