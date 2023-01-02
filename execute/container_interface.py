@@ -190,23 +190,14 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
     singularity = _check_singularity_env()
 
     # Build the Singularity image locally.
-    errlog = stderr
-    if stderr is not None:
-        errlog = open(stderr, 'w', encoding='utf-8')
-
-    outlog = stdout
-    if stdout is not None:
-        outlog = open(stdout, 'w', encoding='utf-8')
-
     kwargs = {'args': ['build',
                        f'{sfd_obj.sif_name}',
                        f'{sfd_obj.docker_image}:{sfd_obj.docker_tag}'
                        ],
-              'job_type': "app"
+              'job_type': "app",
+              'errlog': stderr,
+              'outlog': stdout
               }
-#              'errlog': errlog,
-#              'outlog': outlog
-#              }
 
     subprocess_interface.run(exe=singularity, **kwargs)
 
