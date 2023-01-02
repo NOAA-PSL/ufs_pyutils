@@ -46,7 +46,7 @@
 #    To build the respective Singularity image file (i.e., container),
 #    do as follows.
 
-#    user@host:$ singularity build ufs_pyutils_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/ufs_pyutils:<TAG>
+#    user@host:$ singularity build ufs_pyutils_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/el7-miniconda.ufs_pyutils:<TAG>
 
 #    In order to execute and application within the Singularity
 #    container, do as follows.
