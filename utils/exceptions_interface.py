@@ -46,6 +46,12 @@ Classes
         This is the base-class for exceptions encountered within the
         utils/boto3_interface module; it is a sub-class of Error.
 
+    ContainerInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        execute/container_interface module; it is a sub-class of
+        Error.
+
     CurlInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -155,6 +161,7 @@ __all__ = [
     "ArgumentsInterfaceError",
     "AWSCLIInterfaceError",
     "Boto3InterfaceError",
+    "ContainerInterfaceError",
     "CurlInterfaceError",
     "GRIBInterfaceError",
     "HashLibInterfaceError",
@@ -222,6 +229,18 @@ class Boto3InterfaceError(Error):
 
     """
 
+# ----
+
+
+class ContainerInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    execute/container_interface module; it is a sub-class of Error.
+
+    """
 
 # ----
 
