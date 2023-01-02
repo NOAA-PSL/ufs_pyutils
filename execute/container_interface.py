@@ -61,7 +61,7 @@ from tools import system_interface
 
 # Define all available functions.
 __all__ = [
-    "build_from_docker"
+    "build_sfd_local"
 ]
 
 # ----
@@ -69,6 +69,18 @@ __all__ = [
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
+
+# ----
+
+# Define the schema attributes for the respective functions.
+sfd_local_schema = {'docker_image': str,
+                    'sif_name': str,
+                    Optional('docker_tag', default='latest'): str,
+                    Optional('docker_image', default=None): str,
+                    Optional('sif_group', default=None): str,
+                    Optional('sif_user', default=None): str,
+                    Optional('update_owner', default=False): bool
+                    }
 
 # ----
 
@@ -92,6 +104,14 @@ def __error__(msg: str = None) -> None:
 
         A Python string containing a message to accompany the
         exception.
+
+    """
+
+# ----
+
+
+def __sandbox__():
+    """
 
     """
 
@@ -177,6 +197,12 @@ def _check_singularity_env() -> str:
 
     return singularity
 
+# ----
+
+
+def build_sandbox_local(build_dict: dict):
+    """ """
+
 
 # ----
 
@@ -202,18 +228,19 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
 
     # Define and validate the schema for the Singularity container
     # build configuration; proceed accordingly.
-    cls_schema = {'docker_image': str,
-                  'sif_name': str,
-                  Optional('docker_tag', default='latest'): str,
-                  Optional('docker_image', default=None): str,
-                  Optional('sif_group', default=None): str,
-                  Optional('sif_user', default=None): str,
-                  Optional('update_owner', default=False): bool
-                  }
+#    cls_schema = {'docker_image': str,
+#                  'sif_name': str,
+#                  Optional('docker_tag', default='latest'): str,
+#                  Optional('docker_image', default=None): str,
+#                  Optional('sif_group', default=None): str,
+#                  Optional('sif_user', default=None): str,
+#                  Optional('update_owner', default=False): bool
+#                  }
 
     cls_opts = build_dict
 
-    schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
+    schema_interface.validate_opts(
+        cls_schema=sfd_local_schema, cls_opts=cls_opts)
 
     # Define the attributes and the respective default values required
     # to build the Singularity image from the respective Docker
