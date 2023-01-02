@@ -1,0 +1,81 @@
+# =========================================================================
+
+# Docker Recipe File: Docker/ubuntu.hello_world.docker
+
+# Email: henry.winterbottom@noaa.gov
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the respective public license published by the
+# Free Software Foundation and included with the repository within
+# which this application is contained.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# =========================================================================
+
+# Description
+# -----------
+
+#    This Docker recipe file builds a Docker image containing the
+#    latest Ubuntu base-Linux platform image required for a "hello
+#    world" application.
+
+# Docker Instructions
+# -------------------
+
+#    The Docker container image should be built as follows.
+
+#    user@host:$ docker build -f ubuntu.hello_world.docker --tag ubuntu.hello_world:<TAG> .
+
+#    user@host:$ docker tag ubuntu.hello_world:<TAG> <DOCKER LOGIN>/ubuntu.hello_world:<TAG>
+
+#    user@host:$ docker push <DOCKER LOGIN>/ubuntu.hello_world:<TAG>
+
+#    where <TAG> is the tag identifier/name for the respective image
+#    and <DOCKER LOGIN> is the user Docker Hub login name.
+
+# Singularity Instructions
+# ------------------------
+
+#    To build the respective Singularity image file (i.e., container),
+#    do as follows.
+
+#    user@host:$ singularity build hello_world_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/ubuntu.hello_world:<TAG>
+
+#    In order to execute the entry point within the Singularity
+#    container, do as follows.
+
+#    user@host:$ singularity run hello_world_<TAG>.sif
+
+# Author(s)
+# ---------
+
+#    Henry R. Winterbottom; 09 December 2022 
+
+# History
+# -------
+
+#    2022-12-09: Henry R. Winterbottom -- Initial implementation.
+
+# Base Image Attributes
+# ---------------------
+
+#    Linux Image and Tag: ubuntu:latest
+
+# Latest Container Image Downloads
+# --------------------------------
+
+#    Docker Hub: docker pull noaaufsrnr/hello_world:<TAG>
+
+#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/hello_world:<TAG>
+
+#----
+
+# Define the container base information.
+FROM ubuntu:latest
+MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)"
+
+# Define the application launched upon container execution.
+ENTRYPOINT ["echo", "HELLO UFS CONTAINER USER!!!"]

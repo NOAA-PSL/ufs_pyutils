@@ -60,7 +60,7 @@
 # Author(s)
 # ---------
 
-#    Henry R. Winterbottom; 06 December 2022 
+#    Henry R. Winterbottom; 07 December 2022 
 
 # History
 # -------
@@ -82,7 +82,7 @@
 #----
 
 # Define the container base information.
-FROM centos:7
+FROM amd64/centos:7
 MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)" 
 
 #----
@@ -142,5 +142,11 @@ RUN /miniconda/bin/pip install netcdf4==1.6.2 && \
 
 #----
 
+# Define the base-user within the container.
+RUN useradd -ms /bin/bash ufs_user
+WORKDIR /home/ufs_user
+USER ufs_user
+
 # Define the container environment.
 ENV PATH="/miniconda/bin:${PATH}"
+ENV PYTHONPATH="/home/ufs_user"
