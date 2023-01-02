@@ -101,6 +101,12 @@ Classes
         This is the base-class for exceptions encountered within the
         ioapps/sqlite3_interface module; it is a sub-class of Error.
 
+    SubprocessInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        execute/subprocess_interface module; it is a sub-class of
+        Error.
+
     TarFileInterfaceError()
 
         This is the base-class for exceptions encountered within the
@@ -160,6 +166,7 @@ __all__ = [
     "ParserInterfaceError",
     "SchemaInterfaceError",
     "SQLite3InterfaceError",
+    "SubprocessInterfaceError",
     "TarFileInterfaceError",
     "TCVitalsInterfaceError",
     "TimestampsInterfaceError",
@@ -358,6 +365,19 @@ class SQLite3InterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/sqlite3_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class SubprocessInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    execute/subprocess_interface module; it is a sub-class of Error.
 
     """
 
