@@ -26,7 +26,7 @@
 import os
 import pytest
 
-from confs import yaml_interface
+from confs.yaml_interface import YAML
 from execute import container_interface
 from tools import fileio_interface
 from tools import parser_interface
@@ -68,7 +68,7 @@ class TestContainerMethods(TestCase):
 
         # Build the Singularity image from the Docker containerized
         # image.
-        yaml_dict = yaml_interface.read_yaml(yaml_file=self.build_sfd_yaml)
+        yaml_dict = YAML().read_yaml(yaml_file=self.build_sfd_yaml)
         build_dict = parser_interface.dict_key_value(
             dict_in=yaml_dict, key='hello_world')
 
