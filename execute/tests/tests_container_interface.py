@@ -102,10 +102,18 @@ class TestContainerMethods(TestCase):
 
         # Define the list of (the) netCDF-formatted file(s) to be
         # removed.
-        filelist = [os.path.join(self.dirpath, "tests", item) for item in
-                    fileio_interface.dircontents(
-                        path=os.path.join(self.dirpath, "tests"))
-                    if "hello_world_sfd" or "hello_world.sif" in item]
+        filelist = []
+        for (yaml_key, yaml_value) in self.yaml_dict.items():
+            sif_name = parser_interface.dict_key_value(
+                dict_in=self.yaml_dict[yaml_key], key="sif_name",
+                force=True, no_split=True)
+            if sif_name is not None:
+                filelist.append(os.path.join(self.dirpath, "tests", sif_name)
+
+#        filelist = [os.path.join(self.dirpath, "tests", item) for item in
+#                    fileio_interface.dircontents(
+#                        path=os.path.join(self.dirpath, "tests"))
+#                    if "hello_world_sfd" or "hello_world.sif" in item]
 
         # Remove the specified netCDF-formatted file(s).
         fileio_interface.removefiles(filelist=filelist)
