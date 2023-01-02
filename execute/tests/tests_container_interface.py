@@ -83,7 +83,7 @@ class TestContainerMethods(TestCase):
         assert True
 
         # Check that the Singularity image exists locally.
-        exist = fileio_interface.fileexist(path=sif_name)
+        exist = fileio_interface.fileexist(path=self.sif_name)
 
         self.assertTrue(exist, msg=(
             self.unit_test_msg.format('build_sfd_local')))
