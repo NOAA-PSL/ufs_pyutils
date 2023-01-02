@@ -30,16 +30,13 @@ Description
     involve the parsing of dictionaries, lists, and other Python type
     comprehensions.
 
-Classes
--------
-
-    ParserInterfaceError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     dict_formatter(in_dict)
 
@@ -59,6 +56,12 @@ Functions
         dictionary key; if the optional variable 'force' is True and
         the dictionary key does not exist within the Python
         dictionary, the function will return NoneType.
+
+    dict_merge(dict1, dict2)
+
+        This function merges two Python dictionaries and returns a
+        generator containing the merged Python dictionary relative to
+        the checks within the function.
 
     enviro_get(envvar)
 
@@ -166,19 +169,20 @@ History
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
-# pylint: disable=wrong-import-order
+# pylint: disable=unused-argument
 
 # ----
 
 import collections
 import copy
-import numpy
 import os
 import sys
 import types
+from typing import Generator, Union
 
-from typing import Union
-from utils.error_interface import Error
+import numpy
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import ParserInterfaceError
 
 # ----
 
@@ -187,6 +191,7 @@ __all__ = [
     "dict_formatter",
     "dict_key_remove",
     "dict_key_value",
+    "dict_merge",
     "enviro_get",
     "enviro_set",
     "find_commonprefix",
@@ -214,13 +219,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class ParserInterfaceError(Error):
+@msg_except_handle(ParserInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -231,16 +236,6 @@ class ParserInterfaceError(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new ParserInterfaceError object.
-
-        """
-        super().__init__(msg=msg)
 
 
 # ----
@@ -474,7 +469,7 @@ def dict_key_value(
             "values. Please check that only one threshold value is "
             "is to be sought from the list. Aborting!!!"
         )
-        raise ParserInterfaceError(msg=msg)
+        __error__(msg=msg)
 
     if index_value is not None:
         if max_value:
@@ -483,7 +478,7 @@ def dict_key_value(
                 "the specified index) and the maximum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
         if min_value:
             msg = (
@@ -491,7 +486,7 @@ def dict_key_value(
                 "the specified index) and the minimum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
     try:
         value = dict_in[key]
         if no_split:
@@ -509,18 +504,81 @@ def dict_key_value(
         except AttributeError:
             value = dict_in[key]
 
-    except KeyError as error:
+    except KeyError:
         if not force:
             msg = (
                 f"Key {key} could not be found in user provided dictionary. "
                 "Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg) from error
+            __error__(msg=msg)
 
         if force:
             value = None
 
     return value
+
+
+# ----
+
+
+def dict_merge(dict1: dict, dict2: dict) -> Generator[dict, dict, dict]:
+    """
+    Description
+    -----------
+
+    This function merges two Python dictionaries and returns a
+    generator containing the merged Python dictionary relative to the
+    checks within the function.
+
+    Parameters
+    ----------
+
+    dict1: dict
+
+         A Python dictionary to be merged.
+
+    dict2: dict
+
+         A Python dictionary to be merged.
+
+    Returns
+    -------
+
+    A Python generator is returned containing the merged Python
+    dictionaries.
+
+    """
+
+    # Define the attributes list containing the unique values from the
+    # respective Python dictionaries.
+    attrs_list = set(dict1.keys()).union(dict2.keys())
+    for k in attrs_list:
+
+        # For unique key values, merge the respective Python
+        # dictionaries.
+        if k in dict1 and k in dict2:
+
+            # If the respective Python dictionary key values are
+            # Python dictionaries, proceed accordingly.
+            if isinstance(dict1[k], dict) and isinstance(dict2[k], dict):
+                yield (k, dict(dict_merge(dict1[k], dict2[k])))
+
+            else:
+
+                # If one of the Python dictionary key values is not a
+                # Python dictionary, update the second dictionary and
+                # continue.
+                yield (k, dict2[k])
+
+        elif k in dict1:
+
+            # Update the first Python dictionary accordingly.
+            yield (k, dict1[k])
+
+        else:
+
+            # Update the second Python dictionary accordingly.
+            yield (k, dict2[k])
 
 
 # ----
@@ -895,7 +953,7 @@ def object_getattr(
                 f"The object {object_in} does not contain attribute "
                 "{key}. Aborting!!!"
             )
-            raise ParserInterfaceError(msg=msg)
+            __error__(msg=msg)
 
     return value
 

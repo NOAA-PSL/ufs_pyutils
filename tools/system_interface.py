@@ -34,7 +34,17 @@ Functions
 
     _get_stack()
 
-        This method defines the calling application stack frame.
+        This function defines the calling application stack frame.
+
+    get_app_path(app)
+
+        This function collects the path for the specified application;
+        if the path cannot be determined, NoneType is returned.
+
+    sleep(seconds=0)
+
+        This function allows specific calling applications to suspend
+        execution for a specified number of seconds.
 
     app_path(app)
 
@@ -48,8 +58,8 @@ Functions
 
     task_exit()
 
-        This method (gracefully) exits the respective application and
-        returns a status code of 0 (i.e., success).
+        This function (gracefully) exits the respective application
+        and returns a status code of 0 (i.e., success).
 
     user()
 
@@ -78,6 +88,7 @@ import inspect
 import shutil
 import subprocess
 import sys
+import time
 
 from utils.logger_interface import Logger
 
@@ -104,7 +115,7 @@ def _get_stack() -> list:
     Description
     -----------
 
-    This method defines the calling application stack frame.
+    This function defines the calling application stack frame.
 
     Returns
     -------
@@ -213,12 +224,73 @@ def chown(path: str, user: str, group: str = None) -> None:
 # ----
 
 
+def get_app_path(app: str) -> str:
+    """
+    Description
+    -----------
+
+    This function collects the path for the specified application; if
+    the path cannot be determined, NoneType is returned.
+
+    Parameters
+    ----------
+
+    app: str
+
+        A Python string specifying the name of the application for
+        which to return the respective path.
+
+    Returns
+    -------
+
+    app_path: str
+
+        A Python string specifying the path to the application name
+        provided upon entry; if the application path cannot be
+        determined, this value is NoneType.
+
+    """
+
+    # Collect the application path.
+    app_path = shutil.which(app)
+
+    return app_path
+
+
+# ----
+
+
+def sleep(seconds: int = 0) -> None:
+    """
+    Description
+    -----------
+
+    This function allows specific calling applications to suspend
+    execution for a specified number of seconds.
+
+    Keywords
+    --------
+
+    seconds: int, optional
+
+        A Python integer specifying the number of seconds for which to
+        suspend execution.
+
+    """
+
+    # Suspend execution for the specified number of seconds.
+    time.sleep(seconds)
+
+
+# ----
+
+
 def task_exit() -> None:
     """
     Description
     -----------
 
-    This method (gracefully) exits the respective application and
+    This function (gracefully) exits the respective application and
     returns a status code of 0 (i.e., success).
 
     """
@@ -230,7 +302,7 @@ def task_exit() -> None:
     [module, lineno] = (stack[2][1], stack[2][2])
 
     # Gracefully exit task.
-    msg = f"Task exit called from file {module} line number " "{lineno}."
+    msg = f"Task exit called from file {module} line number {lineno}."
     logger.warn(msg=msg)
 
     sys.exit(0)

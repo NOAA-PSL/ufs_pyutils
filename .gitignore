@@ -6,6 +6,13 @@ __pycache__/
 # C extensions
 *.so
 
+# Singularity extensions
+*.sif
+
+# Generic extensions
+*.err
+*.out
+
 # Distribution / packaging
 .Python
 build/

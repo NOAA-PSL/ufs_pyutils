@@ -40,10 +40,13 @@ Classes
         template file parsing and external FORTRAN 90 namelist-type
         file creation.
 
-    NamelistError(msg)
+Functions
+---------
 
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
 Author(s)
 ---------
@@ -59,6 +62,7 @@ History
 
 # ----
 
+# pylint: disable=broad-except
 # pylint: disable=consider-using-f-string
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-locals
@@ -70,9 +74,9 @@ History
 
 import re
 
-from tools import datetime_interface
-from tools import fileio_interface
-from utils.error_interface import Error
+from tools import datetime_interface, fileio_interface
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import NamelistInterfaceError
 
 # ----
 
@@ -396,21 +400,21 @@ class Namelist:
         except Exception as error:
             msg = (
                 f"Creation of FORTRAN 90 namelist file {nml_path} failed with "
-                "error {error}. Aborting!!!"
+                f"error {error}. Aborting!!!"
             )
-            raise NamelistError(msg=msg) from error
+            __error__(msg=msg)
 
 
 # ----
 
 
-class NamelistError(Error):
+@msg_except_handle(NamelistInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -421,13 +425,3 @@ class NamelistError(Error):
         exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new NamelistError object.
-
-        """
-        super().__init__(msg=msg)

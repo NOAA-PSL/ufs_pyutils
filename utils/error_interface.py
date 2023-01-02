@@ -36,6 +36,14 @@ Classes
         This is the base-class for all exceptions; it is a sub-class
         of Exceptions.
 
+Functions
+---------
+
+    msg_except_handle(err_cls):
+
+        This function provides a decorator to be used to raise
+        specified exceptions
+
 Author(s)
 ---------
 
@@ -50,7 +58,22 @@ History
 
 # ----
 
+# pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
+
+# ----
+
+from collections.abc import Callable
+
 from utils.logger_interface import Logger
+
+# ----
+
+logger = Logger()
+
+# ----
+
+__all__ = ["Error", "msg_except_handle"]
 
 # ----
 
@@ -89,6 +112,48 @@ class Error(Exception):
         """
 
         # Define the base-class attributes.
-        logger = Logger()
         logger.error(msg=msg)
         super().__init__()
+
+
+# ----
+
+
+def msg_except_handle(err_cls: object) -> Callable:
+    """
+    Description
+    -----------
+
+    This function provides a decorator to be used to raise specified
+    exceptions.
+
+    Parameters
+    ----------
+
+    err_cls: object
+
+        A Python object containing the Error subclass to be used for
+        exception raises.
+
+    Parameters
+    ----------
+
+    decorator: Callable
+
+        A Python decorator.
+
+    """
+
+    # Define the decorator function.
+    def decorator(func: Callable):
+
+        # Execute the caller function; proceed accordingly.
+        def call_function(msg: str) -> None:
+
+            # If an exception is encountered, raise the respective
+            # exception.
+            raise err_cls(msg=msg)
+
+        return call_function
+
+    return decorator

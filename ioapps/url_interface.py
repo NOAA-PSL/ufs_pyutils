@@ -29,14 +29,6 @@ Description
     This module contains functions to parse a Uniform Resource Locator
     (URL) paths.
 
-Classes
--------
-
-    URLError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
 ---------
 
@@ -71,11 +63,18 @@ History
 
 # ----
 
+# pylint: disable=broad-except
+# pylint: disable=raise-missing-from
+# pylint: disable=unused-argument
+
+# ----
+
 import os
 import urllib
 
 from bs4 import BeautifulSoup
-from utils.error_interface import Error
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import URLInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -96,32 +95,23 @@ logger = Logger()
 # ----
 
 
-class URLError(Error):
+@msg_except_handle(URLInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
 
     msg: str
 
-        A Python string to accompany the raised exception.
+        A Python string containing a message to accompany the
+        exception.
 
     """
-
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new URLError object.
-
-        """
-        super(URLError, self).__init__(msg=msg)
 
 
 # ----
@@ -168,7 +158,7 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
     Raises
     ------
 
-    URLError:
+    URLInterfaceError:
 
         * raised if an Exception is encountered while attempting to
           parse the URL path contents; the respective error message
@@ -185,11 +175,8 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
         soup = BeautifulSoup(url_contents, "html.parser")
 
     except Exception as error:
-        msg = (
-            "Retrieving the URL path {0} failed with error {1}. "
-            "Aborting!!!".format(url, error)
-        )
-        raise URLError(msg=msg)
+        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
+        __error__(msg=msg)
 
     # Compile a list of all URL file paths beneath the respective URL
     # file path provided upon entry; compile a list of the respective
@@ -203,7 +190,8 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
             for node in soup.find_all("a")
             if node.get("href").endswith(ext)
         )
-        weblist = list()
+        weblist = []
+
         for webfile in webfiles:
             if include_dirname:
                 filename = os.path.join(os.path.dirname(url), webfile)
@@ -214,10 +202,10 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
 
     except Exception as error:
         msg = (
-            "Compilation of URL paths beneath URL {0} failed with "
-            "error {1}. Aborting!!!".format(url, error)
+            f"Compilation of URL paths beneath URL {url} failed with "
+            f"error {error}. Aborting!!!"
         )
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     return weblist
 
@@ -279,7 +267,7 @@ def read_webfile(
     Raises
     ------
 
-    URLError:
+    URLInterfaceError:
 
         * raised if an exception is encountered while establishing the
           URL path request.
@@ -299,11 +287,8 @@ def read_webfile(
         request = urllib.request.Request(url=url)
 
     except Exception as error:
-        msg = (
-            "Retrieving the URL path {0} failed with error {1}. "
-            "Aborting!!!".format(url, error)
-        )
-        raise URLError(msg=msg)
+        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
+        __error__(msg=msg)
 
     # Read the contents of the URL file path; proceed accordingly.
     try:
@@ -312,7 +297,8 @@ def read_webfile(
         # contents will be returned as strings if return_string is
         # True upon entry; otherwise the default format of the file is
         # returned.
-        contents = list()
+        contents = []
+
         try:
             with urllib.request.urlopen(url=request) as response:
                 contents = response.read()
@@ -328,24 +314,23 @@ def read_webfile(
         except urllib.error.HTTPError as url_error:
             if ignore_missing:
                 msg = (
-                    "Opening URL {0} path failed with error {1}; "
+                    f"Opening URL {url} path failed with error {url_error}; "
                     "collection of URL path contents will not be "
-                    "performed.".format(url, url_error)
+                    "performed."
                 )
                 logger.warn(msg=msg)
 
             if not ignore_missing:
                 msg = (
-                    "Opening URL path {0} failed with error {1}. "
-                    "Aborting!!!".format(url, url_error)
+                    f"Opening URL path {url} failed with error {error}. " "Aborting!!!"
                 )
-                raise URLError(ms=msg)
+                __error__(msg=msg)
 
     except Exception as error:
         msg = (
-            "Reading the contents of URL path {0} failed with error "
-            "{1}. Aborting!!!".format(url, error)
+            f"Reading the contents of URL path {url} failed with error "
+            f"{error}. Aborting!!!"
         )
-        raise URLError(msg=msg)
+        __error__(msg=msg)
 
     return contents

@@ -59,16 +59,15 @@ History
 # ----
 
 # pylint: disable=undefined-variable
-# pylint: disable=wrong-import-order
 
 # ----
 
 import os
-import pytest
+from unittest import TestCase
 
+import pytest
 from confs import namelist_interface
 from tools import fileio_interface
-from unittest import TestCase
 
 # ----
 

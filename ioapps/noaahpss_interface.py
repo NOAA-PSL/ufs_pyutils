@@ -30,21 +30,18 @@ Description
     National Oceanographic and Atmospheric Administration (NOAA)
     High-Performance Storage System (HPSS).
 
-Classes
--------
-
-    NOAAHPSSError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
-
 Functions
--------
+---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_hpss_env()
 
         This function checks whether the HPSS environment has been
-        loaded; if not, a NOAAHPSSError will be thrown; if so, the
+        loaded; if not, a NOAAHPSSInterfaceError will be thrown; if so, the
         paths to the htar and hsi executables will be defined
         respectively as the base-class attributes htar and hsi.
 
@@ -64,7 +61,7 @@ Functions
     path_build(path)
 
         This function attempts to build a path on the NOAA HPSS; if a
-        path cannot be created, this function throws a NOAAHPSSError.
+        path cannot be created, this function throws a NOAAHPSSInterfaceError.
 
     path_exist(path)
 
@@ -95,7 +92,7 @@ Functions
 
         This function will attempt to write a tarball and
         corresponding tarball index file to the NOAA HPSS; if one
-        cannot be written, this function will thrown a NOAAHPSSError;
+        cannot be written, this function will thrown a NOAAHPSSInterfaceError;
         a returncode of 70, meaning the HPSS tarball file path is too
         long, is ignored as it is erroneous.
 
@@ -113,12 +110,23 @@ History
 
 # ----
 
-import numpy
+# pylint: disable=broad-except
+# pylint: disable=consider-using-with
+# pylint: disable=raise-missing-from
+# pylint: disable=simplifiable-if-statement
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
+# pylint: disable=unused-argument
+
+# ----
+
 import os
 import subprocess
 
-from tools import fileio_interface
-from utils.error_interface import Error
+import numpy
+from tools import fileio_interface, system_interface
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import NOAAHPSSInterfaceError
 from utils.logger_interface import Logger
 
 # ----
@@ -148,13 +156,13 @@ logger = Logger()
 # ----
 
 
-class NOAAHPSSError(Error):
+@msg_except_handle(NOAAHPSSInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -166,16 +174,6 @@ class NOAAHPSSError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new NOAAHPSSError object.
-
-        """
-        super(NOAAHPSSError, self).__init__(msg=msg)
-
 
 # ----
 
@@ -186,9 +184,9 @@ def _check_hpss_env() -> tuple:
     -----------
 
     This function checks whether the HPSS environment has been loaded;
-    if not, a NOAAHPSSError will be thrown; if so, the paths to the
-    htar and hsi executables will be defined respectively as the
-    base-class attributes htar and hsi.
+    if not, a NOAAHPSSInterfaceError will be thrown; if so, the paths
+    to the htar and hsi executables will be defined respectively as
+    the base-class attributes htar and hsi.
 
     Returns
     -------
@@ -204,7 +202,7 @@ def _check_hpss_env() -> tuple:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the htar executable path cannot be determined.
 
@@ -213,40 +211,20 @@ def _check_hpss_env() -> tuple:
     """
 
     # Check the run-time environment in order to determine the htar
-    # executable path.
-    cmd = ["which", "htar"]
+    # executable path; proceed accordingly.
+    htar = system_interface.get_app_path(app="htar")
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-    if len(out) > 0:
-        htar = out.rstrip().decode("utf-8")
-
-    else:
-        msg = (
-            "\n\nThe htar executable could not be determined for your system; "
-            "please check that the appropriate HPSS libaries/modules are "
-            "loaded prior to calling this script; for example:\n\n"
-            "module load hpss\n\nAborting!!!"
-        )
-        raise NOAAHPSSError(msg=msg)
+    if htar is None:
+        msg = "The htar executable could not be determined for your system. Aborting!!!"
+        __error__(msg=msg)
 
     # Check the run-time environment in order to determine the hsi
     # executable path.
-    cmd = ["which", "hsi"]
+    hsi = system_interface.get_app_path(app="hsi")
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-    if len(out) > 0:
-        hsi = out.rstrip().decode("utf-8")
-
-    else:
-        msg = (
-            "\n\nThe hsi executable could not be determined for the system; "
-            "please check that the appropriate HPSS libaries/modules are "
-            "loaded prior to calling this script; for example:\n\n"
-            "module load hpss\n\nAborting!!!"
-        )
-        raise NOAAHPSSError(msg=msg)
+    if hsi is None:
+        msg = "The hsi executable could not be determined for your system. Aborting!!!"
+        __error__(msg=msg)
 
     return (hsi, htar)
 
@@ -300,20 +278,20 @@ def check_filepath(
 
     # Build the htar command line string and proceed accordingly.
     (_, htar) = _check_hpss_env()
-    cmd = ["{0}".format(htar), "-tvf", "{0}".format(tarball_path)]
+    cmd = [f"{htar}", "-tvf", f"{tarball_path}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
+    (out, _) = proc.communicate()
     out = list(out.rstrip().decode("utf-8").rsplit())
 
     if include_slash:
-        if "./{0}".format(filename) in out:
+        if f"./{filename}" in out:
             exist = True
         else:
             exist = False
 
     if not include_slash:
-        if "{0}".format(filename) in out:
+        if f"{filename}" in out:
             exist = True
         else:
             exist = False
@@ -344,7 +322,7 @@ def get_hpssfile(hpss_filepath: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if an exception is encountered during the HPSS file
           collection.
@@ -353,7 +331,7 @@ def get_hpssfile(hpss_filepath: str) -> None:
 
     # Build the hsi command line string and proceed accordingly.
     (hsi, _) = _check_hpss_env()
-    cmd = ["{0}".format(hsi), "get", "{0}".format(hpss_filepath)]
+    cmd = [f"{hsi}".format(hsi), "get", f"{hpss_filepath}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
@@ -361,10 +339,10 @@ def get_hpssfile(hpss_filepath: str) -> None:
 
     except Exception as error:
         msg = (
-            "Collecting file {0} from the NOAA HPSS failed with "
-            "error {0}. Aborting!!!".format(hpss_filepath, error)
+            f"Collecting file {hpss_filepath} from the NOAA HPSS failed with "
+            f"error {error}. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
 
 # ----
@@ -376,7 +354,7 @@ def path_build(path: str) -> None:
     -----------
 
     This function attempts to build a path on the NOAA HPSS; if a path
-    cannot be created, this function throws a NOAAHPSSError.
+    cannot be created, this function throws a NOAAHPSSInterfaceError.
 
     Parameters
     ----------
@@ -388,7 +366,7 @@ def path_build(path: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the specified HPSS path cannot be created.
 
@@ -396,14 +374,14 @@ def path_build(path: str) -> None:
 
     # Build the hsi command line string and proceed accordingly.
     (hsi, _) = _check_hpss_env()
-    cmd = ["{0}".format(hsi), "mkdir", "-p", "{0}".format(path)]
+    cmd = [f"{hsi}", "mkdir", "-p", f"{path}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
 
     if proc.returncode != 0:
-        msg = "The NOAA HPSS path {0} could not be created. Aborting!!!".format(path)
-        raise NOAAHPSSError(msg=msg)
+        msg = f"The NOAA HPSS path {path} could not be created. Aborting!!!"
+        __error__(msg=msg)
 
 
 # ----
@@ -437,7 +415,7 @@ def path_exist(path: str) -> bool:
 
     # Build the hsi command line string and proceed accordingly.
     (hsi, _) = _check_hpss_env()
-    cmd = ["{0}".format(hsi), "ls", "{0}".format(path)]
+    cmd = [f"{hsi}", "ls", f"{path}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.wait()
@@ -482,7 +460,7 @@ def path_filelist(path: str) -> list:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the NOAA HPSS path does not exist.
 
@@ -494,14 +472,14 @@ def path_filelist(path: str) -> list:
 
     if not exist:
         msg = "The NOAA HPSS path does not exist. Aborting!!!"
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
-    cmd = ["{0}".format(hsi), "-q", "ls", "-l", "{0}".format(path)]
+    cmd = [f"{hsi}", "-q", "ls", "-l", f"{path}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     (_, hpss_list) = list(proc.communicate())
 
-    filelist = list()
+    filelist = []
     for item in hpss_list.split():
         filelist.append(item.decode("utf-8"))
 
@@ -535,7 +513,7 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if an exception is encountered while archiving the
           respective file path to the NOAA HPSS.
@@ -544,7 +522,7 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
 
     # Build the hsi command line string and proceed accordingly.
     (hsi, _) = _check_hpss_env()
-    cmd = ["{0}".format(hsi), "put", "-P", "{0} : {1}".format(filepath, hpss_filepath)]
+    cmd = [f"{hsi}", "put", "-P", f"{filepath} : {hpss_filepath}"]
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     try:
@@ -552,10 +530,10 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
 
     except Exception as error:
         msg = (
-            "The archiving of file {0} to the NOAA HPSS failed with "
-            "error {1}. Aborting!!!".format(filepath, error)
+            f"The archiving of file {filepath} to the NOAA HPSS failed with "
+            f"error {error}. Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)
 
 
 # ----
@@ -602,8 +580,8 @@ def read_tarball(
 
         A Python boolean variable; if False and the user-specified
         filename is not found in the tarball (tarball_path), a
-        NOAAHPSSError will be thrown; if True, this function carries on
-        gracefully.
+        NOAAHPSSInterfaceError will be thrown; if True, this function
+        carries on gracefully.
 
     strip_dir: bool, optional
 
@@ -625,19 +603,14 @@ def read_tarball(
     os.chdir(path)
 
     if include_slash:
-        cmd = [
-            "{0}".format(htar),
-            "-xvf",
-            "{0}".format(tarball_path),
-            "./{0}".format(filename),
-        ]
+        cmd = [f"{htar}" "-xvf", f"{tarball_path}", f"./{filename}"]
 
     if not include_slash:
         cmd = [
-            "{0}".format(htar),
+            f"{htar}",
             "-xvf",
-            "{0}".format(tarball_path),
-            "{0}".format(filename),
+            f"{tarball_path}",
+            f"{filename}",
         ]
 
     proc = subprocess.Popen(cmd)
@@ -646,8 +619,8 @@ def read_tarball(
     if not force:
         if proc.returncode != 0:
             msg = (
-                "The HPSS file {0} collection from tarball {1} failed "
-                "with returncode {2}.".format(filename, tarball_path, proc.returncode)
+                f"The HPSS file {filename} collection from tarball "
+                f"{tarball_path} failed with returncode {proc.returncode}."
             )
             logger.warn(msg=msg)
 
@@ -681,9 +654,9 @@ def write_tarball(
 
     This function will attempt to write a tarball and corresponding
     tarball index file to the NOAA HPSS; if one cannot be written,
-    this function will thrown a NOAAHPSSError; a returncode of 70,
-    meaning the HPSS tarball file path is too long, is ignored as it
-    is erroneous.
+    this function will thrown a NOAAHPSSInterfaceError; a returncode
+    of 70, meaning the HPSS tarball file path is too long, is ignored
+    as it is erroneous.
 
     Parameters
     ----------
@@ -715,7 +688,7 @@ def write_tarball(
     Raises
     ------
 
-    NOAAHPSSError:
+    NOAAHPSSInterfaceError:
 
         * raised if the return code from the NOAA HPSS is neither 0 or
           70; this indicates that the file was most likely not created
@@ -729,21 +702,21 @@ def write_tarball(
     os.chdir(path)
     if filelist is None:
         cmd = [
-            "{0}".format(htar),
+            f"{htar}",
             "-cvf",
-            "{0}".format(tarball_path),
+            f"{tarball_path}",
             "-I",
-            "{0}".format(tarball_idx_path),
+            f"{tarball_idx_path}",
             "./",
         ]
 
     if filelist is not None:
         cmd = [
-            "{0}".format(htar),
+            f"{htar}",
             "-cvf",
-            "{0}".format(tarball_path),
+            f"{tarball_path}",
             "-I",
-            "{0}".format(tarball_idx_path),
+            f"{tarball_idx_path}",
         ]
 
         for item in filelist:
@@ -755,16 +728,14 @@ def write_tarball(
 
             if gigabytes_path >= htar_max_gigabyte:
                 msg = (
-                    "File {0} has file size {1} TB which exceeds "
-                    "the htar maximum file size {2} TB and will not "
-                    "be archived.".format(filename, gigabytes_path, htar_max_gigabyte)
+                    f"File {filename} has file size {gigabytes_path} TB which exceeds "
+                    f"the htar maximum file size {htar_max_gigabyte} TB and will not "
+                    "be archived."
                 )
                 logger.warn(msg=msg)
 
             if gigabytes_path < htar_max_gigabyte:
-                msg = "File {0} has size {1} TB and will be archived.".format(
-                    filename, gigabytes_path
-                )
+                msg = f"File {filename} has size {gigabytes_path} TB and will be archived."
                 logger.info(msg=msg)
                 cmd.append(item)
 
@@ -772,9 +743,9 @@ def write_tarball(
     proc = subprocess.Popen(cmd)
     proc.wait()
 
-    if (proc.returncode != 0) and (proc.returncode != 70):
+    if proc.returncode not in (0, 70):
         msg = (
-            "The HPSS archive creation failed with returncode {0}. "
-            "Aborting!!!".format(proc.returncode)
+            f"The HPSS archive creation failed with returncode {proc.returncode}. "
+            "Aborting!!!"
         )
-        raise NOAAHPSSError(msg=msg)
+        __error__(msg=msg)

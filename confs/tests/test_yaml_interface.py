@@ -59,16 +59,15 @@ History
 # ----
 
 # pylint: disable=undefined-variable
-# pylint: disable=wrong-import-order
 
 # ----
 
 import os
-import pytest
+from unittest import TestCase
 
+import pytest
 from confs import yaml_interface
 from tools import fileio_interface
-from unittest import TestCase
 
 # ----
 
@@ -153,7 +152,7 @@ class TestYAMLMethods(TestCase):
 
         # Write the YAML-formatted file.
         yaml = yaml_interface.YAML()
-        yaml.run(
+        yaml.write_tmpl(
             yaml_dict=self.yaml_test_dict,
             yaml_template=self.yaml_template,
             yaml_path=self.yaml_path,

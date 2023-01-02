@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Module: tools/constants_interface.py
+# Module: utils/constants_interface.py
 
 # Author: Henry R. Winterbottom
 

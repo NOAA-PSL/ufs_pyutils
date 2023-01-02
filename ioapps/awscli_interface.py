@@ -27,19 +27,16 @@ Description
 -----------
 
     This module contains functions which interface with the Amazon Web
-    Services (AWS) command-line interface (CLI) for AWS s3 bucket and
-    object paths.
-
-Classes
-------- 
-
-    AWSCLIError(msg)
-
-        This is the base-class for all exceptions; it is a sub-class
-        of Error.
+    Services (AWS) command-line interface (CLI) for AWS resource
+    bucket and object paths.
 
 Functions
 ---------
+
+    __error__(msg=None)
+
+        This function is the exception handler for the respective
+        module.
 
     _check_awscli_env()
 
@@ -47,13 +44,26 @@ Functions
         loaded; if not, an AWSCLIError will be thrown; if so, the path
         to the AWS CLI executable will be defined and returned.
 
+    exist_awspath(aws_path, resource='s3', profile=None)
+
+        This function queries the respective Amazon Web Services (AWS)
+        resource bucket and object path to, using the command line
+        interface (CLI), in order to determine whether a file/path
+        exists; a boolean value indicating the status is returned.
+
+    list_awspath(aws_path, resource='s3', profile=None)
+
+        This function provides an interface to the Amazon Web Services
+        (AWS) command line interface (CLI) application to list the
+        specified resource bucket contents.
+
     put_awsfile(aws_path, path, is_dir=False, is_wildcards=False,
-                aws_exclude=None, aws_include=None, profile=None,
-                errlog=None, outlog=None):
+                aws_exclude=None, aws_include=None, resource='s3',
+                profile=None, errlog=None, outlog=None):
 
         This function provides an interface to the Amazona Web
         Services (AWS) command line interface (CLI) application to
-        stage local files within specified AWS s3 bucket and object
+        stage local files within specified AWS resource `bucket and object
         paths.
 
 Requirements
@@ -75,16 +85,28 @@ History
 
 # ----
 
-import subprocess
+# pylint: disable=broad-except
+# pylint: disable=consider-using-with
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-branches
+# pylint: disable=too-many-locals
+# pylint: disable=too-many-statements
+# pylint: disable=unused-argument
 
-from utils.error_interface import Error
+# ----
+
+import subprocess
+from ast import literal_eval
+
+from tools import parser_interface, system_interface
+from utils.error_interface import msg_except_handle
+from utils.exceptions_interface import AWSCLIInterfaceError
 from utils.logger_interface import Logger
-from tools import parser_interface
 
 # ----
 
 # Define all available functions.
-__all__ = ["put_awsfile"]
+__all__ = ["exist_awspath", "list_awspath", "put_awsfile"]
 
 # ----
 
@@ -99,13 +121,13 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-class AWSCLIError(Error):
+@msg_except_handle(AWSCLIInterfaceError)
+def __error__(msg: str = None) -> None:
     """
     Description
     -----------
 
-    This is the base-class for all exceptions; it is a sub-class of
-    Error.
+    This function is the exception handler for the respective module.
 
     Parameters
     ----------
@@ -117,17 +139,6 @@ class AWSCLIError(Error):
 
     """
 
-    def __init__(self, msg: str):
-        """
-        Description
-        -----------
-
-        Creates a new AWSCLIError object.
-
-        """
-        super(AWSCLIError, self).__init__(msg=msg)
-
-
 # ----
 
 
@@ -137,8 +148,8 @@ def _check_awscli_env() -> str:
     -----------
 
     This function checks whether the AWS CLI environment has been
-    loaded; if not, an AWSCLIError will be thrown; if so, the path to
-    the AWS CLI executable will be defined and returned.
+    loaded; if not, an AWSCLIInterfaceError will be thrown; if so, the
+    path to the AWS CLI executable will be defined and returned.
 
     Returns
     -------
@@ -158,25 +169,193 @@ def _check_awscli_env() -> str:
 
     # Check the run-time environment in order to determine the AWS CLI
     # executable path.
-    cmd = ["which", "aws"]
+    awscli = system_interface.get_app_path(app="aws")
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (out, err) = proc.communicate()
-
-    # Define the AWS CLI executable path; proceed accordingly.
-    if len(out) > 0:
-        awscli = out.rstrip().decode("utf-8")
-
-    else:
+    if awscli is None:
         msg = (
             "The AWS CLI executable could not be determined for your "
             "system; please check that the appropriate AWS CLI "
             "libaries/modules are loaded prior to calling this script. "
             "Aborting!!!"
         )
-        raise AWSCLIError(msg=msg)
+        __error__(msg=msg)
 
     return awscli
+
+
+# ----
+
+
+def exist_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> bool:
+    """
+    Description
+    -----------
+
+    This function queries the respective Amazon Web Services (AWS)
+    resource bucket and object path to, using the command line
+    interface (CLI), in order to determine whether a file/path exists;
+    a boolean value indicating the status is returned.
+
+    Parameters
+    ----------
+
+    aws_path: str
+
+        A Python string specifying the AWS resource bucket and object
+        path within which to collect the respective contents.
+
+    Keywords
+    --------
+
+    resource: str, optional
+
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
+
+    profile: str, optional
+
+        A Python string specifying the AWS CLI credentials; if
+        NoneType upon entry the AWS CLI assumes the --no-sign-request
+        attribute; if this value is not NoneType, the credentials
+        corresponding to the respective string must live beneath the
+        ~/.aws/credentials path and contain the appropriate AWS
+        aws_access_key_id and aws_secret_access_key attributes.
+
+    Returns
+    -------
+
+    exist: bool
+
+        A Python boolean valued variable specifying whether the AWS
+        path provided upon entry exists.
+
+    """
+
+    # Establish the AWS CLI executable environment.
+    awscli = _check_awscli_env()
+    cmd = [f"{awscli}", f"{resource}", "ls", f"{aws_path}"]
+
+    # Determine the permission attributes for the AWS CLI executable.
+    if profile is None:
+        cmd.append("--no-sign-request")
+    if profile is not None:
+        cmd.append("--profile")
+        cmd.append(f"{profile}")
+
+    # Query the AWS path; proceed accordingly.
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
+    (contents, _) = proc.communicate()
+    proc.wait()
+
+    # If the contents list returned by the AWS CLI is not empty, the
+    # AWS path is assumed to exist; otherwise it is assumed not to
+    # exist.
+    exist = len(contents.decode("utf-8")) > 0
+
+    return exist
+
+
+# ----
+
+
+def list_awspath(aws_path: str, resource: str = "s3", profile: str = None) -> list:
+    """
+    Description
+    -----------
+
+    This function provides an interface to the Amazon Web Services
+    (AWS) command line interface (CLI) application to list the
+    specified resource bucket contents.
+
+    Parameters
+    ----------
+
+    aws_path: str
+
+        A Python string specifying the AWS resource bucket and object
+        path within which to collect the respective contents.
+
+    Keywords
+    --------
+
+    resource: str, optional
+
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
+
+    profile: str, optional
+
+        A Python string specifying the AWS CLI credentials; if
+        NoneType upon entry the AWS CLI assumes the --no-sign-request
+        attribute; if this value is not NoneType, the credentials
+        corresponding to the respective string must live beneath the
+        ~/.aws/credentials path and contain the appropriate AWS
+        aws_access_key_id and aws_secret_access_key attributes.
+
+    Returns
+    -------
+
+    awspath_list: list
+
+        A Python list containing the contents of the specified AWS
+        resource bucket and object path.
+
+    Raises
+    ------
+
+    AWSCLIInterfaceError:
+
+        * raised if an exception is encountered while creating the
+          list of files within the specified AWS resource bucket and
+          object path.
+
+    """
+
+    # Establish the AWS CLI executable environment.
+    awscli = _check_awscli_env()
+    cmd = [f"{awscli}", f"{resource}", "ls", f"{aws_path}"]
+
+    # Determine the permission attributes for the AWS CLI executable.
+    if profile is None:
+        cmd.append("--no-sign-request")
+    if profile is not None:
+        cmd.append("--profile")
+        cmd.append(f"{profile}")
+
+    # Create a list of the contents in the specified AWS resource
+    # path; proceed accordingly.
+    try:
+
+        # Collect a list of the AWS resource path contents.
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (path_list, _) = proc.communicate()
+        proc.wait()
+
+        # Build a list of the respective files; encode and decode as
+        # necessary and proceed accordingly.
+        awspath_list = []
+        try:
+
+            # Update the list with the respective file; format
+            # accordingly.
+            for item in path_list.split("\n".encode()):
+                awspath_list.append(str(item.split()[3].decode("utf-8")))
+
+        except IndexError:
+            pass
+
+    except Exception as error:
+        msg = (
+            f"Determining the files in AWS path {aws_path} for AWS "
+            f"resource {resource} failed with error {error}. Aborting!!!"
+        )
+        __error__(msg=msg)
+
+    return awspath_list
 
 
 # ----
@@ -189,6 +368,7 @@ def put_awsfile(
     is_wildcards: bool = False,
     aws_exclude: str = None,
     aws_include: str = None,
+    resource: str = "s3",
     profile: str = None,
     errlog: str = None,
     outlog: str = None,
@@ -197,23 +377,23 @@ def put_awsfile(
     Description
     -----------
 
-    This function provides an interface to the Amazona Web Services
+    This function provides an interface to the Amazon Web Services
     (AWS) command line interface (CLI) application to stage local
-    files within specified AWS s3 bucket and object paths.
+    files within specified AWS resource bucket and object paths.
 
     Parameters
     ----------
 
     aws_path: str
 
-        A Python string specifying the AWS s3 bucket and object path
-        for the staged file.
+        A Python string specifying the AWS resource bucket and object
+        path for the staged file.
 
     path: str
 
         A Python string specifying the path for the local file to be
-        staged within the specified AWS s3 bucket and object path (see
-        aws_path above).
+        staged within the specified AWS resource bucket and object
+        path (see aws_path above).
 
     Keywords
     --------
@@ -242,6 +422,12 @@ def put_awsfile(
         A Python string specifying the file strings to be included;
         utilized only if is_wildcards (above) is True.
 
+    resource: str, optional
+
+        A Python string specifying the supported AWS resource;
+        allowable storage resources can be found at
+        https://tinyurl.com/AWS-Storage-Resources.
+
     profile: str, optional
 
         A Python string specifying the AWS CLI credentials; if
@@ -266,7 +452,7 @@ def put_awsfile(
     Raises
     ------
 
-    AWSCLIError:
+    AWSCLIInterfaceError:
 
         * raised if the parameter values specified upon entry are
           non-compliant with the wildcards attribute.
@@ -281,118 +467,108 @@ def put_awsfile(
 
     # Define the Python dictionaries and list of parameter keys and
     # values provided upon entry.
-    awss3_kwargs_list = ["aws_exclude", "aws_include", "is_dir", "is_wildcards"]
+    aws_kwargs_list = ["aws_exclude", "aws_include", "is_dir", "is_wildcards"]
 
-    awss3_kwargs_dict = {"aws_exclude": "exclude", "aws_include": "include"}
+    aws_kwargs_dict = {"aws_exclude": "exclude", "aws_include": "include"}
 
     # Define the keywords provided upon entry and proceed accordingly.
-    awss3_obj = parser_interface.object_define()
-    for awss3_kwarg in awss3_kwargs_list:
-        value = eval(awss3_kwarg)
-        awss3_obj = parser_interface.object_setattr(
-            object_in=awss3_obj, key=awss3_kwarg, value=value
+    aws_obj = parser_interface.object_define()
+    for aws_kwarg in aws_kwargs_list:
+        value = literal_eval(aws_kwarg)
+        aws_obj = parser_interface.object_setattr(
+            object_in=aws_obj, key=aws_kwarg, value=value
         )
 
     # Check that the associated keywords provided upon entry are
     # valid.
-    if awss3_obj.is_wildcards:
-        if not any([awss3_obj.aws_exclude, awss3_obj.aws_include]):
+    if aws_obj.is_wildcards:
+        if not any([aws_obj.aws_exclude, aws_obj.aws_include]):
             msg = (
-                "For AWS s3 wildcard strings to be valid, either/"
+                "For AWS resource wildcard strings to be valid, either/"
                 "aws_exclude and/or aws_include must not be "
                 "NoneType. Aborting!!!"
             )
-            raise AWSCLIError(msg=msg)
+            __error__(msg=msg)
 
-    if not awss3_obj.is_wildcards:
+    if not aws_obj.is_wildcards:
         for item in ["aws_exclude", "aws_include"]:
 
-            if (
-                parser_interface.object_getattr(object_in=awss3_obj, key=item)
-                is not None
-            ):
+            if parser_interface.object_getattr(object_in=aws_obj, key=item) is not None:
 
                 # Reset the value for the wildcard related keyword
                 # values.
                 msg = (
-                    "The keyword {0} had a value of {1} upon "
+                    f"The keyword {item} had a value of {0} upon "
                     "entry; wildcards are not supported by the "
                     "parameters provided upon entry; resetting to "
                     "NoneType.".format(
-                        item,
-                        parser_interface.object_getattr(object_in=awss3_obj, key=item),
+                        parser_interface.object_getattr(
+                            object_in=aws_obj, key=item),
                     )
                 )
                 logger.warn(msg=msg)
-                awss3_obj = parser_interface.object_setattr(
-                    object_in=awss3_obj, key=item, value=None
+                aws_obj = parser_interface.object_setattr(
+                    object_in=aws_obj, key=item, value=None
                 )
 
     # Build the AWS CLI command line string and proceed accordingly.
-    cmd = ["{0}".format(awscli), "s3", "cp"]
+    cmd = [f"{awscli}", f"{resource}", "cp"]
 
-    if awss3_obj.is_dir:
+    if aws_obj.is_dir:
         cmd.append("--recursive")
 
     # Establish the keyword arguments for the AWS CLI executable
     # relative to the parameter values provided upon entry.
-    for awss3_kwarg in awss3_kwargs_list:
+    for aws_kwarg in aws_kwargs_list:
 
         # Define the appropriate variable value attributes; proceed
         # accordingly.
-        if awss3_kwarg in list(awss3_kwargs_dict.keys()):
+        if aws_kwarg in list(aws_kwargs_dict.items()[0]):
             strval = parser_interface.dict_key_value(
-                dict_in=awss3_kwargs_dict, key=awss3_kwarg, no_split=True
+                dict_in=aws_kwargs_dict, key=aws_kwarg, no_split=True
             )
             value = parser_interface.object_getattr(
-                object_in=awss3_obj, key=awss3_kwarg
-            )
+                object_in=aws_obj, key=aws_kwarg)
 
             # Check that the keyword argument value is not NoneType;
             # proceed accordingly.
             if value is not None:
                 if isinstance(value, str):
-                    cmd.append('{0} "{1}"'.format(strval, value))
+                    cmd.append(f'{strval} "{value}"')
                 if not isinstance(value, str):
-                    cmd.append("{0} {1}".format(strval, value))
+                    cmd.append(f"{strval} {value}")
 
-    # Add the local and AWS s3 file paths for the AWS CLI executable
-    # application.
-    cmd.append("{0}".format(path))
-    cmd.append("{0}".format(aws_path))
+    # Add the local and AWS resource file paths for the AWS CLI
+    # executable application.
+    cmd.append(f"{path}")
+    cmd.append(f"{aws_path}")
 
     # Determine the permission attributes for the AWS CLI executable.
     if profile is None:
         cmd.append("--no-sign-request")
     if profile is not None:
         cmd.append("--profile")
-        cmd.append("{0}".format(profile))
+        cmd.append(f"{profile}")
 
     # Check the subprocess stderr and stdout attributes provided upon
     # entry; proceed accordingly.
     if errlog is None:
         stderr = subprocess.PIPE
     if errlog is not None:
-        msg = (
-            "The stderr from the AWS CLI application will be written "
-            "to {0}.".format(errlog)
-        )
+        msg = f"The stderr from the AWS CLI application will be written to {errlog}."
         logger.warn(msg=msg)
-        stderr = open(errlog, "w")
+        stderr = open(errlog, "w", encoding="utf-8")
 
     if outlog is None:
         stdout = subprocess.PIPE
     if outlog is not None:
-        msg = (
-            "The stdout from the AWS CLI application will be written "
-            "to {0}.".format(outlog)
-        )
+        msg = f"The stdout from the AWS CLI application will be written to {outlog}."
         logger.warn(msg=msg)
-        stdout = open(outlog, "w")
+        stdout = open(outlog, "w", encoding="utf-8")
 
-    # Upload the local file path to the AWS s3 bucket and object path;
-    # proceed accordingly.
-    msg = "Uploading files from path {0} to AWS s3 path {1}.".format(path, aws_path)
+    # Upload the local file path to the AWS resource bucket and object
+    # path; proceed accordingly.
+    msg = f"Uploading files from path {path} to AWS {resource} path {aws_path}."
     logger.info(msg=msg)
     try:
         proc = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
@@ -400,10 +576,8 @@ def put_awsfile(
         proc.wait()
 
     except Exception as error:
-        msg = "The AWS CLI application failed with error {0}. " "Aborting!!!".format(
-            error
-        )
-        raise AWSCLIError(msg=msg)
+        msg = f"The AWS CLI application failed with error {error}. Aborting!!!"
+        __error__(msg=msg)
 
     # Check the subprocess stderr and stdout attributes; proceed
     # accordingly.

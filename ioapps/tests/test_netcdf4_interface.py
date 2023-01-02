@@ -260,7 +260,8 @@ class TestNetCDF4Methods(TestCase):
             ncfile=self.ncfile, ncvarname="dummy_test_var", ncfrmt=self.ncfrmt
         )
 
-        self.assertTrue(not ncvarexist, msg=(self.unit_test_msg.format("ncvarexist")))
+        self.assertTrue(not ncvarexist, msg=(
+            self.unit_test_msg.format("ncvarexist")))
 
     @pytest.mark.order(1)
     def test_ncwrite(self):
@@ -288,7 +289,8 @@ class TestNetCDF4Methods(TestCase):
         self.assertTrue(
             exist,
             msg=(
-                "The netCDF-formatted file {0} does " "not exist.".format(self.ncfile)
+                "The netCDF-formatted file {0} does " "not exist.".format(
+                    self.ncfile)
             ),
         )
 

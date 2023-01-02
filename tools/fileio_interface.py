@@ -29,14 +29,6 @@ Description
     This module contains functions required to perform various file
     and directory tasks.
 
-Classes
--------
-
-    RNRYAMLLoader()
-
-        This is the base-class object for all YAML file parsing
-        interfaces; it is a sub-class of yaml.SafeLoader.
-
 Functions
 ---------
 
@@ -58,6 +50,11 @@ Functions
 
         This function compiles a content list of the user specified
         directory.
+
+    dirpath_tree(path)
+
+        This function checks whether the directory tree (i.e., path)
+        exists; if not an attempt will be made to build it.
 
     fileexist(path)
 
@@ -82,18 +79,6 @@ Functions
         This function is a wrapper around os.makedirs and will build
         the directory tree (if needed) and the directory
         leaves/sub-directories.
-
-    read_json(json_file)
-
-        This function ingests a JavaScript Object Notation (e.g.,
-        JSON) formatted file and returns a Python dictionary
-        containing all attributes of the file.
-
-    read_yaml(yaml_file, return_obj=False)
-
-        This function ingests a YAML Ain't Markup Language (e.g.,
-        YAML) formatted file and returns a Python dictionary
-        containing all attributes of the file.
 
     removefiles(filelist)
 
@@ -123,21 +108,6 @@ Functions
 
         This function emulates the POSIX UNIX touch application.
 
-    write_jinja2(jinja2_file, in_dict)
-
-        This function writes a Jinja2 formatted file using the
-        specified Python dictionary.
-
-    write_json(json_file, in_dict, indent=4)
-
-        This function writes a JavaScript Object Notation (e.g., JSON)
-        formatted file using the specified Python dictionary.
-
-    write_yaml(yaml_file, in_dict, default_flow_style=False):
-
-        This function writes a YAML Ain't Markup Language (e.g., YAML)
-        formatted file using the specified Python dictionary.
-
 Requirements
 ------------
 
@@ -162,20 +132,19 @@ History
 # pylint: disable=broad-except
 # pylint: disable=too-many-ancestors
 # pylint: disable=unspecified-encoding
-# pylint: disable=wrong-import-order
 
 # ----
 
-import json
 import os
 import re
 import shutil
 import subprocess
+from typing import Union
+
 import numpy
-import yaml
+from utils.logger_interface import Logger
 
 from tools import parser_interface
-from typing import Union
 
 # ----
 
@@ -184,60 +153,28 @@ __all__ = [
     "concatenate",
     "copyfile",
     "dircontents",
+    "dirpath_tree",
     "fileexist",
     "filepermission",
     "filesize",
     "makedirs",
-    "read_json",
-    "read_yaml",
     "removefiles",
     "rename",
     "rmdir",
     "symlink",
     "touch",
     "write_jinja2",
-    "write_json",
-    "write_yaml",
 ]
+
+# ----
+
+logger = Logger()
 
 # ----
 
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-
-# ----
-
-
-class RNRYAMLLoader(yaml.SafeLoader):
-    """
-    Description
-    -----------
-
-    This is the base-class object for all YAML file parsing
-    interfaces; it is a sub-class of yaml.SafeLoader.
-
-    """
-
-    # Define the YAML library loader type; this follows from the
-    # discussion found at
-    # https://stackoverflow.com/questions/52412297/\
-    #   how-to-replace-environment-variable-value-in-yaml-file-to-be-parsed-using-python
-    envvar_matcher = re.compile(r".*\$\{([^}^{]+)\}.*")
-
-    def envvar_constructor(self, node):
-        """
-        Description
-        -----------
-
-        This function is the environment variable template
-        constructor.
-
-        """
-
-        return os.path.expandvars(node.value)
-
 
 # ----
 
@@ -315,9 +252,13 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     # Copy the specified source file to the corresponding destination
     # file using the respective platform copy method.
+    msg = f"Copying file {srcfile} to {dstfile}."
+    logger.info(msg=msg)
+
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -353,6 +294,43 @@ def dircontents(path: str) -> list:
     contents = os.listdir(path)
 
     return contents
+
+
+# ----
+
+
+def dirpath_tree(path: str) -> None:
+    """
+    Description
+    -----------
+
+    This function checks whether the directory tree (i.e., path) exists;
+    if not an attempt will be made to build it.
+
+    Parameters
+    ----------
+
+    path: str
+
+        A Python string specifying the directory tree path to be
+        created if it does not (yet) exist.
+
+    """
+
+    # Check whether the directory tree exists; proceed accordingly.
+    exist = fileexist(path=path)
+    if exist:
+        msg = f"The directory tree {path} exists; nothing to be done."
+        logger.info(msg=msg)
+
+    if not exist:
+        msg = (
+            f"The directory tree {path} does not exist; an attempt "
+            "will be made to create it."
+        )
+        logger.warn(msg=msg)
+
+        makedirs(path=path)
 
 
 # ----
@@ -510,124 +488,6 @@ def makedirs(path: str, force: bool = False) -> None:
     except OSError:
         pass
 
-
-# ----
-
-
-def read_json(json_file: str) -> dict:
-    """
-    Description
-    -----------
-
-    This function ingests a JavaScript Object Notation (e.g., JSON)
-    formatted file and returns a Python dictionary containing all
-    attributes of the file.
-
-    Parameters
-    ----------
-
-    json_file: str
-
-        A Python string containing the full-path to the JSON file to
-        be parsed.
-
-    Returns
-    -------
-
-    json_dict: dict
-
-        A Python dictionary containing all attributes contained within
-        the ingested JSON file.
-
-    """
-
-    # Open and read the contents of the specified JSON-formatted file
-    # path.
-    with open(json_file, "r") as stream:
-        json_dict = json.load(stream)
-
-    return json_dict
-
-
-# ----
-
-
-def read_yaml(yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
-    """
-    Description
-    -----------
-
-    This function ingests a YAML Ain't Markup Language (e.g., YAML)
-    formatted file and returns a Python dictionary containing all
-    attributes of the file.
-
-    Parameters
-    ----------
-
-    yaml_file: str
-
-        A Python string containing the full-path to the YAML file to
-        be parsed.
-
-    Keywords
-    --------
-
-    return_obj: bool, optional
-
-        A Python boolean valued variable specifying whether to return
-        a Python object containing the YAML-formatted file contents;
-        in this instance a Python dictionary will be defined using the
-        contents of the YAML-formatted file and then the Python object
-        will be constructed; if True, yaml_obj is returned instead of
-        yaml_dict.
-
-    Returns
-    -------
-
-    yaml_dict: dict
-
-        A Python dictionary containing all attributes ingested from
-        the YAML-formatted file; returned if return_obj is False upon
-        entry.
-
-    yaml_obj: object
-
-        A Python object containing all attributes injested from the
-        YAML-formatted file; returned if return_obj is True upon
-        entry.
-
-    """
-
-    # Define the YAML library loader type.
-    RNRYAMLLoader.add_implicit_resolver("!ENV", RNRYAMLLoader.envvar_matcher, None)
-    RNRYAMLLoader.add_constructor("!ENV", RNRYAMLLoader.envvar_constructor)
-
-    # Open and read the contents of the specified YAML-formatted file
-    # path.
-    with open(yaml_file, "r") as stream:
-        yaml_dict = yaml.load(stream, Loader=RNRYAMLLoader)
-
-    # Define the Python data type to be returned; proceed accordingly.
-    yaml_return = None
-    if return_obj:
-        (attr_list, yaml_obj) = ([], parser_interface.object_define())
-        for key in yaml_dict.keys():
-            attr_list.append(key)
-            value = parser_interface.dict_key_value(
-                dict_in=yaml_dict, key=key, no_split=True
-            )
-            yaml_obj = parser_interface.object_setattr(
-                object_in=yaml_obj, key=key, value=value
-            )
-        yaml_return = yaml_obj
-
-    if not return_obj:
-
-        yaml_return = yaml_dict
-
-    return yaml_return
-
-
 # ----
 
 
@@ -783,124 +643,3 @@ def touch(path: str):
     # Open and append to the file path specified upon entry.
     with open(path, "a"):
         os.utime(path, None)
-
-
-# ----
-
-
-def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a Jinja2 formatted file using the specified
-    Python dictionary.
-
-    Parameters
-    ----------
-
-    jinja2_file: str
-
-        A Python string containing the full-path to the Jinja2 file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the Jinja2 file.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # Jinja2-formatted file path.
-    with open(jinja2_file, "w") as file:
-        file.write("#!Jinja2\n")
-        for key in in_dict.keys():
-            value = in_dict[key]
-
-            if isinstance(value, str):
-                string = f'set {key} = "{value}"'
-            else:
-                string = f"set {key} = {value}"
-
-            file.write("{%% %s %%}\n" % string)
-
-
-# ----
-
-
-def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a JavaScript Object Notation (e.g., JSON)
-    formatted file using the specified Python dictionary.
-
-    Parameters
-    ----------
-
-    json_file: str
-
-        A Python string containing the full-path to the JSON file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the JSON file.
-
-    Keywords
-    --------
-
-    indent: int, optional
-
-        A Python integer defining the indentation level for the
-        attributes within the JSON-formatted file.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # JSON-formatted file path.
-    with open(json_file, "w") as file:
-        json.dump(in_dict, file, indent=indent)
-
-
-# ----
-
-
-def write_yaml(yaml_file: str, in_dict: dict, default_flow_style: bool = False) -> None:
-    """
-    Description
-    -----------
-
-    This function writes a YAML Ain't Markup Language (e.g., YAML)
-    formatted file using the specified Python dictionary.
-
-    Parameters
-    ----------
-
-    yaml_file: str
-
-        A Python string containing the full-path to the YAML file to
-        be written.
-
-    in_dict: dict
-
-        A Python dictionary containing the attributes to be written to
-        the YAML file.
-
-    Keywords
-    --------
-
-    default_flow_style: bool, optional
-
-        A Python boolean variable specifying the output YAML file
-        formatting.
-
-    """
-
-    # Open and write the dictionary contents to the specified
-    # YAML-formatted file path.
-    with open(yaml_file, "w") as file:
-        yaml.dump(in_dict, file, default_flow_style=default_flow_style)
