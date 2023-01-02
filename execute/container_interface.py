@@ -84,6 +84,9 @@ sfd_local_schema = {'docker_image': str,
                     Optional('update_owner', default=False): bool
                     }
 
+print(sfd_local_schema)
+quit()
+
 # ----
 
 logger = Logger()
