@@ -77,13 +77,13 @@ class TestContainerMethods(TestCase):
                                          'hello_world_sfd.out')
                             ]
 
-        self.sif_name = container_interface.build_sfd_local(build_dict=build_dict,
-                                                            stderr=stderr, stdout=stdout)
+        sif_name = container_interface.build_sfd_local(build_dict=build_dict,
+                                                       stderr=stderr, stdout=stdout)
 
         assert True
 
         # Check that the Singularity image exists locally.
-        exist = fileio_interface.fileexist(path=self.sif_name)
+        exist = fileio_interface.fileexist(path=sif_name)
 
         self.assertTrue(exist, msg=(
             self.unit_test_msg.format('build_sfd_local')))
@@ -102,7 +102,9 @@ class TestContainerMethods(TestCase):
 
         # Define the list of (the) netCDF-formatted file(s) to be
         # removed.
-        filelist = [self.sif_name]
+        filelist = [item for item in
+                    fileio_interface.dircontents(path=os.path.join(self.dirpath, "tests")
+                                                 if "hello_world_sfd" in item)]
 
         # Remove the specified netCDF-formatted file(s).
         fileio_interface.removefiles(filelist=filelist)
