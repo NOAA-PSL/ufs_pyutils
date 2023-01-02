@@ -215,7 +215,7 @@ def build_sfd_local(build_dict: dict, stderr: str = None,
         msg = (f'Changing owner of Singularity containerized image {sfd_obj.sif_name} '
                f'to {sfd_obj.sif_user}.')
         logger.warn(msg=msg)
-#        system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
-#                               group=sfd_obj.sif_group)
+        system_interface.chown(path=sfd_obj.sif_name, user=sfd_obj.sif_user,
+                               group=sfd_obj.sif_group)
 
     return sfd_obj.sif_name
