@@ -111,7 +111,7 @@ class TestContainerMethods(TestCase):
                 filelist.append(os.path.join(self.dirpath, sif_name))
 
         # Remove the specified netCDF-formatted file(s).
-        fileio_interface.removefiles(filelist=filelist)
+        # TEST fileio_interface.removefiles(filelist=filelist)
 
 
 # ----
