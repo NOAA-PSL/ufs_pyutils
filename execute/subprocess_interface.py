@@ -432,7 +432,7 @@ def run(
         A Python boolean valued variable specifying whether to
         implement the SLURM multi_prog capabilities for the respective
         task; if True, multi_prog_conf must be specified; note that is
-        not (yet) supported for MVAPICH run-time
+        not (yet) supported for MVAPICH at run-time
         configurations/executables.
 
     multi_prog_conf: str, optional
