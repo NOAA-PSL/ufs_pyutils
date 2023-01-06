@@ -42,6 +42,11 @@ Globals
         Information timestamp format; this format is typically used
         for informational purposes.
 
+    YmdTHMZ: str
+
+        A timestamp format, assuming the POSIX convention, of
+        %Y%m%dT%H%MZ.
+
 Functions
 ---------
 
@@ -90,6 +95,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # should be defined/determined.
 GLOBAL = "%Y%m%d%H%M%S"
 INFO = "%H:%M:%S UTC %d %B %Y"
+YmdTHMZ = "%Y%m%dT%H%MZ"
 
 # ----
 
