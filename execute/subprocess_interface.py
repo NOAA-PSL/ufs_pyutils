@@ -236,7 +236,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
 # ----
 
 
-def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
+def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> int:
     """
     Description
     -----------
@@ -278,6 +278,14 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         A Python string specifying the path to the standard-output
         (e.g., stdout) information; if NoneType upon entry, the stdout
         is written to out.log.
+
+    Returns
+    -------
+
+    returncode: int
+
+        A Python integer specifying the return code provided by the
+        subprocess command.
 
     Raises
     ------
@@ -341,6 +349,7 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
         # Launch the executable and proceed accordingly.
         proc.wait()
         proc.communicate()
+        returncode = proc.returncode
 
     except Exception as msg:
         __error__(msg=msg)
@@ -352,12 +361,14 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> None:
     if (infile is not None) and (not has_wildcards):
         stdin.close()
 
-    if proc.returncode != 0:
+    if returncode != 0:
         msg = (
             f"Executable failed! Please refer to {errlog} for more "
             "information. Aborting!!!"
         )
         __error__(msg=msg)
+
+    return returncode
 
 
 # ----
@@ -373,7 +384,7 @@ def run(
     outlog: str = None,
     multi_prog: bool = False,
     multi_prog_conf: str = None,
-) -> None:
+) -> int:
     """
     Description
     -----------
@@ -441,6 +452,14 @@ def run(
         SLURM multi_prog directives; if multi_prog (above) is True,
         this value is required; note that is not (yet) supported for
         MVAPICH run-time configurations/executables.
+
+    Returns
+    -------
+
+    returncode: int
+
+        A Python integer specifying the return code provided by the
+        subprocess command.
 
     Raises
     ------
@@ -515,4 +534,6 @@ def run(
     cmd = list([item for item in cmd if item is not None])
 
     # Launch the respective application.
-    _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
+    returncode = _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
+
+    return returncode
