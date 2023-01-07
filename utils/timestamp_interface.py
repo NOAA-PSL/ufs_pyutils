@@ -32,6 +32,11 @@ Description
 Globals
 -------
 
+    GENERAL: str
+
+        A timestamp of format %Y-%m-%d_%H:%M:%S assuming the POSIX
+        convention.
+
     GLOBAL: str
 
         Global timestamp format; this is the format from which all
@@ -93,6 +98,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 # Global timestamp format; this is the format from which all others
 # should be defined/determined.
+GENERAL = "%Y-%m-%d_%H:%M:%S"
 GLOBAL = "%Y%m%d%H%M%S"
 INFO = "%H:%M:%S UTC %d %B %Y"
 YmdTHMZ = "%Y%m%dT%H%MZ"
