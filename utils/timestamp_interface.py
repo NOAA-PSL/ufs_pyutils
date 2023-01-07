@@ -17,8 +17,7 @@
 
 # =========================================================================
 
-"""
-Module
+"""Module
 ------
 
     timestamp_interface.py
@@ -32,6 +31,11 @@ Description
 Globals
 -------
 
+    GENERAL: str
+
+        A timestamp format, assuming the POSIX convention, of
+        %Y-%m-%d_%H:%M:%S.
+
     GLOBAL: str
 
         Global timestamp format; this is the format from which all
@@ -41,6 +45,11 @@ Globals
 
         Information timestamp format; this format is typically used
         for informational purposes.
+
+    YmdTHMS: str
+
+        A timestamp format, assuming the POSIX convention, of
+        %Y%m%dT%H%M%S.
 
     YmdTHMZ: str
 
@@ -93,8 +102,10 @@ __email__ = "henry.winterbottom@noaa.gov"
 
 # Global timestamp format; this is the format from which all others
 # should be defined/determined.
+GENERAL = "%Y-%m-%d_%H:%M:%S"
 GLOBAL = "%Y%m%d%H%M%S"
 INFO = "%H:%M:%S UTC %d %B %Y"
+YmdTHMS = "%Y%m%dT%H%M%S"
 YmdTHMZ = "%Y%m%dT%H%MZ"
 
 # ----
