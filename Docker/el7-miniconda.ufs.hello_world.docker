@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Docker Recipe File: Docker/ubuntu.hello_world.docker
+# Docker Recipe File: Docker/el7-miniconda.ufs.hello_world.docker
 
 # Email: henry.winterbottom@noaa.gov
 
@@ -27,11 +27,11 @@
 
 #    The Docker container image should be built as follows.
 
-#    user@host:$ docker build -f ubuntu.hello_world.docker --tag ubuntu.hello_world:<TAG> .
+#    user@host:$ docker build -f el7-miniconda.ufs.hello_world.docker --tag el7-miniconda.ufs.hello_world:<TAG> .
 
-#    user@host:$ docker tag ubuntu.hello_world:<TAG> <DOCKER LOGIN>/ubuntu.hello_world:<TAG>
+#    user@host:$ docker tag el7-miniconda.ufs.hello_world:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs.hello_world:<TAG>
 
-#    user@host:$ docker push <DOCKER LOGIN>/ubuntu.hello_world:<TAG>
+#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs.hello_world:<TAG>
 
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
@@ -42,12 +42,12 @@
 #    To build the respective Singularity image file (i.e., container),
 #    do as follows.
 
-#    user@host:$ singularity build hello_world_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/ubuntu.hello_world:<TAG>
+#    user@host:$ singularity build el7-miniconda.ufs.hello_world_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/el7-miniconda.ufs.hello_world:<TAG>
 
 #    In order to execute the entry point within the Singularity
 #    container, do as follows.
 
-#    user@host:$ singularity run hello_world_<TAG>.sif
+#    user@host:$ singularity run el7-miniconda.ufs.hello_world_<TAG>.sif
 
 # Author(s)
 # ---------
@@ -62,7 +62,7 @@
 # Base Image Attributes
 # ---------------------
 
-#    Linux Image and Tag: ubuntu:latest
+#    Linux Image and Tag: noaaufsrnr/el7-miniconda.ufs:latest
 
 # Latest Container Image Downloads
 # --------------------------------
@@ -74,7 +74,7 @@
 #----
 
 # Define the container base information.
-FROM ubuntu:latest
+FROM noaaufsrnr/el7-miniconda.ufs:latest
 MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)"
 
 # Define the application launched upon container execution.

@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Docker Recipe File: Docker/el7-miniconda.ufs_pyutils.docker
+# Docker Recipe File: Docker/el7-miniconda.ufs.docker
 
 # Email: henry.winterbottom@noaa.gov
 
@@ -20,22 +20,27 @@
 
 #    This Docker recipe file builds a Docker image containing the
 #    Centos 7 base-Linux platform required to build the Python 3.5+
-#    software stack for the respective ufs_pyutils applications.
+#    software stack for the respective Unified Forecast System (UFS)
+#    applications.
 
 #    In addition to the Python 3.5+ software stack, both the GO
 #    programming language and Singularity are also compiled within
 #    this container.
+
+#    This image has been built specific to UFS packages however may
+#    used as either a base image or for other packages for which this
+#    image contains the respective (base) dependencies.
 
 # Docker Instructions
 # -------------------
 
 #    The Docker container image should be built as follows.
 
-#    user@host:$ docker build -f el7-miniconda.ufs_pyutils.docker --tag el7-miniconda.ufs_pyutils:<TAG> .
+#    user@host:$ docker build -f el7-miniconda.ufs.docker --tag el7-miniconda.ufs:<TAG> .
 
-#    user@host:$ docker tag el7-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ docker tag el7-miniconda.ufs:<TAG> <DOCKER LOGIN>/el7-miniconda.ufs:<TAG>
 
-#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ docker push <DOCKER LOGIN>/el7-miniconda.ufs:<TAG>
 
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
@@ -46,12 +51,12 @@
 #    To build the respective Singularity image file (i.e., container),
 #    do as follows.
 
-#    user@host:$ singularity build ufs_pyutils_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/el7-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ singularity build el7-miniconda.ufs_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/el7-miniconda.ufs:<TAG>
 
 #    In order to execute and application within the Singularity
 #    container, do as follows.
 
-#    user@host:$ singularity exec ufs_pyutils_<TAG>.sif <X> <Y>
+#    user@host:$ singularity exec el7-miniconda.ufs_<TAG>.sif <X> <Y>
 
 #    where <X> is an executable or application within the Singularity
 #    container (e.g., Python) and <Y> is an application exist on the
@@ -70,22 +75,31 @@
 # Base Image Attributes
 # ---------------------
 
-#    Linux Image and Tag: centos:7
+#    Linux Image and Tag: amd64/centos:7
 
-# Latest Container Image Downloads
-# --------------------------------
+# External Package Dependencies
+# -----------------------------
 
-#    Docker Hub: docker pull noaaufsrnr/el7-miniconda.ufs_pyutils:<TAG>
+#    go; https://go.dev/ (version 1.19.3)
 
-#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ufs_pyutils:<TAG>
+#    miniconda; https://docs.conda.io/en/latest/miniconda.html (version 39_4.10.3-Linux-x86_64)
 
-#----
+#    singularity; https://github.com/sylabs/singularity.git 
+
+# Container Image Downloads
+# -------------------------
+
+#    Docker Hub: docker pull noaaufsrnr/el7-miniconda.ufs:<TAG>
+
+#    Sylabs: singularity pull--arch amd64 library://noaaufsrnr/noaaufsrnr/ufs:<TAG> 
+
+# ----
 
 # Define the container base information.
 FROM amd64/centos:7
 MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)" 
 
-#----
+# ----
 
 # Build the Linux platform.
 RUN yum groupinstall -y 'Development Tools' && \
@@ -102,7 +116,7 @@ RUN yum groupinstall -y 'Development Tools' && \
     yum install -y libstdc++-devel.i686 && \
     rm -rf /var/lib/apt/lists/*
 
-#----
+# ----
 
 # Collect and build the GO programming language.
 RUN export VERSION=1.19.3 OS=linux ARCH=386 && \
@@ -111,7 +125,7 @@ RUN export VERSION=1.19.3 OS=linux ARCH=386 && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc && \
     rm -rf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
 
-#----
+# ----
 
 # Collect and build the Singularity application.
 RUN git clone --recurse-submodules https://github.com/sylabs/singularity.git && \
@@ -122,7 +136,7 @@ RUN git clone --recurse-submodules https://github.com/sylabs/singularity.git && 
     make -C builddir && \
     make -C builddir install
 
-#----
+# ----
 
 # Download and install Miniconda.
 RUN wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh && \
@@ -140,7 +154,7 @@ RUN /miniconda/bin/pip install netcdf4==1.6.2 && \
     /miniconda/bin/pip install schema==0.7.5 && \
     /miniconda/bin/conda clean --tarballs
 
-#----
+# ----
 
 # Define the base-user within the container.
 RUN useradd -ms /bin/bash ufs_user
