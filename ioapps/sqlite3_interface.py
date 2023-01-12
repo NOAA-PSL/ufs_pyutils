@@ -374,7 +374,7 @@ def _database_exist(path: str) -> bool:
     """
     exist = fileio_interface.fileexist(path=path)
     if exist:
-        msg = f"Database file {path} exists and will be updated."
+        msg = f"Database file {path} exists."
         logger.info(msg=msg)
 
     if not exist:
@@ -691,7 +691,8 @@ def read_table(path: str, table_name: str) -> dict:
         # Define the SQLite3 database path connection.
         (connect, cursor) = _database_connect(path=path)
         exec_str = f"SELECT * FROM {table_name}"
-        table = _database_execute(cursor=cursor, exec_str=exec_str, is_read=True)
+        table = _database_execute(
+            cursor=cursor, exec_str=exec_str, is_read=True)
 
         # Build the Python dictionary containing the SQLite3 database
         # table contents
