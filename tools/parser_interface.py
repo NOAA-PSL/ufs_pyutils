@@ -136,6 +136,12 @@ Functions
         This function ingests a Python object and returns a Python
         dictionary containing the contents of the respective object.
 
+    str_to_bool(string)
+
+        This function converts a Python string to it's corresponding
+        boolean value; if a JSONDecodeError exception is encountered,
+        NoneType is returned.
+
     string_parser(in_list)
 
         This function ingests a Python list of variables and returns
@@ -175,9 +181,11 @@ History
 
 import collections
 import copy
+import json
 import os
 import sys
 import types
+from json.decoder import JSONDecodeError
 from typing import Generator, Union
 
 import numpy
@@ -205,6 +213,7 @@ __all__ = [
     "object_hasattr",
     "object_setattr",
     "object_todict",
+    "str_to_bool",
     "string_parser",
     "true_or_false",
     "unique_list",
@@ -783,8 +792,7 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(
-        object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -1017,8 +1025,7 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower()
-                  and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
@@ -1227,6 +1234,48 @@ def singletrue(bool_list: list) -> bool:
 # ----
 
 
+def str_to_bool(string: str) -> bool:
+    """
+    Description
+    -----------
+
+    This function converts a Python string to it's corresponding
+    boolean value; if a JSONDecodeError exception is encountered,
+    NoneType is returned.
+
+    Parameters
+    ----------
+
+    string: str
+
+        A Python string for which to convert to a corresponding
+        boolean value.
+
+    Returns
+    -------
+
+    boolval: bool
+
+        A Python boolean valued variable containing the boolean value
+        corresponding to the Python string specified upon entry; if a
+        JSONDecodeError is encounterd, NoneType is returned.
+
+    """
+
+    # Convert the string value to it's corresponding boolean value;
+    # proceed accordingly.
+    try:
+        boolval = json.loads(string.lower())
+
+    except JSONDecodeError:
+        boolval = None
+
+    return boolval
+
+
+# ----
+
+
 def string_parser(in_list: list, remove_comma: bool = False) -> list:
     """
     Description
@@ -1384,8 +1433,7 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(
-        x for x in in_list if x not in out_list)
+    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):
