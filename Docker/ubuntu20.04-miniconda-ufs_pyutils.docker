@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Docker Recipe File: Docker/ubuntu18.04-miniconda_ufs_pyutils.ufs_tools.docker
+# Docker Recipe File: Docker/ubuntu20.04-miniconda-ufs_pyutils.docker
 
 # Email: henry.winterbottom@noaa.gov
 
@@ -19,23 +19,20 @@
 # -----------
 
 #    This Docker recipe file builds a Docker image containing the
-#    Ubuntu 18.04 base-Linux platform required to build the Python 3.5+
-#    software stack for the respective ufs_pyutils applications.
-
-#    In addition to the Python 3.5+ software stack, the ufs_pyutils
-#    package is also installed and the respective container
-#    environment configured.
+#    ufs_pyutils package upon a Ubuntu 20.04 base-Linux platform and
+#    Miniconda Python 3.9+ software stack required for the respective
+#    ufs_pyutils applications.
 
 # Docker Instructions
 # -------------------
 
 #    The Docker container image should be built as follows.
 
-#    user@host:$ docker build -f ubuntu18.04-miniconda.ufs_pyutils.docker --tag ubuntu18.04-miniconda.ufs_pyutils:<TAG> .
+#    user@host:$ docker build -f ubuntu20.04-miniconda-ufs_pyutils.docker --tag ubuntu20.04-miniconda-ufs_pyutils:<TAG> .
 
-#    user@host:$ docker tag ubuntu18.04-miniconda.ufs_pyutils:<TAG> <DOCKER LOGIN>/ubuntu18.04-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ docker tag ubuntu20.04-miniconda-ufs_pyutils:<TAG> <DOCKER LOGIN>/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
 
-#    user@host:$ docker push <DOCKER LOGIN>/ubuntu18.04-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ docker push <DOCKER LOGIN>/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
 
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
@@ -46,12 +43,12 @@
 #    To build the respective Singularity image file (i.e., container),
 #    do as follows.
 
-#    user@host:$ singularity build ubuntu18.04_miniconda_ufs_pyutils_<TAG>.sif docker://noaaufsrnr/ubuntu18.04-miniconda.ufs_pyutils:<TAG>
+#    user@host:$ singularity build ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif docker://noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
 
 #    In order to execute and application within the Singularity
 #    container, do as follows.
 
-#    user@host:$ singularity exec ubuntu18.04_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
+#    user@host:$ singularity exec ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
 
 #    where <X> is an executable or application within the Singularity
 #    container (e.g., Python) and <Y> is an application exist on the
@@ -60,29 +57,31 @@
 # Author(s)
 # ---------
 
-#    Henry R. Winterbottom; 11 January 2023 
+#    Henry R. Winterbottom; 14 January 2023 
 
 # History
 # -------
 
-#    2023-01-11: Henry R. Winterbottom -- Initial implementation.
+#    2023-01-14: Henry R. Winterbottom -- Initial implementation.
 
 # Base Image Attributes
 # ---------------------
 
-#    Linux Image and Tag: ubuntu:18.04
+#    Linux Image and Tag: ubuntu:20.04
 
 # External Package Dependencies
 # -----------------------------
+
+#    miniconda; https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
 
 #    ufs_pyutils; https://github.com/HenryWinterbottom-NOAA/ufs_pyutils
 
 # Latest Container Image Downloads
 # --------------------------------
 
-#    Docker Hub: docker pull noaaufsrnr/el7-miniconda.ufs_pyutils:<TAG>
+#    Docker Hub: docker pull noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
 
-#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ufs_pyutils:<TAG>
+#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ubuntu20.04_miniconda_ufs_pyutils_:<TAG>
 
 # ----
 
@@ -95,6 +94,7 @@ MAINTAINER "Henry R. Winterbottom (Henry.Winterbottom@noaa.gov)"
 # Build the Linux platform.
 RUN apt-get update -y && \
     apt-get install -y --no-install-recommends wget && \
+    apt-get install -y git && \
     rm -rf /var/lib/apt/lists/*
 
 # ----
@@ -114,3 +114,14 @@ RUN /miniconda/bin/pip install netcdf4==1.6.2 && \
     /miniconda/bin/conda install -c anaconda boto3==1.24.28 && \
     /miniconda/bin/pip install schema==0.7.5 && \
     /miniconda/bin/conda clean --tarballs
+
+# ----
+
+# Download and setup ufs_pyutils
+RUN git clone https://github.com/HenryWinterbottom-NOAA/ufs_pyutils /ufs_pyutils
+
+# ----
+
+# Define the container environment.
+ENV PATH="/miniconda/bin:${PATH}"
+ENV PYTHONPATH="/ufs_pyutils:${PYTHONPATH}"
