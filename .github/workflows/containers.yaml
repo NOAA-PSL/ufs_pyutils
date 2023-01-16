@@ -38,7 +38,7 @@ jobs:
            sudo apt-get install libstdc++6
            sudo wget -O /tmp/go.tar.gz https://dl.google.com/go/go1.19.3.linux-386.tar.gz
            sudo tar -C /usr/local -xzf /tmp/go.tar.gz
-           sudo echo "export PATH=/usr/local/go/bin" >> /root/.bashrc
+           sudo echo "export PATH=/usr/local/go/bin" >> ~/.bashrc
            sudo rm -rf /tmp/go.tar.gz"
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
            sudo cd singularity 
