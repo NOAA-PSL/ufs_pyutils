@@ -1,0 +1,32 @@
+# Define the name of the Github actions/workflow.
+name: Container Build Tests
+
+# Define the Github triggers for which to launch the respective Github
+# action/workflow.
+on:
+  pull_request:
+    types: [opened]
+    
+  release:
+    types: [published]
+
+  schedule:
+    - cron: "0 0 * * *"
+          
+jobs:
+
+  # Define the container image.
+  build:
+    runs-on: amd64/centos:7
+    name: Run the ufs_pyutils container build tests.
+        
+    steps:
+
+    # Build the Docker container containing both the Docker build as
+    # well as the Singularity build.
+    - name: Build and install the Linux dependencies
+      run: |
+           yum install -y yum-utils
+           yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+           yum install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+           systemctl start docker
