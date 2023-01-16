@@ -41,7 +41,7 @@ jobs:
            sudo echo "export PATH=/usr/local/go/bin" >> ~/.bashrc
            sudo rm -rf /tmp/go.tar.gz
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
-           bash -c "cd singularity"
+           sudo -D singularity
            bash -c "source ~/.bashrc"
            sudo ./mconfig --without-suid --without-conmon --without-seccomp
            bash -c "export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH}"
