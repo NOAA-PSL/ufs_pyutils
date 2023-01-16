@@ -33,6 +33,7 @@ jobs:
     - name: Build and install the Singularity dependencies
       run: |
            sudo apt-get update
+           sudo apt install bash
            sudo apt-get install build-essential
            sudo apt-get install libstdc++6
            sudo export VERSION=1.19.3 OS=linux ARCH=386
