@@ -45,7 +45,5 @@ jobs:
       run: |
            cd $GITHUB_WORKSPACE/ufs_pyutils/Docker
            docker build -f ubuntu20.04-miniconda-ufs_pyutils.docker --tag ubuntu20.04-miniconda-ufs_pyutils:latest .
-           docker tag ubuntu20.04-miniconda-ufs_pyutils:latest noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:latest
-           docker push noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:latest
 
            
