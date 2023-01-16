@@ -33,5 +33,5 @@ jobs:
     - name: Build and install the Singularity dependencies
       run: |
            sudo docker pull noaaufsrnr/el7-miniconda-ufs_pyutils.ufs_apps:latest
-           docker container run echo "HELLO WORLD"
+           docker container run noaaufsrnr/el7-miniconda-ufs_pyutils.ufs_apps:latest echo "HELLO WORLD"
            
