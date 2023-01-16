@@ -43,8 +43,8 @@ jobs:
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
            bash -c "cd singularity "
            bash -c "source ~/.bashrc "
-           sudo ./mconfig --without-suid --without-conmon --without-seccomp 
+           bash -c "./mconfig --without-suid --without-conmon --without-seccomp "
            bash -c "export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH}"
-           sudo make -C builddir 
-           sudo make -C builddir install
+           bash -c "make -C builddir"
+           bash -c "make -C builddir install"
            
