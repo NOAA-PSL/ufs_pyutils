@@ -127,7 +127,8 @@ Functions
         name (ncvarname); it returns a boolean values indicating
         whether the variable name has been found.
 
-    ncwrite(ncfile, ncdim_obj, ncvar_obj, ncfrmt=None):
+    ncwrite(ncfile, ncdim_obj, ncvar_obj, ncfrmt=None, 
+            glbattrs_dict=None):
 
         This function writes a netCDF-formatted file, containing the
         dimensions, variables, and (optional) attributes, specified by
@@ -1319,8 +1320,8 @@ def ncvarlist(ncfile: str, ncfrmt: str = None) -> list:
 
 
 def ncwrite(
-    ncfile: str, ncdim_obj: object, ncvar_obj: object, ncfrmt: str = None
-) -> None:
+        ncfile: str, ncdim_obj: object, ncvar_obj: object, ncfrmt: str = None,
+        glbattrs_dict: dict = None) -> None:
     """
     Description
     -----------
@@ -1358,6 +1359,12 @@ def ncwrite(
         NETCDF3_64BIT_DATA; if not specified, NETCDF4_CLASSIC is
         assumed.
 
+    glbattrs_dict: dict, optional
+
+        A Python dictionary containing global attribute values; the
+        dictionary keys are the global attribute names while the
+        dictionary values are the corresponding key values.
+
     """
 
     # Open the netCDF-formatted file.
@@ -1376,6 +1383,7 @@ def ncwrite(
     for (key, value) in ncvar_dict.items():
         try:
             var_dict = value
+
             if var_dict["type"].lower() == "char":
                 datatype = str
 
@@ -1409,6 +1417,17 @@ def ncwrite(
 
         except TypeError:
             pass
+
+    # Check whether to append the file with global attributes; proceed
+    # accordingly.
+    if glbattrs_dict is not None:
+
+        # Define the global attributes for the netCDF-formatted file.
+        for glbattr in glbattrs_dict:
+            value = parser_interface.dict_key_value(
+                dict_in=glbattrs_dict, key=glbattr, no_split=True)
+            ncfile = parser_interface.object_setattr(
+                object_in=ncfile, key=glbattr, value=value)
 
     # Close the open netCDF-formatted file.
     ncfile.close()
