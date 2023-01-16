@@ -41,10 +41,10 @@ jobs:
            sudo echo "export PATH=/usr/local/go/bin" >> ~/.bashrc
            sudo rm -rf /tmp/go.tar.gz
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
-           bash -c "cd singularity"
+           sudo cd singularity
            bash -c "source ~/.bashrc"
-           bash -c "./mconfig --without-suid --without-conmon --without-seccomp"
+           sudo ./mconfig --without-suid --without-conmon --without-seccomp
            bash -c "export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH}"
-           bash -c "make -C builddir"
-           bash -c "make -C builddir install"
+           sudo make -C builddir
+           sudo make -C builddir install
            
