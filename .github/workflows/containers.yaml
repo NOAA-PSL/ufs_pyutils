@@ -3,15 +3,8 @@ name: Container Build Tests
 
 # Define the Github triggers for which to launch the respective Github
 # action/workflow.
-on:
-  pull_request:
-    types: [opened]
-    
-  release:
-    types: [published]
+on: [workflow_dispatch]
 
-  schedule:
-    - cron: "0 0 * * *"
           
 jobs:
 
