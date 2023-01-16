@@ -16,7 +16,7 @@ jobs:
     steps:
 
     # Build and install the Docker dependencies
-    - name: Build and install the Docker dependencies
+    - name: Build and install the Docker dependencies.
       run: |
            sudo apt-get install git
            sudo apt-get remove docker docker-engine docker.io containerd runc
@@ -29,9 +29,23 @@ jobs:
            sudo apt-get update
            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-    # Pull the Docker container containing the Singularity application.
-    - name: Build and install the Singularity dependencies
+    # Pull down the CentOS 7 Docker Engine and Singularity container.
+    - name: Pull down the CentOS 7 Docker Engine and Singularity container.
       run: |
-           sudo docker pull noaaufsrnr/el7-miniconda-ufs_pyutils.ufs_apps:latest
-           docker container run noaaufsrnr/el7-miniconda-ufs_pyutils.ufs_apps:latest echo "HELLO WORLD"
+           docker pull noaaufsrnr/el7-docker-singularity:latest
+
+    # Clone the ufs_pytils repository branch.
+    - name: Checkout ufs_pyutils.
+      uses: actions/checkout@v2
+      with:
+        path: ufs_pyutils
+
+    # Build the Docker image and push to the Docker Hub repository.
+    - name: Build the Docker image and push to the Docker Hub repository.
+      run: |
+           cd $GITHUB_WORKSPACE/ufs_pyutils/Docker
+           docker build -f ubuntu20.04-miniconda-ufs_pyutils.docker --tag ubuntu20.04-miniconda-ufs_pyutils:latest
+           docker tag ubuntu20.04-miniconda-ufs_pyutils:latest noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:latest
+           docker push noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:latest
+
            
