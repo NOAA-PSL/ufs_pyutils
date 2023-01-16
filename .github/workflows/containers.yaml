@@ -36,11 +36,11 @@ jobs:
            sudo apt install bash
            sudo apt-get install build-essential
            sudo apt-get install libstdc++6
-           sudo export VERSION=1.19.3 OS=linux ARCH=386
+           bash -c "export VERSION=1.19.3 OS=linux ARCH=386"
            sudo wget -O /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz https://dl.google.com/go/go${VERSION}.${OS}-${ARCH}.tar.gz
            sudo tar -C /usr/local -xzf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
            sudo echo 'export PATH=$PATH:/usr/local/go/bin' >> /root/.bashrc
-           sudo rm -rf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz
+           sudo rm -rf /tmp/go${VERSION}.${OS}-${ARCH}.tar.gz"
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
            sudo cd singularity 
            sudo source /root/.bashrc 
