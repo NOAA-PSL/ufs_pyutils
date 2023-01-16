@@ -44,7 +44,7 @@ jobs:
            sudo cd singularity 
            sudo source /root/.bashrc 
            sudo ./mconfig --without-suid --without-conmon --without-seccomp 
-           sudo export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH} 
+           export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH} 
            sudo make -C builddir 
            sudo make -C builddir install
            
