@@ -10,7 +10,7 @@ jobs:
 
   # Define the container image.
   build:
-    runs-on: amd64/centos:7
+    runs-on: centOS 7
     name: Run the ufs_pyutils container build tests.
         
     steps:
