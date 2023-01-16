@@ -29,8 +29,9 @@ jobs:
            sudo apt-get update
            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-    # Build and install the Singularity dependencies
+    # Pull the Docker container containing the Singularity application.
     - name: Build and install the Singularity dependencies
       run: |
            sudo docker pull noaaufsrnr/el7-miniconda-ufs_pyutils.ufs_apps:latest
+           docker container run -it echo "HELLO WORLD"
            
