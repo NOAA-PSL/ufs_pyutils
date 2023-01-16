@@ -39,10 +39,10 @@ jobs:
            sudo wget -O /tmp/go.tar.gz https://dl.google.com/go/go1.19.3.linux-386.tar.gz
            sudo tar -C /usr/local -xzf /tmp/go.tar.gz
            sudo echo "export PATH=/usr/local/go/bin" >> ~/.bashrc
-           sudo rm -rf /tmp/go.tar.gz"
+           sudo rm -rf /tmp/go.tar.gz
            sudo git clone --recurse-submodules https://github.com/sylabs/singularity.git 
            sudo cd singularity 
-           sudo source /root/.bashrc 
+           sudo source ~/.bashrc 
            sudo ./mconfig --without-suid --without-conmon --without-seccomp 
            bash -c "export LD_LIBRARY_PATH=/usr/lib64:${LD_LIBRARY_PATH}"
            sudo make -C builddir 
