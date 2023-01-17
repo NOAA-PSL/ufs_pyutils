@@ -1,6 +1,6 @@
 # =========================================================================
 
-# Singularity Definition File: Docker/ubuntu20.04-miniconda-ufs_pyutils.def
+# Singularity Definition File: Docker/el7-miniconda-ufs_pyutils.def
 
 # Email: henry.winterbottom@noaa.gov
 
@@ -19,9 +19,19 @@
 # -----------
 
 #    This Singularity definition file builds a Singularity image
-#    containing the ufs_pyutils package built upon a Ubuntu 20.04
-#    base-Linux platform and Miniconda Python 3.9+ software stack
-#    support for the respective ufs_pyutils applications.
+#    containing the following packages.
+
+#    - AMD 64 CentOS 7 base Linux image;
+
+#    - Docker Engine (https://docs.docker.com/engine/);
+
+#    - GO programming language (https://go.dev/; required by Singularity);
+
+#    - Singularity (https://sylabs.io/singularity/).
+
+#    - Miniconda Python 3.9+ stack;
+
+#    - ufs_pyutils applications.
 
 # Singularity Instructions
 # ------------------------
@@ -29,14 +39,14 @@
 #    To build the respective Singularity image file (i.e., container),
 #    do as follows.
 
-#    user@host:$ singularity build ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif ubuntu20.04-miniconda-ufs_pyutils.def
+#    user@host:$ singularity build el7_miniconda_ufs_pyutils_<TAG>.sif el7-miniconda-ufs_pyutils.def
 
-#    user@host:$ singularity push ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif library://noaaufsrnr/noaaufsrnr/ubuntu20.04_miniconda_ufs_pyutils:<TAG>
+#    user@host:$ singularity push el7_miniconda_ufs_pyutils_<TAG>.sif library://noaaufsrnr/noaaufsrnr/el7_miniconda_ufs_pyutils:<TAG>
 
 #    In order to execute and application within the Singularity
 #    container, do as follows.
 
-#    user@host:$ singularity exec ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
+#    user@host:$ singularity exec el7_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
 
 #    where <X> is an executable or application within the Singularity
 #    container (e.g., Python) and <Y> is an application exist on the
@@ -55,22 +65,29 @@
 # Base Image Attributes
 # ---------------------
 
-#    Image and Tag: noaaufsrnr/ubuntu20.04_miniconda_ufs_pyutils:latest
+#    Image and Tag: noaaufsrnr/el7-miniconda-ufs_pyutils:latest
 
-# External Package Dependencies
-# -----------------------------
+# Container Image Downloads
+# -------------------------
 
-#    singularity; https://github.com/sylabs/singularity
-
-# Latest Container Image Downloads
-# --------------------------------
-
-#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ubuntu20.04_miniconda_ufs_pyutils:<TAG>
+#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/el7_miniconda_ufs_pyutils:<TAG>
 
 # ----
 
 # Define the Singularity builder instructions.
 Bootstrap: docker
-From: docker://noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:latest
+From: noaaufsrnr/el7-miniconda-ufs_pyutils:latest
+
 %labels
-    Version: latest
+    Author Henry R. Winterbottom
+    Email henry.winterbottom@noaa.gov
+    Version latest
+
+%help
+    The Singularity container application may be executed as follows:
+
+    user@host: singularity exec el7_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
+
+    where <X> is an executable or application within the Singularity
+    container (e.g., Python) and <Y> is an application exist on the
+    local host disk (i.e., a Python script/application).
