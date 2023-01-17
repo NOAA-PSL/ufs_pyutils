@@ -46,10 +46,4 @@ jobs:
            cd $GITHUB_WORKSPACE/ufs_pyutils/Docker
            docker build -f ubuntu20.04-miniconda-ufs_pyutils.docker --tag ubuntu20.04-miniconda-ufs_pyutils:latest .
 
-    # Build the Docker image.
-    - name: Build the Docker image.
-      run: |
-           cd $GITHUB_WORKSPACE/ufs_pyutils/Docker
-           singularity build $GITHUB_WORKSPACE/ufs_pyutils/Docker/ubuntu20.04-miniconda-ufs_pyutils.sif docker-daemon://ubuntu20.04-miniconda-ufs_pyutils:latest
-
            
