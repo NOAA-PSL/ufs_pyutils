@@ -19,8 +19,11 @@
 # -----------
 
 #    This Docker recipe file builds a Docker image containing the
-#    Ubuntu 20.04 base-Linux platform image required for a "hello
-#    world" type application.
+#    following packages.
+
+#    - Ubuntu 20.04 base Linux image;
+
+#    - A "HELLO WORLD" shell application.
 
 # Docker Instructions
 # -------------------
@@ -36,19 +39,6 @@
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
 
-# Singularity Instructions
-# ------------------------
-
-#    To build the respective Singularity image file (i.e., container),
-#    do as follows.
-
-#    user@host:$ singularity build ubuntu20.04.hello_world_<TAG>.sif docker://noaaufsrnr/noaaufsrnr/ubuntu20.04.hello_world:<TAG>
-
-#    In order to execute the entry point within the Singularity
-#    container, do as follows.
-
-#    user@host:$ singularity run ubuntu20.04.hello_world_<TAG>.sif
-
 # Author(s)
 # ---------
 
@@ -62,14 +52,12 @@
 # Base Image Attributes
 # ---------------------
 
-#    Linux Image and Tag: ubuntu:20.04
+#    Image and Tag: ubuntu:20.04
 
-# Latest Container Image Downloads
-# --------------------------------
+# Container Image Downloads
+# -------------------------
 
 #    Docker Hub: docker pull noaaufsrnr/ubuntu20.04.hello_world:<TAG>
-
-#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ubuntu20.04.hello_world:<TAG>
 
 #----
 

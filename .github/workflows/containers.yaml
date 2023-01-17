@@ -39,7 +39,7 @@
 # ----
 
 # Define the name of the Github actions/workflow.
-name: Container Build Tests
+name: Docker Images
 
 # Define the Github triggers for which to launch the respective Github
 # action/workflow.

@@ -1,0 +1,93 @@
+# =========================================================================
+
+# Singularity Definition File: Docker/el7-miniconda-ufs_pyutils.def
+
+# Email: henry.winterbottom@noaa.gov
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the respective public license published by the
+# Free Software Foundation and included with the repository within
+# which this application is contained.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# =========================================================================
+
+# Description
+# -----------
+
+#    This Singularity definition file builds a Singularity image
+#    containing the following packages.
+
+#    - AMD 64 CentOS 7 base Linux image;
+
+#    - Docker Engine (https://docs.docker.com/engine/);
+
+#    - GO programming language (https://go.dev/; required by Singularity);
+
+#    - Singularity (https://sylabs.io/singularity/).
+
+#    - Miniconda Python 3.9+ stack;
+
+#    - ufs_pyutils applications.
+
+# Singularity Instructions
+# ------------------------
+
+#    To build the respective Singularity image file (i.e., container),
+#    do as follows.
+
+#    user@host:$ singularity build el7_miniconda_ufs_pyutils_<TAG>.sif el7-miniconda-ufs_pyutils.def
+
+#    user@host:$ singularity push el7_miniconda_ufs_pyutils_<TAG>.sif library://noaaufsrnr/noaaufsrnr/el7_miniconda_ufs_pyutils:<TAG>
+
+#    In order to execute and application within the Singularity
+#    container, do as follows.
+
+#    user@host:$ singularity exec el7_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
+
+#    where <X> is an executable or application within the Singularity
+#    container (e.g., Python) and <Y> is an application exist on the
+#    local host disk (i.e., a Python script/application).
+
+# Author(s)
+# ---------
+
+#    Henry R. Winterbottom; 16 January 2023 
+
+# History
+# -------
+
+#    2023-01-16: Henry R. Winterbottom -- Initial implementation.
+
+# Base Image Attributes
+# ---------------------
+
+#    Image and Tag: noaaufsrnr/el7-miniconda-ufs_pyutils:latest
+
+# Container Image Downloads
+# -------------------------
+
+#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/el7_miniconda_ufs_pyutils:<TAG>
+
+# ----
+
+# Define the Singularity builder instructions.
+Bootstrap: docker
+From: noaaufsrnr/el7-miniconda-ufs_pyutils:latest
+
+%labels
+    Author Henry R. Winterbottom
+    Email henry.winterbottom@noaa.gov
+    Version latest
+
+%help
+    The Singularity container application may be executed as follows:
+
+    user@host: singularity exec el7_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
+
+    where <X> is an executable or application within the Singularity
+    container (e.g., Python) and <Y> is an application exist on the
+    local host disk (i.e., a Python script/application).
