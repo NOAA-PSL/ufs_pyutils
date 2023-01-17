@@ -19,9 +19,13 @@
 # -----------
 
 #    This Docker recipe file builds a Docker image containing the
-#    ufs_pyutils package upon a Ubuntu 20.04 base-Linux platform and
-#    Miniconda Python 3.9+ software stack required for the respective
-#    ufs_pyutils applications.
+#    following packages.
+
+#    - Ubuntu 20.08 base Linux image;
+
+#    - Miniconda Python 3.9+ stack;
+
+#    - ufs_pyutils applications.
 
 # Docker Instructions
 # -------------------
@@ -37,37 +41,20 @@
 #    where <TAG> is the tag identifier/name for the respective image
 #    and <DOCKER LOGIN> is the user Docker Hub login name.
 
-# Singularity Instructions
-# ------------------------
-
-#    To build the respective Singularity image file (i.e., container),
-#    do as follows.
-
-#    user@host:$ singularity build ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif docker://noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
-
-#    In order to execute and application within the Singularity
-#    container, do as follows.
-
-#    user@host:$ singularity exec ubuntu20.04_miniconda_ufs_pyutils_<TAG>.sif <X> <Y>
-
-#    where <X> is an executable or application within the Singularity
-#    container (e.g., Python) and <Y> is an application exist on the
-#    local host disk (i.e., a Python script/application).
-
 # Author(s)
 # ---------
 
-#    Henry R. Winterbottom; 14 January 2023 
+#    Henry R. Winterbottom; 17 January 2023 
 
 # History
 # -------
 
-#    2023-01-14: Henry R. Winterbottom -- Initial implementation.
+#    2023-01-17: Henry R. Winterbottom -- Initial implementation.
 
 # Base Image Attributes
 # ---------------------
 
-#    Linux Image and Tag: ubuntu:20.04
+#    Image and Tag: ubuntu:20.04
 
 # External Package Dependencies
 # -----------------------------
@@ -80,8 +67,6 @@
 # --------------------------------
 
 #    Docker Hub: docker pull noaaufsrnr/ubuntu20.04-miniconda-ufs_pyutils:<TAG>
-
-#    Sylabs: singularity pull library://noaaufsrnr/noaaufsrnr/ubuntu20.04_miniconda_ufs_pyutils_:<TAG>
 
 # ----
 
