@@ -36,11 +36,6 @@ jobs:
            sudo apt-get update
            sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-    # Pull down the CentOS 7 Docker Engine and Singularity container.
-    - name: Pull down the CentOS 7 Docker Engine and Singularity container.
-      run: |
-           docker pull noaaufsrnr/el7-docker-singularity:latest
-
     # Clone the ufs_pytils repository branch.
     - name: Checkout ufs_pyutils.
       uses: actions/checkout@v2
@@ -48,7 +43,7 @@ jobs:
         path: ufs_pyutils
 
     # Build the Docker image.
-    - name: Build the Docker image.
+    - name: Build the Docker images.
       run: |
            cd $GITHUB_WORKSPACE/ufs_pyutils/Docker
            docker build -f ubuntu20.04-miniconda-ufs_pyutils.docker --tag ubuntu20.04-miniconda-ufs_pyutils:latest .
