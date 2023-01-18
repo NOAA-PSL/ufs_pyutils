@@ -335,11 +335,14 @@ class YAML:
 
             yaml_file_list = ()
             for yaml_key in yaml_dict:
-                yaml_file_list.append(parser_interface.dict_key_value(
-                    dict_in=yaml_dict, key=yaml_key, no_split=True))
 
-            print(self.concat_yaml(yaml_file_list=yaml_file_list,
-                                   yaml_file_out=None, ignore_missing=True))
+                yaml_value = parser_interface.dict_key_value(
+                    dict_in=yaml_dict, key=yaml_key, no_split=True)
+
+                print(yaml_value)
+
+            # print(self.concat_yaml(yaml_file_list=yaml_file_list,
+            #                       yaml_file_out=None, ignore_missing=True))
 
         # print(yaml_dict)
 
