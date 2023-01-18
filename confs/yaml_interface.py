@@ -281,8 +281,14 @@ class YAML:
         with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
+        # For each attribute within the parsed YAML-formatted file,
+        # determine whether a given file is a YAML-formatted file and
+        # whether the respective YAML-formatted file exists; proceed
+        # acccordingly.
+        for yaml_attr in yaml_dict:
+            print(yaml_attr)
+
         print('here')
-        print(yaml_dict)
         quit()
 
     def read_yaml(self, yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
