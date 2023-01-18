@@ -352,11 +352,9 @@ class YAML:
                     if fileio_interface.fileexist(path=attr_value):
                         yaml_file_list.append(attr_value)
 
-                # yaml_file_list.append(yaml_value)
-            print(yaml_file_list)
-
-            # print(self.concat_yaml(yaml_file_list=yaml_file_list,
-            #                       yaml_file_out=None, ignore_missing=True))
+                # yaml_file_list.append(yaml_value
+                self.concat_yaml(yaml_file_list=yaml_file_list,
+                                 yaml_file_out=None, ignore_missing=True)
 
         # print(yaml_dict)
 
