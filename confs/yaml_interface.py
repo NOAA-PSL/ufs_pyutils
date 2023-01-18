@@ -326,7 +326,9 @@ class YAML:
         with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
-        print(yaml_dict)
+        for yaml_key in yaml_dict:
+            print(yaml_key)
+
         quit()
 
         # Define the Python data type to be returned; proceed
