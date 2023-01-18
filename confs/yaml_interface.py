@@ -117,6 +117,48 @@ class YAML:
         # Define the base-class attributes.
         self.logger = Logger()
 
+    def __yaml_obj__(self, attr_dict: dict) -> object:
+        """
+        Description
+        -----------
+
+        This method parses a Python dictionary containing attributes
+        collected from a YAML-formatted file and returned as a Python
+        object.
+
+        Parameters
+        ----------
+
+        attr_dict: dict
+
+            A Python dictionary containing the attributes collected
+            from a YAML-formatted file.
+
+        Returns
+        -------
+
+        yaml_obj: object
+
+            A Python object containing the attributes collected from
+            the Python dictionary provided upon entry.
+
+        """
+
+        # Collect the attributes within the Python dictionary provided
+        # upon entry and build a Python object.
+        (attr_list, yaml_obj) = ([], parser_interface.object_define())
+        for attr in attr_dict.keys():
+            attr_list.append(attr)
+            value = parser_interface.dict_key_value(
+                dict_in=attr_dict, key=attr, no_split=True
+            )
+
+            yaml_obj = parser_interface.object_setattr(
+                object_in=yaml_obj, key=attr, value=value
+            )
+
+        return yaml_obj
+
     def check_yaml(self, attr_value: str) -> bool:
         """
         Description
@@ -267,6 +309,113 @@ class YAML:
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
+
+    def read_concat_yaml(
+        self, yaml_file: str, return_obj: bool = False
+    ) -> Union[dict, object]:
+        """
+        Description
+        -----------
+
+        This method ingests a YAML Ain't Markup Language (e.g., YAML)
+        formatted file and returns a Python dictionary containing the
+        concatenated attributes of the file; this method is useful for
+        parsing YAML-formatted files with embedded YAML-formatted file
+        directives (e.g., the YAML-formatted file contains paths to
+        external YAML-formatted files to also be parsed).
+
+        Parameters
+        ----------
+
+        yaml_file: str
+
+            A Python string containing the full-path to the
+            YAML-formatted file to be parsed.
+
+        Keywords
+        --------
+
+        return_obj: bool, optional
+
+            A Python boolean valued variable specifying whether to
+            return a Python object containing the YAML-formatted file
+            contents; in this instance a Python dictionary will be
+            defined using the contents of the YAML-formatted file and
+            then the Python object will be constructed; if True,
+            yaml_obj is returned instead of yaml_dict.
+
+        Returns
+        -------
+
+        yaml_dict: dict
+
+            A Python dictionary containing all attributes ingested
+            from the YAML-formatted file; returned if return_obj is
+            False upon entry.
+
+        yaml_obj: object
+
+            A Python object containing all attributes injested from
+            the YAML-formatted file; returned if return_obj is True
+            upon entry.
+
+        """
+
+        # Define the YAML library loader type.
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
+
+        # Open and read the contents of the specified YAML-formatted
+        # file path.
+        with open(yaml_file, "r", encoding="utf-8") as stream:
+            yaml_full_dict = yaml.load(stream, Loader=YAMLLoader)
+
+        # For each attribute within the parsed YAML-formatted file,
+        # determine whether a given file is a YAML-formatted file and
+        # whether the respective YAML-formatted file exists; proceed
+        # acccordingly.
+        yaml_dict_concat = {}
+        for attr_key in yaml_full_dict:
+
+            # Collect the attribute corresponding to the respective
+            # attribute; proceed accordingly.
+            attr_value = parser_interface.dict_key_value(
+                dict_in=yaml_full_dict, key=attr_key, no_split=True
+            )
+            is_yaml = self.check_yaml(attr_value=attr_value)
+
+            # If the respective attribute value is a YAML-formatted
+            # file, check that it exists and proceed accordingly.
+            if is_yaml:
+                exist = fileio_interface.fileexist(path=attr_value)
+                if exist:
+                    yaml_dict = self.read_yaml(yaml_file=attr_value)
+
+                    yaml_dict_concat.update(
+                        dict(
+                            parser_interface.dict_merge(
+                                dict1=yaml_dict_concat, dict2=yaml_dict
+                            )
+                        )
+                    )
+
+                if not exist:
+                    yaml_dict_concat[attr_key] = attr_value
+
+            if not is_yaml:
+                yaml_dict_concat[attr_key] = attr_value
+
+        # Define the Python data type to be returned; proceed
+        # accordingly.
+        if return_obj:
+
+            yaml_return = self.__yaml_obj__(attr_dict=yaml_dict_concat)
+
+        if not return_obj:
+
+            yaml_return = yaml_dict_concat
+
+        return yaml_return
 
     def read_yaml(
         self, yaml_file: str, return_obj: bool = False
