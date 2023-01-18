@@ -311,7 +311,7 @@ class YAML:
             if not is_yaml:
                 yaml_dict_concat[attr_key] = attr_value
 
-        print(yaml_dict_concat)
+        print(yaml_dict_concat['fetch'])
 
         quit()
 
