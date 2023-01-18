@@ -310,8 +310,9 @@ class YAML:
         # YAML-formatted file to contain the concatenated attributes.
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
-    def read_concat_yaml(self, yaml_file: str,
-                         return_obj: bool = False) -> Union[dict, object]:
+    def read_concat_yaml(
+        self, yaml_file: str, return_obj: bool = False
+    ) -> Union[dict, object]:
         """
         Description
         -----------
@@ -361,8 +362,7 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver(
-            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -380,7 +380,8 @@ class YAML:
             # Collect the attribute corresponding to the respective
             # attribute; proceed accordingly.
             attr_value = parser_interface.dict_key_value(
-                dict_in=yaml_full_dict, key=attr_key, no_split=True)
+                dict_in=yaml_full_dict, key=attr_key, no_split=True
+            )
             is_yaml = self.check_yaml(attr_value=attr_value)
 
             # If the respective attribute value is a YAML-formatted
@@ -391,8 +392,12 @@ class YAML:
                     yaml_dict = self.read_yaml(yaml_file=attr_value)
 
                     yaml_dict_concat.update(
-                        dict(parser_interface.dict_merge(
-                            dict1=yaml_dict_concat, dict2=yaml_dict)))
+                        dict(
+                            parser_interface.dict_merge(
+                                dict1=yaml_dict_concat, dict2=yaml_dict
+                            )
+                        )
+                    )
 
                 if not exist:
                     yaml_dict_concat[attr_key] = attr_value
@@ -412,7 +417,9 @@ class YAML:
 
         return yaml_return
 
-    def read_yaml(self, yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
+    def read_yaml(
+        self, yaml_file: str, return_obj: bool = False
+    ) -> Union[dict, object]:
         """
         Description
         -----------
@@ -459,8 +466,7 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver(
-            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
