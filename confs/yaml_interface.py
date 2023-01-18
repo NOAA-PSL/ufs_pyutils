@@ -297,9 +297,21 @@ class YAML:
             # If the respective attribute value is a YAML-formatted
             # file, check that it exists and proceed accordingly.
             if is_yaml:
-                if fileio_interface.fileexist(path=attr_value):
+                exist = fileio_interface.fileexist(path=attr_value)
+                if exist:
                     yaml_dict = self.read_yaml(yaml_file=attr_value)
-                    print(yaml_dict)
+
+                    yaml_dict_concat.update(
+                        dict(parser_interface.dict_merge(
+                            dict1=yaml_dict_concat, dict2=yaml_dict)))
+
+                if not exist:
+                    yaml_dict_concat[attr_key] = attr_value
+
+            if not is_yaml:
+                yaml_dict_concat[attr_key] = attr_value
+
+        print(yaml_dict_concat)
 
         quit()
 
