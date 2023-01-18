@@ -333,7 +333,7 @@ class YAML:
         # YAML-formatted file, proceed accordingly.
         if concat_yamls:
 
-            yaml_file_list = ()
+            yaml_file_list = []
             for yaml_key in yaml_dict:
 
                 yaml_value = parser_interface.dict_key_value(
