@@ -293,7 +293,7 @@ class YAML:
                 dict_in=yaml_dict, key=attr_key, no_split=True)
             is_yaml = self.check_yaml(attr_value=attr_value)
 
-            print(attr_key, attr_value)
+            print(attr_key, attr_value, is_yaml)
 
         quit()
 
@@ -351,7 +351,7 @@ class YAML:
         # Open and read the contents of the specified YAML-formatted
         # file path.
         with open(yaml_file, "r", encoding="utf-8") as stream:
-            yaml_dict=yaml.load(stream, Loader=YAMLLoader)
+            yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
         # Define the Python data type to be returned; proceed
         # accordingly.
