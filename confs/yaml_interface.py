@@ -333,12 +333,23 @@ class YAML:
         # YAML-formatted file, proceed accordingly.
         if concat_yamls:
 
+            concat_yaml_dict = {}
             yaml_file_list = []
             for yaml_key in yaml_dict:
 
-                yaml_value = parser_interface.dict_key_value(
+                # Collect YAML attribute value; check whether the
+                # respective attribute is an existent YAML-formatted
+                # file; proceed accordingly.
+                attr_value = parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=yaml_key, no_split=True)
-                yaml_file_list.append(yaml_value)
+                if self.check_yaml(attr_value=attr_value):
+
+                    # Check that the YAML-formatted file exists;
+                    # proceed accordingly.
+                    if fileio_interface.fileexist(path=attr_value):
+                        yaml_file_list.append(attr_value)
+
+                # yaml_file_list.append(yaml_value)
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
                                    yaml_file_out=None, ignore_missing=True))
