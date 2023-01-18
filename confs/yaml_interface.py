@@ -326,8 +326,24 @@ class YAML:
         with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
-        for yaml_key in yaml_dict:
-            print(yaml_key)
+        # If the concatenating the attributes provided in the
+        # YAML-formatted file, proceed accordingly.
+        if concat_yamls:
+
+            # Initialize the Python dictionary to contain the
+            # concatenated YAML attributes; build the Python
+            # dictionary accordingly.
+            yaml_dict_concat = {}
+
+            for yaml_key in yaml_dict:
+
+                # Check if the respective YAML attribute value is an
+                # existing YAML-formatted file path; proceed
+                # accordingly.
+                value = parser_interface.dict_key_value(
+                    dict_in=yaml_dict, key=yaml_key, no_split=True)
+
+                print(value)
 
         quit()
 
