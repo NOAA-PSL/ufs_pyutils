@@ -311,7 +311,11 @@ class YAML:
             if not is_yaml:
                 yaml_dict_concat[attr_key] = attr_value
 
-        print(yaml_dict_concat['fetch'])
+        for key in yaml_dict_concat['fetch']:
+            print(key, parser_interface.dict_key_value(
+                dict_in=yaml_dict_concat['fetch'], key=key, no_split=True))
+
+        # print(yaml_dict_concat['fetch'])
 
         quit()
 
