@@ -117,6 +117,21 @@ class YAML:
         # Define the base-class attributes.
         self.logger = Logger()
 
+    def __yaml_obj__(self, attr_dict: dict) -> object:
+        """ """
+
+        (attr_list, yaml_obj) = ([], parser_interface.object_define())
+        for attr in attr_dict.keys():
+            attr_list.append(attr)
+            value = parser_interface.dict_key_value(
+                dict_in=yaml_dict, key=attr, no_split=True
+            )
+            yaml_obj = parser_interface.object_setattr(
+                object_in=yaml_obj, key=attr, value=value
+            )
+
+        return yaml_obj
+
     def check_yaml(self, attr_value: str) -> bool:
         """
         Description
@@ -311,11 +326,11 @@ class YAML:
             if not is_yaml:
                 yaml_dict_concat[attr_key] = attr_value
 
-        for key in yaml_dict_concat['fetch']:
-            print(key, parser_interface.dict_key_value(
-                dict_in=yaml_dict_concat['fetch'], key=key, no_split=True))
+        if return_obj:
 
-        # print(yaml_dict_concat['fetch'])
+            yaml_return = self.__yaml_obj__(attr_dict=yaml_dict_concat)
+
+            print(yaml_return)
 
         quit()
 
