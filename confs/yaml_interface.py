@@ -344,7 +344,10 @@ class YAML:
                     dict_in=yaml_dict, key=yaml_key, no_split=True)
 
                 if self.check_yaml(attr_value=value):
-                    print(yaml_key, value)
+
+                    if fileio_interface.fileexist(path=value):
+
+                        print(yaml_key, value)
 
         quit()
 
