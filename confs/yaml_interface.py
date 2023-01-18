@@ -269,7 +269,7 @@ class YAML:
 
         return yaml_dict_concat
 
-        #self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
+        # self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def read_yaml(
             self, yaml_file: str, return_obj: bool = False,
@@ -333,7 +333,12 @@ class YAML:
         # YAML-formatted file, proceed accordingly.
         if concat_yamls:
 
-            yaml_dict = self.concat_yaml(yaml_file_list=yaml_dict.values(),
+            yaml_file_list = ()
+            for yaml in yaml_dict:
+                yaml_file_list.append(parser_interface.dict_key_value(
+                    dict_in=yaml_dict, key=yaml, no_split=True)
+
+            yaml_dict=self.concat_yaml(yaml_file_list=yaml_file_list,
                                          yaml_file_out=None, ignore_missing=True)
 
         print(yaml_dict)
@@ -342,9 +347,9 @@ class YAML:
 
         # Define the Python data type to be returned; proceed
         # accordingly.
-        yaml_return = None
+        yaml_return=None
         if return_obj:
-            (attr_list, yaml_obj) = ([], parser_interface.object_define())
+            (attr_list, yaml_obj)=([], parser_interface.object_define())
             for key in yaml_dict.keys():
                 attr_list.append(key)
                 value = parser_interface.dict_key_value(
