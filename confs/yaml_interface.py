@@ -266,7 +266,10 @@ class YAML:
 
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
-        self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
+
+        return yaml_dict_concat
+
+        #self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def read_yaml(
             self, yaml_file: str, return_obj: bool = False,
@@ -330,24 +333,10 @@ class YAML:
         # YAML-formatted file, proceed accordingly.
         if concat_yamls:
 
-            # Initialize the Python dictionary to contain the
-            # concatenated YAML attributes; build the Python
-            # dictionary accordingly.
-            yaml_dict_concat = {}
+            yaml_dict = self.concat_yaml(yaml_file_list=yaml_dict.keys(),
+                                         yaml_file_out=None, ignore_missing=True)
 
-            for yaml_key in yaml_dict:
-
-                # Check if the respective YAML attribute value is an
-                # existing YAML-formatted file path; proceed
-                # accordingly.
-                value = parser_interface.dict_key_value(
-                    dict_in=yaml_dict, key=yaml_key, no_split=True)
-
-                if self.check_yaml(attr_value=value):
-
-                    if fileio_interface.fileexist(path=value):
-
-                        print(yaml_key, value)
+        print(yaml_dict)
 
         quit()
 
