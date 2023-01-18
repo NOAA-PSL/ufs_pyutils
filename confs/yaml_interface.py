@@ -333,7 +333,7 @@ class YAML:
         # YAML-formatted file, proceed accordingly.
         if concat_yamls:
 
-            yaml_dict = self.concat_yaml(yaml_file_list=yaml_dict.keys(),
+            yaml_dict = self.concat_yaml(yaml_file_list=yaml_dict.values(),
                                          yaml_file_out=None, ignore_missing=True)
 
         print(yaml_dict)
