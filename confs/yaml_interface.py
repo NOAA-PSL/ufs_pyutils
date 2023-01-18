@@ -279,21 +279,27 @@ class YAML:
         # Open and read the contents of the specified YAML-formatted
         # file path.
         with open(yaml_file, "r", encoding="utf-8") as stream:
-            yaml_dict = yaml.load(stream, Loader=YAMLLoader)
+            yaml_full_dict = yaml.load(stream, Loader=YAMLLoader)
 
         # For each attribute within the parsed YAML-formatted file,
         # determine whether a given file is a YAML-formatted file and
         # whether the respective YAML-formatted file exists; proceed
         # acccordingly.
-        for attr_key in yaml_dict:
+        yaml_dict_concat = {}
+        for attr_key in yaml_full_dict:
 
             # Collect the attribute corresponding to the respective
             # attribute; proceed accordingly.
             attr_value = parser_interface.dict_key_value(
-                dict_in=yaml_dict, key=attr_key, no_split=True)
+                dict_in=yaml_full_dict, key=attr_key, no_split=True)
             is_yaml = self.check_yaml(attr_value=attr_value)
 
-            print(attr_key, attr_value, is_yaml)
+            # If the respective attribute value is a YAML-formatted
+            # file, check that it exists and proceed accordingly.
+            if is_yaml:
+                if fileio_interface.fileexist(path=attr_value):
+                    yaml_dict = self.read_yaml(yaml_file=attr_value)
+                    print(yaml_dict)
 
         quit()
 
@@ -355,18 +361,18 @@ class YAML:
 
         # Define the Python data type to be returned; proceed
         # accordingly.
-        yaml_return=None
+        yaml_return = None
         if return_obj:
-            (attr_list, yaml_obj)=([], parser_interface.object_define())
+            (attr_list, yaml_obj) = ([], parser_interface.object_define())
             for key in yaml_dict.keys():
                 attr_list.append(key)
-                value=parser_interface.dict_key_value(
+                value = parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=key, no_split=True
                 )
-                yaml_obj=parser_interface.object_setattr(
+                yaml_obj = parser_interface.object_setattr(
                     object_in=yaml_obj, key=key, value=value
                 )
-            yaml_return=yaml_obj
+            yaml_return = yaml_obj
 
         if not return_obj:
 
