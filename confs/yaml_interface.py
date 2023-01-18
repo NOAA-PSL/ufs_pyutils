@@ -343,7 +343,8 @@ class YAML:
                 value = parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=yaml_key, no_split=True)
 
-                print(value)
+                if self.check_yaml(attr_value=value):
+                    print(yaml_key, value)
 
         quit()
 
