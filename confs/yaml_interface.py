@@ -124,7 +124,7 @@ class YAML:
         for attr in attr_dict.keys():
             attr_list.append(attr)
             value = parser_interface.dict_key_value(
-                dict_in=yaml_dict, key=attr, no_split=True
+                dict_in=attr_dict, key=attr, no_split=True
             )
             yaml_obj = parser_interface.object_setattr(
                 object_in=yaml_obj, key=attr, value=value
