@@ -266,17 +266,26 @@ class YAML:
 
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
+        self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
-        print(yaml_dict_concat)
+    def read_concat_yaml(self, yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
+        """ """
+
+        # Define the YAML library loader type.
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
+
+        # Open and read the contents of the specified YAML-formatted
+        # file path.
+        with open(yaml_file, "r", encoding="utf-8") as stream:
+            yaml_dict = yaml.load(stream, Loader=YAMLLoader)
+
+        print('here')
+        print(yaml_dict)
         quit()
 
-        return yaml_dict_concat
-
-        # self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
-
-    def read_yaml(
-            self, yaml_file: str, return_obj: bool = False,
-            concat_yamls: bool = False) -> Union[dict, object]:
+    def read_yaml(self, yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
         """
         Description
         -----------
@@ -331,34 +340,6 @@ class YAML:
         # file path.
         with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
-
-        # If the concatenating the attributes provided in the
-        # YAML-formatted file, proceed accordingly.
-        if concat_yamls:
-
-            concat_yaml_dict = {}
-            yaml_file_list = []
-            for yaml_key in yaml_dict:
-
-                # Collect YAML attribute value; check whether the
-                # respective attribute is an existent YAML-formatted
-                # file; proceed accordingly.
-                attr_value = parser_interface.dict_key_value(
-                    dict_in=yaml_dict, key=yaml_key, no_split=True)
-                if self.check_yaml(attr_value=attr_value):
-
-                    # Check that the YAML-formatted file exists;
-                    # proceed accordingly.
-                    if fileio_interface.fileexist(path=attr_value):
-                        yaml_file_list.append(attr_value)
-
-                # yaml_file_list.append(yaml_value
-                self.concat_yaml(yaml_file_list=yaml_file_list,
-                                 yaml_file_out=None, ignore_missing=True)
-
-        # print(yaml_dict)
-
-        quit()
 
         # Define the Python data type to be returned; proceed
         # accordingly.
