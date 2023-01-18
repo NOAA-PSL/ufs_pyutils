@@ -267,6 +267,9 @@ class YAML:
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
 
+        print(yaml_dict_concat)
+        quit()
+
         return yaml_dict_concat
 
         # self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
