@@ -269,8 +269,8 @@ class YAML:
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def read_yaml(
-            self, yaml_file: str, return_obj: bool = False, concat: bool = False,
-    ) -> Union[dict, object]:
+            self, yaml_file: str, return_obj: bool = False,
+            concat_yamls: bool = False) -> Union[dict, object]:
         """
         Description
         -----------
@@ -328,7 +328,7 @@ class YAML:
 
         print(yaml_dict)
         quit()
-            
+
         # Define the Python data type to be returned; proceed
         # accordingly.
         yaml_return = None
