@@ -338,6 +338,7 @@ class YAML:
 
                 yaml_value = parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=yaml_key, no_split=True)
+                yaml_file_list.append(yaml_value)
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
                                    yaml_file_out=None, ignore_missing=True, fail_nonvalid=False))
