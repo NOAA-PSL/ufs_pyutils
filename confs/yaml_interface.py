@@ -336,7 +336,7 @@ class YAML:
             yaml_file_list = ()
             for yaml in yaml_dict:
                 yaml_file_list.append(parser_interface.dict_key_value(
-                    dict_in=yaml_dict, key=yaml, no_split=True)
+                    dict_in=yaml_dict, key=yaml, no_split=True))
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
                                    yaml_file_out=None, ignore_missing=True))
@@ -347,7 +347,7 @@ class YAML:
 
         # Define the Python data type to be returned; proceed
         # accordingly.
-        yaml_return=None
+        yaml_return = None
         if return_obj:
             (attr_list, yaml_obj)=([], parser_interface.object_define())
             for key in yaml_dict.keys():
