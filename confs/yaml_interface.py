@@ -340,7 +340,7 @@ class YAML:
                     dict_in=yaml_dict, key=yaml_key, no_split=True)
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
-                                   yaml_file_out=None, ignore_missing=True, fail_invalid=False))
+                                   yaml_file_out=None, ignore_missing=True, fail_nonvalid=False))
 
         # print(yaml_dict)
 
