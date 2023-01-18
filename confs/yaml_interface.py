@@ -269,7 +269,7 @@ class YAML:
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def read_yaml(
-        self, yaml_file: str, return_obj: bool = False
+            self, yaml_file: str, return_obj: bool = False, concat: bool = False,
     ) -> Union[dict, object]:
         """
         Description
@@ -317,7 +317,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -325,6 +326,9 @@ class YAML:
         with open(yaml_file, "r", encoding="utf-8") as stream:
             yaml_dict = yaml.load(stream, Loader=YAMLLoader)
 
+        print(yaml_dict)
+        quit()
+            
         # Define the Python data type to be returned; proceed
         # accordingly.
         yaml_return = None
