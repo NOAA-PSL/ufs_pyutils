@@ -341,7 +341,7 @@ class YAML:
                 yaml_file_list.append(yaml_value)
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
-                                   yaml_file_out=None, ignore_missing=True, fail_nonvalid=False))
+                                   yaml_file_out=None, ignore_missing=True))
 
         # print(yaml_dict)
 
