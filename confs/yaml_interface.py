@@ -334,9 +334,9 @@ class YAML:
         if concat_yamls:
 
             yaml_file_list = ()
-            for yaml in yaml_dict:
+            for yaml_key in yaml_dict:
                 yaml_file_list.append(parser_interface.dict_key_value(
-                    dict_in=yaml_dict, key=yaml, no_split=True))
+                    dict_in=yaml_dict, key=yaml_key, no_split=True))
 
             print(self.concat_yaml(yaml_file_list=yaml_file_list,
                                    yaml_file_out=None, ignore_missing=True))
@@ -349,10 +349,10 @@ class YAML:
         # accordingly.
         yaml_return = None
         if return_obj:
-            (attr_list, yaml_obj)=([], parser_interface.object_define())
+            (attr_list, yaml_obj) = ([], parser_interface.object_define())
             for key in yaml_dict.keys():
                 attr_list.append(key)
-                value=parser_interface.dict_key_value(
+                value = parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=key, no_split=True
                 )
                 yaml_obj = parser_interface.object_setattr(
