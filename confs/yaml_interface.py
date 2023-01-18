@@ -285,10 +285,16 @@ class YAML:
         # determine whether a given file is a YAML-formatted file and
         # whether the respective YAML-formatted file exists; proceed
         # acccordingly.
-        for yaml_attr in yaml_dict:
-            print(yaml_attr)
+        for attr_key in yaml_dict:
 
-        print('here')
+            # Collect the attribute corresponding to the respective
+            # attribute; proceed accordingly.
+            attr_value = parser_interface.dict_key_value(
+                dict_in=yaml_dict, key=attr_key, no_split=True)
+            is_yaml = self.check_yaml(attr_value=attr_value)
+
+            print(attr_key, attr_value)
+
         quit()
 
     def read_yaml(self, yaml_file: str, return_obj: bool = False) -> Union[dict, object]:
@@ -345,22 +351,22 @@ class YAML:
         # Open and read the contents of the specified YAML-formatted
         # file path.
         with open(yaml_file, "r", encoding="utf-8") as stream:
-            yaml_dict = yaml.load(stream, Loader=YAMLLoader)
+            yaml_dict=yaml.load(stream, Loader=YAMLLoader)
 
         # Define the Python data type to be returned; proceed
         # accordingly.
-        yaml_return = None
+        yaml_return=None
         if return_obj:
-            (attr_list, yaml_obj) = ([], parser_interface.object_define())
+            (attr_list, yaml_obj)=([], parser_interface.object_define())
             for key in yaml_dict.keys():
                 attr_list.append(key)
-                value = parser_interface.dict_key_value(
+                value=parser_interface.dict_key_value(
                     dict_in=yaml_dict, key=key, no_split=True
                 )
-                yaml_obj = parser_interface.object_setattr(
+                yaml_obj=parser_interface.object_setattr(
                     object_in=yaml_obj, key=key, value=value
                 )
-            yaml_return = yaml_obj
+            yaml_return=yaml_obj
 
         if not return_obj:
 
