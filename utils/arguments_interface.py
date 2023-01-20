@@ -52,11 +52,11 @@ History
 # ----
 
 # pylint: disable=broad-except
-# pylint: disable=too-few-public-methods
 
 # ----
 
 from argparse import ArgumentParser
+from dataclasses import dataclass
 
 from tools import parser_interface
 
@@ -67,6 +67,7 @@ from utils.exceptions_interface import ArgumentsInterfaceError
 # ----
 
 
+@dataclass
 class Arguments:
     """
     Description
@@ -173,7 +174,8 @@ class Arguments:
                 cls_opts = parser_interface.dict_formatter(in_dict=cls_opts)
 
                 # Evalute the schema; proceed accordingly.
-                schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
+                schema_interface.validate_opts(
+                    cls_schema=cls_schema, cls_opts=cls_opts)
 
             except Exception as error:
 
