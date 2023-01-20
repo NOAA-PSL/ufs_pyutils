@@ -69,9 +69,7 @@ History
 
 # ----
 
-# pylint: disable=too-few-public-methods
-
-# ----
+from dataclasses import dataclass
 
 from tools import parser_interface
 from utils.arguments_interface import Arguments
@@ -91,6 +89,7 @@ logger = Logger()
 # ----
 
 
+@dataclass
 class UFSLogger:
     """
     Description
