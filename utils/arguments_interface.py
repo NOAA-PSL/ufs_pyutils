@@ -57,8 +57,8 @@ History
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
-from schema import Schema, Optional
 
+from schema import Optional, Schema
 from tools import parser_interface
 
 from utils import schema_interface
