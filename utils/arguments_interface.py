@@ -52,13 +52,13 @@ History
 # ----
 
 # pylint: disable=broad-except
+# pylint: disable=unnecessary-list-index-lookup
 
 # ----
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
 
-from schema import Optional, Schema
 from tools import parser_interface
 
 from utils import schema_interface
@@ -136,7 +136,8 @@ class Arguments:
 
         # Collect the command-line argument key and value pairs.
         (_, args) = ArgumentParser().parse_known_args()
-        (arg_keys, arg_values) = ([item.strip("-") for item in args[::2]], args[1::2])
+        (arg_keys, arg_values) = ([item.strip("-")
+                                   for item in args[::2]], args[1::2])
 
         # Build the Python object containing the command line
         # arguments.
@@ -165,7 +166,8 @@ class Arguments:
                 cls_opts = parser_interface.dict_formatter(in_dict=cls_opts)
 
                 # Evalute the schema; proceed accordingly.
-                schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
+                schema_interface.validate_opts(
+                    cls_schema=cls_schema, cls_opts=cls_opts)
 
             except Exception as error:
 
