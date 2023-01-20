@@ -57,6 +57,7 @@ History
 
 from argparse import ArgumentParser
 from dataclasses import dataclass
+from schema import Schema, Optional
 
 from tools import parser_interface
 
@@ -108,12 +109,12 @@ class Arguments:
 
         The command line arguments may be specified as follows.
 
-        user@host:$ python <caller_script>.py --key=value
+        user@host:$ python <caller_script>.py --key value
 
-        user@host:$ python <caller_script>.py -key=value
+        user@host:$ python <caller_script>.py -key value
 
         Here 'key' is the argument name and 'value' is the value
-        attributed to the respective argument.
+        attributed to the respective argument/key.
 
         Returns
         --------
@@ -133,29 +134,20 @@ class Arguments:
 
         """
 
-        # Define the base-class attributes.
-        parser = ArgumentParser()
-        arg_key_strip = ["-", "--"]
-
-        # Collect the command line arguments.
-        (_, args) = parser.parse_known_args()
+        # Collect the command-line argument key and value pairs.
+        (_, args) = ArgumentParser().parse_known_args()
+        (arg_keys, arg_values) = ([item.strip("-")
+                                   for item in args[::2]], args[1::2])
 
         # Build the Python object containing the command line
         # arguments.
         options_obj = parser_interface.object_define()
 
-        for arg in args:
-
-            # Define the argument and the respective value; proceed
-            # accordingly.
-            (key, value) = arg.split("=")
-
-            for arg_key in arg_key_strip:
-                key = key.strip(arg_key)
+        for (idx, _) in enumerate(arg_keys):
 
             # Define the Python object attributes.
             options_obj = parser_interface.object_setattr(
-                object_in=options_obj, key=key, value=value
+                object_in=options_obj, key=arg_keys[idx], value=arg_values[idx]
             )
 
         # Check whether to evaluate the argument schema; proceed
