@@ -362,7 +362,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -466,7 +467,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -541,9 +543,7 @@ class YAML:
                             dict_in=yaml_dict, key=key, no_split=True
                         )
                         item = item.replace(f"<{key}>", str(value))
-
-                if not any(x in item for x in template_matches):
-                    file.write(f"{item}\n")
+                file.write(f"{item}\n")
 
     def write_yaml(
         self,
