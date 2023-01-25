@@ -656,7 +656,7 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
 
     # Define the run-time environment variable.
     if isinstance(value, list):
-        os.environ[envvar] = value.split(",")
+        os.environ[envvar] = [item for item in value]
 
     if not isinstance(value, list):
         os.environ[envvar] = value
@@ -1030,7 +1030,8 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower()
+                  and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
