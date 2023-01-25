@@ -179,7 +179,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def concatenate(filelist: list, concatfile: str) -> None:
+def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None:
     """
     Description
     -----------
@@ -211,6 +211,8 @@ def concatenate(filelist: list, concatfile: str) -> None:
             with open(filename, "rb") as fin:
                 data = fin.read()
             fout.write(data)
+            if sepfiles:
+                fout.write("\n")
 
 
 # ----
