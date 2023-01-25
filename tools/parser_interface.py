@@ -656,7 +656,7 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
 
     # Define the run-time environment variable.
     if isinstance(value, list):
-        os.environ[envvar] = f"{value}"
+        os.environ[envvar] = ','.join([item for item in value])
 
     if not isinstance(value, list):
         os.environ[envvar] = value
