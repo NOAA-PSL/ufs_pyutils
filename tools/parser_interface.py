@@ -655,7 +655,11 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
     """
 
     # Define the run-time environment variable.
-    os.environ[envvar] = value
+    if isinstance(value, list):
+        os.environ[envvar] = value.split(",")
+
+    if not isinstance(value, list):
+        os.environ[envvar] = value
 
 
 # ----
@@ -792,7 +796,8 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(
+        object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
