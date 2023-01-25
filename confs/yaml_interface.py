@@ -467,8 +467,7 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver(
-            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
         YAMLLoader.add_constructor("!INC", YAMLLoader.include_constructor)
 
@@ -530,7 +529,6 @@ class YAML:
         """
 
         # Read the template file.
-        template_matches = ["<", ">"]
         with open(yaml_template, "r", encoding="utf-8") as file:
             template = file.read().split("\n")
 
