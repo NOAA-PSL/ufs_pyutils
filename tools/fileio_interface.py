@@ -32,7 +32,7 @@ Description
 Functions
 ---------
 
-    concatenate(filelist, concatfile)
+    concatenate(filelist, concatfile, sepfiles=False)
 
         This function concatenates a list of user-specified files
         (filelist) into a single user-specified file (concatfile); the
@@ -136,15 +136,11 @@ History
 # ----
 
 import os
-import re
 import shutil
 import subprocess
-from typing import Union
 
 import numpy
 from utils.logger_interface import Logger
-
-from tools import parser_interface
 
 # ----
 
@@ -163,7 +159,6 @@ __all__ = [
     "rmdir",
     "symlink",
     "touch",
-    "write_jinja2",
 ]
 
 # ----
@@ -179,7 +174,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def concatenate(filelist: list, concatfile: str) -> None:
+def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None:
     """
     Description
     -----------
@@ -202,6 +197,15 @@ def concatenate(filelist: list, concatfile: str) -> None:
         A Python string specifying the path of the concatenated file
         created from the input file list.
 
+    Keywords
+    --------
+
+    sepfiles: bool, optional
+
+        A Python boolean valued variable specifying whether to include
+        a blank line seperator between the contents of the respective
+        files to be concatenated.
+
     """
 
     # Concatenate files contained within the specified list of files
@@ -211,6 +215,8 @@ def concatenate(filelist: list, concatfile: str) -> None:
             with open(filename, "rb") as fin:
                 data = fin.read()
             fout.write(data)
+            if sepfiles:
+                fout.write(b"\n")
 
 
 # ----
@@ -257,8 +263,7 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -487,6 +492,7 @@ def makedirs(path: str, force: bool = False) -> None:
         os.makedirs(path)
     except OSError:
         pass
+
 
 # ----
 
