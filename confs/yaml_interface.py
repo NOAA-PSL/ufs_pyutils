@@ -470,6 +470,7 @@ class YAML:
         YAMLLoader.add_implicit_resolver(
             "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
+        YAMLLoader.add_constructor("!INC", YAMLLoader.include_constructor)
 
         # Open and read the contents of the specified YAML-formatted
         # file path.
@@ -622,12 +623,25 @@ class YAMLLoader(SafeLoader):
         Description
         -----------
 
-        This function is the environment variable template
-        constructor.
+        This method is the environment variable template constructor.
 
         """
 
         return os.path.expandvars(node.value)
+
+    def include_constructor(self, node):
+        """
+        Description
+        -----------
+
+        This method is the file inclusion (i.e., opening and reading)
+        template constructor.
+
+        """
+
+        filename = self.construct_scalar(node)
+        with open(filename, "r", encoding="utf-8") as file:
+            return yaml.load(file, YAMLLoader)
 
 
 # ----
