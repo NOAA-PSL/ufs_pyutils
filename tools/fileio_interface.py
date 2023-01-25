@@ -212,7 +212,7 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
                 data = fin.read()
             fout.write(data)
             if sepfiles:
-                fout.write("\n")
+                fout.write(b"\n")
 
 
 # ----
