@@ -32,7 +32,7 @@ Description
 Functions
 ---------
 
-    concatenate(filelist, concatfile)
+    concatenate(filelist, concatfile, sepfiles=False)
 
         This function concatenates a list of user-specified files
         (filelist) into a single user-specified file (concatfile); the
@@ -202,6 +202,15 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
         A Python string specifying the path of the concatenated file
         created from the input file list.
 
+    Keywords
+    --------
+
+    sepfiles: bool, optional
+
+        A Python boolean valued variable specifying whether to include
+        a blank line seperator between the contents of the respective
+        files to be concatenated.
+
     """
 
     # Concatenate files contained within the specified list of files
@@ -213,7 +222,6 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
             fout.write(data)
             if sepfiles:
                 fout.write(b"\n")
-
 
 # ----
 
