@@ -136,15 +136,11 @@ History
 # ----
 
 import os
-import re
 import shutil
 import subprocess
-from typing import Union
 
 import numpy
 from utils.logger_interface import Logger
-
-from tools import parser_interface
 
 # ----
 
@@ -163,7 +159,6 @@ __all__ = [
     "rmdir",
     "symlink",
     "touch",
-    "write_jinja2",
 ]
 
 # ----
@@ -223,6 +218,7 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
             if sepfiles:
                 fout.write(b"\n")
 
+
 # ----
 
 
@@ -267,8 +263,7 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -497,6 +492,7 @@ def makedirs(path: str, force: bool = False) -> None:
         os.makedirs(path)
     except OSError:
         pass
+
 
 # ----
 
