@@ -656,7 +656,7 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
 
     # Define the run-time environment variable.
     if isinstance(value, list):
-        os.environ[envvar] = [item for item in value]
+        os.environ[envvar] = f"{value}"
 
     if not isinstance(value, list):
         os.environ[envvar] = value
@@ -1439,7 +1439,8 @@ def unique_list(in_list: list) -> list:
 
     """
     out_list = []
-    out_dict = collections.OrderedDict.fromkeys(x for x in in_list if x not in out_list)
+    out_dict = collections.OrderedDict.fromkeys(
+        x for x in in_list if x not in out_list)
 
     out_list = []
     for key in sorted(out_dict.keys()):
