@@ -175,6 +175,7 @@ History
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
+# pylint: disable=unnecessary-comprehension
 # pylint: disable=unused-argument
 
 # ----
@@ -655,7 +656,11 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
     """
 
     # Define the run-time environment variable.
-    os.environ[envvar] = value
+    if isinstance(value, list):
+        os.environ[envvar] = ",".join([item for item in value])
+
+    if not isinstance(value, list):
+        os.environ[envvar] = value
 
 
 # ----
@@ -792,7 +797,8 @@ def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(
+        object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -1025,7 +1031,8 @@ def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower()
+                  and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
