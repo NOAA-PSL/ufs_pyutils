@@ -52,6 +52,11 @@ Globals
         A timestamp format, assuming the POSIX convention, of
         %Y-%m-%dT%H%M%SZ.
 
+    YmdTHM: str
+
+        A timestamp format, assuming the POSIX convention, of
+        %Y%m%dT%H%M.
+
     YmdTHMS: str
 
         A timestamp format, assuming the POSIX convention, of
@@ -112,6 +117,7 @@ GENERAL = "%Y-%m-%d_%H:%M:%S"
 GLOBAL = "%Y%m%d%H%M%S"
 INFO = "%H:%M:%S UTC %d %B %Y"
 Y_m_dTHMSZ = "%Y-%m-%dT%H:%M:%SZ"
+YmdTHM = "%Y%m%dT%H%M"
 YmdTHMS = "%Y%m%dT%H%M%S"
 YmdTHMZ = "%Y%m%dT%H%MZ"
 
