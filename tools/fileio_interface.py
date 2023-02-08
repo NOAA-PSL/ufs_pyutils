@@ -108,6 +108,13 @@ Functions
 
         This function emulates the POSIX UNIX touch application.
 
+    virtual_file(delete=True)
+
+        This function opens (i.e., creates) a temporary (e.g.,
+        virtual) file beneath /tmp to be utilized by the respective
+        calling application; the open virtual file path may be closed
+        in the calling script using os.unlink().
+
 Requirements
 ------------
 
@@ -140,6 +147,7 @@ import shutil
 import subprocess
 
 import numpy
+import tempfile
 from utils.logger_interface import Logger
 
 # ----
@@ -159,6 +167,7 @@ __all__ = [
     "rmdir",
     "symlink",
     "touch",
+    "virtual_file",
 ]
 
 # ----
@@ -218,7 +227,6 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
             if sepfiles:
                 fout.write(b"\n")
 
-
 # ----
 
 
@@ -263,7 +271,8 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 
     cmd = ["cp", "-rRfL", srcfile, dstfile]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
 
 
@@ -337,7 +346,6 @@ def dirpath_tree(path: str) -> None:
 
         makedirs(path=path)
 
-
 # ----
 
 
@@ -373,7 +381,6 @@ def fileexist(path: str) -> bool:
 
     return exist
 
-
 # ----
 
 
@@ -399,7 +406,6 @@ def filepermission(path: str, permission: int) -> None:
 
     # Define the permissions for the specified file path.
     os.chmod(path, permission)
-
 
 # ----
 
@@ -490,9 +496,9 @@ def makedirs(path: str, force: bool = False) -> None:
 
     try:
         os.makedirs(path)
+
     except OSError:
         pass
-
 
 # ----
 
@@ -519,7 +525,6 @@ def removefiles(filelist: list) -> None:
     for filename in filelist:
         if os.path.isfile(filename):
             os.remove(filename)
-
 
 # ----
 
@@ -556,7 +561,6 @@ def rename(srcfile: str, dstfile: str) -> None:
     except Exception:
         pass
 
-
 # ----
 
 
@@ -585,7 +589,6 @@ def rmdir(path: str) -> None:
 
     if not os.path.isdir(path):
         pass
-
 
 # ----
 
@@ -622,9 +625,9 @@ def symlink(srcfile: str, dstfile: str) -> None:
 
     try:
         os.symlink(srcfile, dstfile)
+
     except OSError:
         pass
-
 
 # ----
 
@@ -649,3 +652,41 @@ def touch(path: str):
     # Open and append to the file path specified upon entry.
     with open(path, "a"):
         os.utime(path, None)
+
+# ----
+
+
+def virtual_file(delete: bool = True) -> object:
+    """
+    Description
+    -----------
+
+    This function opens (i.e., creates) a temporary (e.g., virtual)
+    file beneath /tmp to be utilized by the respective calling
+    application; the open virtual file path may be closed in the
+    calling script using os.unlink().
+
+    Keywords
+    --------
+
+    delete: bool, optional
+
+        A Python boolean valued variable specifying whether to
+        maintain the respective virtual file path beneath /tmp; if
+        False the downstream application should call
+        close_virtual_file (see above) following the respective
+        application.
+
+    Returns
+    -------
+
+    file_obj: object
+
+        A Python object containing the virtual file path attributes.
+
+    """
+
+    # Open the virtual file path.
+    file_obj = tempfile.NamedTemporaryFile(delete=delete)
+
+    return file_obj
