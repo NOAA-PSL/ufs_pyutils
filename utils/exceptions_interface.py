@@ -123,7 +123,7 @@ Classes
         This is the base-class for exceptions encountered within the
         ioapps/tcvitalsinterface module; it is a sub-class of Error.
 
-    TimestampsInterfaceError()
+    TimestampInterfaceError()
 
         This is the base-class for exceptions encountered within the
         utils/timestamp_interface module; it is a sub-class of Error.
@@ -186,7 +186,7 @@ __all__ = [
     "SubprocessInterfaceError",
     "TarFileInterfaceError",
     "TCVitalsInterfaceError",
-    "TimestampsInterfaceError",
+    "TimestampInterfaceError",
     "URLInterfaceError",
     "WgetInterfaceError",
     "XMLInterfaceError",
@@ -440,7 +440,7 @@ class TCVitalsInterfaceError(Error):
 # ----
 
 
-class TimestampsInterfaceError(Error):
+class TimestampInterfaceError(Error):
     """
     Description
     -----------

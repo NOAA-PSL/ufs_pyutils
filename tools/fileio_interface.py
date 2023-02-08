@@ -145,9 +145,10 @@ History
 import os
 import shutil
 import subprocess
+import tempfile
+from typing import List, Tuple
 
 import numpy
-import tempfile
 from utils.logger_interface import Logger
 
 # ----
@@ -183,7 +184,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None:
+def concatenate(filelist: List, concatfile: str, sepfiles: bool = False) -> None:
     """
     Description
     -----------
@@ -226,6 +227,7 @@ def concatenate(filelist: list, concatfile: str, sepfiles: bool = False) -> None
             fout.write(data)
             if sepfiles:
                 fout.write(b"\n")
+
 
 # ----
 
@@ -279,7 +281,7 @@ def copyfile(srcfile: str, dstfile: str) -> None:
 # ----
 
 
-def dircontents(path: str) -> list:
+def dircontents(path: str) -> List:
     """
     Description
     -----------
@@ -346,6 +348,7 @@ def dirpath_tree(path: str) -> None:
 
         makedirs(path=path)
 
+
 # ----
 
 
@@ -381,6 +384,7 @@ def fileexist(path: str) -> bool:
 
     return exist
 
+
 # ----
 
 
@@ -407,10 +411,11 @@ def filepermission(path: str, permission: int) -> None:
     # Define the permissions for the specified file path.
     os.chmod(path, permission)
 
+
 # ----
 
 
-def filesize(path: str) -> tuple:
+def filesize(path: str) -> Tuple:
     """
     Description
     -----------
@@ -500,10 +505,11 @@ def makedirs(path: str, force: bool = False) -> None:
     except OSError:
         pass
 
+
 # ----
 
 
-def removefiles(filelist: list) -> None:
+def removefiles(filelist: List) -> None:
     """
     Description
     -----------
@@ -525,6 +531,7 @@ def removefiles(filelist: list) -> None:
     for filename in filelist:
         if os.path.isfile(filename):
             os.remove(filename)
+
 
 # ----
 
@@ -561,6 +568,7 @@ def rename(srcfile: str, dstfile: str) -> None:
     except Exception:
         pass
 
+
 # ----
 
 
@@ -589,6 +597,7 @@ def rmdir(path: str) -> None:
 
     if not os.path.isdir(path):
         pass
+
 
 # ----
 
@@ -629,6 +638,7 @@ def symlink(srcfile: str, dstfile: str) -> None:
     except OSError:
         pass
 
+
 # ----
 
 
@@ -652,6 +662,7 @@ def touch(path: str):
     # Open and append to the file path specified upon entry.
     with open(path, "a"):
         os.utime(path, None)
+
 
 # ----
 
