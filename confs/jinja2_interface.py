@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     write_jinja2(jinja2_file, in_dict)
 
         This function writes a Jinja2 formatted file using the
@@ -81,28 +76,6 @@ logger = Logger()
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-
-@msg_except_handle(Jinja2InterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -158,4 +131,4 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
 
     except Exception as error:
         msg = f"Writing Jinja2-formatted file {jinja2_file} failed with error {error}. Aborting!!!"
-        __error__(msg=msg)
+        raise Jinja2InterfaceError(msg=msg)
