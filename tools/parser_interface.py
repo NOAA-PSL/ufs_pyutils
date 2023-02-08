@@ -503,7 +503,7 @@ def dict_key_value(
 # ----
 
 
-def dict_merge(dict1: Dict, dict2: Dict) -> Generator[[Dict for idx in range(3)]]:
+def dict_merge(dict1: Dict, dict2: Dict) -> Generator[Dict, Dict, Dict]:
     """
     Description
     -----------
@@ -769,7 +769,8 @@ def object_append(object_in: object, object_key: str, dict_in: Dict) -> object:
         object_dict[key] = value
 
     # Build the output Python object.
-    object_out = object_setattr(object_in=object_out, key=object_key, value=object_dict)
+    object_out = object_setattr(
+        object_in=object_out, key=object_key, value=object_dict)
 
     return object_out
 
@@ -1002,7 +1003,8 @@ def match_list(in_list: List, match_string: str, exact: bool = False) -> (bool, 
     # Define the local lists to be used for the matching application.
     lower_list = [word for word in in_list if word.islower()]
     upper_list = [word for word in in_list if word.isupper()]
-    mixed_list = [word for word in in_list if not word.islower() and not word.isupper()]
+    mixed_list = [word for word in in_list if not word.islower()
+                  and not word.isupper()]
     match_chk = False
 
     # If appropriate, seek exact matches; proceed accordingly.
