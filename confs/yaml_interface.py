@@ -45,14 +45,6 @@ Classes
         This is the base-class object for all YAML file parsing
         interfaces; it is a sub-class of SafeLoader.
 
-Functions
----------
-
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
 Author(s)
 ---------
 
@@ -69,17 +61,15 @@ History
 
 # pylint: disable=broad-except
 # pylint: disable=too-many-ancestors
-# pylint: disable=unused-argument
 
 # ----
 
 import os
 import re
-from typing import Union
+from typing import Dict, List, Union
 
 import yaml
 from tools import fileio_interface, parser_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import YAMLInterfaceError
 from utils.logger_interface import Logger
 from yaml import SafeLoader
@@ -117,7 +107,7 @@ class YAML:
         # Define the base-class attributes.
         self.logger = Logger()
 
-    def __yaml_obj__(self, attr_dict: dict) -> object:
+    def __yaml_obj__(self, attr_dict: Dict) -> object:
         """
         Description
         -----------
@@ -198,7 +188,7 @@ class YAML:
 
     def concat_yaml(
         self,
-        yaml_file_list: list,
+        yaml_file_list: List,
         yaml_file_out: str,
         fail_nonvalid: bool = True,
         ignore_missing: bool = False,
@@ -280,11 +270,11 @@ class YAML:
                     except Exception:
                         pass
 
-                except ValueError:
+                except ValueError as errmsg:
 
                     if fail_nonvalid:
                         msg = f"{yaml_file} is not a valid YAML file. Aborting!!!"
-                        __error__(msg=msg)
+                        raise YAMLInterfaceError(msg=msg) from errmsg
 
                     if not fail_nonvalid:
                         msg = (
@@ -304,7 +294,7 @@ class YAML:
 
                 if not ignore_missing:
                     msg = f"The file path {yaml_file} does not exist. " "Aborting!!!"
-                    __error__(msg=msg)
+                    raise YAMLInterfaceError(msg=msg)
 
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
@@ -312,7 +302,7 @@ class YAML:
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
-    ) -> Union[dict, object]:
+    ) -> Union[Dict, object]:
         """
         Description
         -----------
@@ -362,8 +352,7 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver(
-            "!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -420,7 +409,7 @@ class YAML:
 
     def read_yaml(
         self, yaml_file: str, return_obj: bool = False
-    ) -> Union[dict, object]:
+    ) -> Union[Dict, object]:
         """
         Description
         -----------
@@ -497,7 +486,7 @@ class YAML:
 
         return yaml_return
 
-    def write_tmpl(self, yaml_dict: dict, yaml_path: str, yaml_template: str) -> None:
+    def write_tmpl(self, yaml_dict: Dict, yaml_path: str, yaml_template: str) -> None:
         """
         Description
         -----------
@@ -547,7 +536,7 @@ class YAML:
     def write_yaml(
         self,
         yaml_file: str,
-        in_dict: dict,
+        in_dict: Dict,
         default_flow_style: bool = False,
         append: bool = False,
     ) -> None:
@@ -640,25 +629,3 @@ class YAMLLoader(SafeLoader):
         filename = self.construct_scalar(node)
         with open(filename, "r", encoding="utf-8") as file:
             return yaml.load(file, YAMLLoader)
-
-
-# ----
-
-
-@msg_except_handle(YAMLInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """

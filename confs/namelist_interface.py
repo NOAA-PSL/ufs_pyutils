@@ -40,14 +40,6 @@ Classes
         template file parsing and external FORTRAN 90 namelist-type
         file creation.
 
-Functions
----------
-
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
 Author(s)
 ---------
 
@@ -68,14 +60,12 @@ History
 # pylint: disable=too-many-locals
 # pylint: disable=too-many-nested-blocks
 # pylint: disable=too-many-statements
-# pylint: disable=unused-argument
 
 # ----
 
 import re
 
 from tools import datetime_interface, fileio_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import NamelistInterfaceError
 
 # ----
@@ -388,6 +378,14 @@ class Namelist:
             A Python string specifying the path to the formatted
             namelist-type output file.
 
+        Raises
+        ------
+
+        NamelistInterfaceError:
+
+            * raised if an exception is raised when creating the
+              FORTRAN 90 namelist file.
+
         """
 
         # Build the namelist file and proceed accordingly.
@@ -397,31 +395,9 @@ class Namelist:
             if self.strip_dblequotes:
                 self.dblequotes_strip(nml_path=nml_path)
 
-        except Exception as error:
+        except Exception as errmsg:
             msg = (
                 f"Creation of FORTRAN 90 namelist file {nml_path} failed with "
-                f"error {error}. Aborting!!!"
+                f"error {errmsg}. Aborting!!!"
             )
-            __error__(msg=msg)
-
-
-# ----
-
-
-@msg_except_handle(NamelistInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
+            raise NamelistInterfaceError(msg=msg) from errmsg
