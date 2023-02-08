@@ -33,11 +33,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _check_curl_env()
 
         This function checks whether the run-time environment contains
@@ -77,17 +72,16 @@ History
 # pylint: disable=broad-except
 # pylint: disable=consider-using-with
 # pylint: disable=raise-missing-from
-# pylint: disable=unused-argument
 
 # ----
 
 import os
 import subprocess
+from typing import List
 
 import requests
 from bs4 import BeautifulSoup
 from tools import system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import CurlInterfaceError
 from utils.logger_interface import Logger
 
@@ -105,28 +99,6 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 logger = Logger()
-
-# ----
-
-
-@msg_except_handle(CurlInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -168,7 +140,7 @@ def _check_curl_env() -> str:
             "The curl application executable could not be determined "
             "from the run-time environment. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise CurlInterfaceError(msg=msg)
 
     return curl_exec
 
@@ -269,7 +241,7 @@ def get_webfile(
 
         os.chdir(cwd)
 
-    except Exception as error:
+    except Exception as errmsg:
 
         # Proceed accordingly for internet-based file paths that are
         # missing.
@@ -278,16 +250,16 @@ def get_webfile(
 
         if not ignore_missing:
             msg = (
-                f"Collecting of internet path {url} failed with error {error}. "
+                f"Collecting of internet path {url} failed with error {errmsg}. "
                 "Aborting!!!"
             )
-            __error__(msg=msg)
+            raise CurlInterfaceError(msg=msg)
 
 
 # ----
 
 
-def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
+def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> List:
     """
     Description
     -----------
@@ -353,11 +325,11 @@ def get_weblist(url: str, decode_utf8: bool = False, ext: str = None) -> list:
         for webfile in webfiles:
             weblist.append(webfile)
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Collection of files available at internet path {url} failed "
-            f"with error {error}. Aborting!!!"
+            f"with error {errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise CurlInterfaceError(msg=msg)
 
     return weblist

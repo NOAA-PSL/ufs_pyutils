@@ -31,11 +31,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     write_tcvfile(filepath, tcvstr)
 
         This function writes a user-specified TC-vitals record(s) to a
@@ -61,14 +56,12 @@ History
 # ----
 
 # pylint: disable=consider-using-f-string
-# pylint: disable=unused-argument
 
 # ----
 
 import numpy
 from tools import parser_interface
 from utils import constants_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import TCVitalsInterfaceError
 from utils.logger_interface import Logger
 
@@ -86,28 +79,6 @@ logger = Logger()
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-
-@msg_except_handle(TCVitalsInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -279,7 +250,7 @@ def write_tcvstr(tcvit_obj: object) -> str:
                 "The input TC-vitals variable object does not contain "
                 f"the mandatory attribute {mand_attr}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise TCVitalsInterfaceError(msg=msg)
 
         # Build the TC-vitals record object.
         value = parser_interface.object_getattr(object_in=tcvit_obj, key=mand_attr)

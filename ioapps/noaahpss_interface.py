@@ -33,11 +33,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _check_hpss_env()
 
         This function checks whether the HPSS environment has been
@@ -116,16 +111,15 @@ History
 # pylint: disable=simplifiable-if-statement
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
-# pylint: disable=unused-argument
 
 # ----
 
 import os
 import subprocess
+from typing import List, Tuple
 
 import numpy
 from tools import fileio_interface, system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import NOAAHPSSInterfaceError
 from utils.logger_interface import Logger
 
@@ -156,29 +150,7 @@ logger = Logger()
 # ----
 
 
-@msg_except_handle(NOAAHPSSInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def _check_hpss_env() -> tuple:
+def _check_hpss_env() -> Tuple:
     """
     Description
     -----------
@@ -216,7 +188,7 @@ def _check_hpss_env() -> tuple:
 
     if htar is None:
         msg = "The htar executable could not be determined for your system. Aborting!!!"
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
     # Check the run-time environment in order to determine the hsi
     # executable path.
@@ -224,7 +196,7 @@ def _check_hpss_env() -> tuple:
 
     if hsi is None:
         msg = "The hsi executable could not be determined for your system. Aborting!!!"
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
     return (hsi, htar)
 
@@ -337,12 +309,12 @@ def get_hpssfile(hpss_filepath: str) -> None:
     try:
         proc.communicate()
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Collecting file {hpss_filepath} from the NOAA HPSS failed with "
-            f"error {error}. Aborting!!!"
+            f"error {errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
 
 # ----
@@ -381,7 +353,7 @@ def path_build(path: str) -> None:
 
     if proc.returncode != 0:
         msg = f"The NOAA HPSS path {path} could not be created. Aborting!!!"
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
 
 # ----
@@ -431,7 +403,7 @@ def path_exist(path: str) -> bool:
 # ----
 
 
-def path_filelist(path: str) -> list:
+def path_filelist(path: str) -> List:
     """
     Description
     -----------
@@ -472,7 +444,7 @@ def path_filelist(path: str) -> list:
 
     if not exist:
         msg = "The NOAA HPSS path does not exist. Aborting!!!"
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
     cmd = [f"{hsi}", "-q", "ls", "-l", f"{path}"]
 
@@ -528,12 +500,12 @@ def put_hpssfile(filepath: str, hpss_filepath: str) -> None:
     try:
         proc.communicate()
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"The archiving of file {filepath} to the NOAA HPSS failed with "
-            f"error {error}. Aborting!!!"
+            f"error {errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)
 
 
 # ----
@@ -646,7 +618,7 @@ def read_tarball(
 
 
 def write_tarball(
-    path: str, tarball_path: str, tarball_idx_path: str, filelist: list = None
+    path: str, tarball_path: str, tarball_idx_path: str, filelist: List = None
 ) -> None:
     """
     Description
@@ -748,4 +720,4 @@ def write_tarball(
             f"The HPSS archive creation failed with returncode {proc.returncode}. "
             "Aborting!!!"
         )
-        __error__(msg=msg)
+        raise NOAAHPSSInterfaceError(msg=msg)

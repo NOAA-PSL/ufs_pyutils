@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     get_hash(filepath, hash_level=None):
 
         This function defines a secure hash for the user specified
@@ -56,14 +51,9 @@ History
 
 # ----
 
-# pylint: disable=unused-argument
-
-# ----
-
 import hashlib
 
 from tools import parser_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import HashLibInterfaceError
 
 # ----
@@ -76,28 +66,6 @@ __all__ = ["get_hash"]
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-
-@msg_except_handle(HashLibInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -158,7 +126,7 @@ def get_hash(filepath: str, hash_level: str = None) -> str:
             f"The checksum/hash level type {hash_level} is not supported. "
             "Aborting!!!"
         )
-        __error__(msg=msg)
+        raise HashLibInterfaceError(msg=msg)
 
     # Define the type of hash library object based on the hash
     # level/type and proceed accordingly.

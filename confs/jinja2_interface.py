@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     write_jinja2(jinja2_file, in_dict)
 
         This function writes a Jinja2 formatted file using the
@@ -59,11 +54,11 @@ History
 # pylint: disable=broad-except
 # pylint: disable=consider-using-f-string
 # pylint: disable=raise-missing-from
-# pylint: disable=unused-argument
 
 # ----
 
-from utils.error_interface import msg_except_handle
+from typing import Dict
+
 from utils.exceptions_interface import Jinja2InterfaceError
 from utils.logger_interface import Logger
 
@@ -85,29 +80,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-@msg_except_handle(Jinja2InterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
+def write_jinja2(jinja2_file: str, in_dict: Dict) -> None:
     """
     Description
     -----------
@@ -156,6 +129,6 @@ def write_jinja2(jinja2_file: str, in_dict: dict) -> None:
 
                 file.write("{%% %s %%}\n" % string)
 
-    except Exception as error:
-        msg = f"Writing Jinja2-formatted file {jinja2_file} failed with error {error}. Aborting!!!"
-        __error__(msg=msg)
+    except Exception as errmsg:
+        msg = f"Writing Jinja2-formatted file {jinja2_file} failed with error {errmsg}. Aborting!!!"
+        raise Jinja2InterfaceError(msg=msg)

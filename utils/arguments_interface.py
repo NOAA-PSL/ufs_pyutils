@@ -62,7 +62,6 @@ from dataclasses import dataclass
 from tools import parser_interface
 
 from utils import schema_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import ArgumentsInterfaceError
 
 # ----
@@ -78,25 +77,6 @@ class Arguments:
     parsing.
 
     """
-
-    @msg_except_handle(ArgumentsInterfaceError)
-    def __error__(self, msg: str = None) -> None:
-        """
-        Description
-        -----------
-
-        This function is the exception handler for the respective
-        module.
-
-        Keywords
-        --------
-
-        msg: str
-
-            A Python string containing a message to accompany the
-            exception.
-
-        """
 
     def run(self, eval_schema=False, cls_schema=None) -> object:
         """
@@ -136,8 +116,7 @@ class Arguments:
 
         # Collect the command-line argument key and value pairs.
         (_, args) = ArgumentParser().parse_known_args()
-        (arg_keys, arg_values) = ([item.strip("-")
-                                   for item in args[::2]], args[1::2])
+        (arg_keys, arg_values) = ([item.strip("-") for item in args[::2]], args[1::2])
 
         # Build the Python object containing the command line
         # arguments.
@@ -166,12 +145,11 @@ class Arguments:
                 cls_opts = parser_interface.dict_formatter(in_dict=cls_opts)
 
                 # Evalute the schema; proceed accordingly.
-                schema_interface.validate_opts(
-                    cls_schema=cls_schema, cls_opts=cls_opts)
+                schema_interface.validate_opts(cls_schema=cls_schema, cls_opts=cls_opts)
 
-            except Exception as error:
+            except Exception as errmsg:
 
-                msg = f"Arguments validation failed with error {error}. Aborting!!!"
-                self.__error__(msg=msg)
+                msg = f"Arguments validation failed with error {errmsg}. Aborting!!!"
+                raise ArgumentsInterfaceError(msg=msg) from errmsg
 
         return options_obj

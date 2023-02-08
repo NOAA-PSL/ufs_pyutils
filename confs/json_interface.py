@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     read_json(json_file)
 
         This function ingests a JavaScript Object Notation (e.g.,
@@ -64,13 +59,12 @@ History
 
 # pylint: disable=broad-except
 # pylint: disable=raise-missing-from
-# pylint: disable=unused-argument
 
 # ----
 
 import json
+from typing import Dict
 
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import JSONInterfaceError
 from utils.logger_interface import Logger
 
@@ -92,29 +86,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-@msg_except_handle(JSONInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def read_json(json_file: str) -> dict:
+def read_json(json_file: str) -> Dict:
     """
     Description
     -----------
@@ -158,9 +130,9 @@ def read_json(json_file: str) -> dict:
         with open(json_file, "r", encoding="utf-8") as stream:
             json_dict = json.load(stream)
 
-    except Exception as error:
-        msg = f"Reading JSON-formatted file {json_file} failed with error {error}. Aborting!!!"
-        __error__(msg=msg)
+    except Exception as errmsg:
+        msg = f"Reading JSON-formatted file {json_file} failed with error {errmsg}. Aborting!!!"
+        raise JSONInterfaceError(msg=msg)
 
     return json_dict
 
@@ -168,7 +140,7 @@ def read_json(json_file: str) -> dict:
 # ----
 
 
-def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
+def write_json(json_file: str, in_dict: Dict, indent: int = 4) -> None:
     """
     Description
     -----------
@@ -216,6 +188,6 @@ def write_json(json_file: str, in_dict: dict, indent: int = 4) -> None:
         with open(json_file, "w", encoding="utf-8") as file:
             json.dump(in_dict, file, indent=indent)
 
-    except Exception as error:
-        msg = f"Writing JSON-formatted file {json_file} failed with error {error}. Aborting!!!"
-        __error__(msg=msg)
+    except Exception as errmsg:
+        msg = f"Writing JSON-formatted file {json_file} failed with error {errmsg}. Aborting!!!"
+        raise JSONInterfaceError(msg=msg)

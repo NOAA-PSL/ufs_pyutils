@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     validate_opts(cls_schema, cls_opts)
 
         This function validates the calling class schema; if the
@@ -63,13 +58,13 @@ History
 # ----
 
 # pylint: disable=broad-except
-# pylint: disable=unused-argument
 
 # ----
 
+from typing import Dict
+
 from schema import Schema
 
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import SchemaInterfaceError
 
 # ----
@@ -86,29 +81,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-@msg_except_handle(SchemaInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def validate_opts(cls_schema: dict, cls_opts: dict) -> None:
+def validate_opts(cls_schema: Dict, cls_opts: Dict) -> None:
     """
     Description
     -----------
@@ -149,7 +122,7 @@ def validate_opts(cls_schema: dict, cls_opts: dict) -> None:
         # Validate the schema.
         schema.validate([cls_opts])
 
-    except Exception as error:
+    except Exception as errmsg:
 
-        msg = f"Schema validation failed with error {error}. Aborting!!!"
-        __error__(msg=msg)
+        msg = f"Schema validation failed with error {errmsg}. Aborting!!!"
+        raise SchemaInterfaceError(msg=msg) from errmsg

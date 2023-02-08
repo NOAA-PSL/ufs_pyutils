@@ -70,11 +70,6 @@ Globals
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     check_frmt(datestr, in_frmttyp = GLOBAL, out_frmttyp = GLOBAL)
 
         This function checks that the format for a provided timestamp
@@ -94,14 +89,13 @@ History
 
 # ----
 
-# pylint: disable=unused-argument
+# pylint: disable=invalid-name
 
 # ----
 
 from tools import datetime_interface
 
-from utils.error_interface import msg_except_handle
-from utils.exceptions_interface import TimestampsInterfaceError
+from utils.exceptions_interface import TimestampInterfaceError
 
 # ----
 
@@ -120,28 +114,6 @@ Y_m_dTHMSZ = "%Y-%m-%dT%H:%M:%SZ"
 YmdTHM = "%Y%m%dT%H%M"
 YmdTHMS = "%Y%m%dT%H%M%S"
 YmdTHMZ = "%Y%m%dT%H%MZ"
-
-# ----
-
-
-@msg_except_handle(TimestampsInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -199,4 +171,4 @@ def check_frmt(
             f"The timestamp string {datestr} does not match the format "
             f"{out_frmttyp}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise TimestampInterfaceError(msg=msg)

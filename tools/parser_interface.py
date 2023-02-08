@@ -33,11 +33,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     dict_formatter(in_dict)
 
         This function formats a Python dictionary; all UNICODE and
@@ -172,11 +167,11 @@ History
 
 # ----
 
+# pylint: disable=raise-missing-from
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
 # pylint: disable=unnecessary-comprehension
-# pylint: disable=unused-argument
 
 # ----
 
@@ -187,10 +182,9 @@ import os
 import sys
 import types
 from json.decoder import JSONDecodeError
-from typing import Generator, Union
+from typing import Dict, Generator, List, Union
 
 import numpy
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import ParserInterfaceError
 
 # ----
@@ -229,29 +223,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-@msg_except_handle(ParserInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def dict_formatter(in_dict: dict) -> dict:
+def dict_formatter(in_dict: Dict) -> Dict:
     """
     Description
     -----------
@@ -344,7 +316,7 @@ def dict_formatter(in_dict: dict) -> dict:
 # ----
 
 
-def dict_key_remove(dict_in: dict, key: str) -> dict:
+def dict_key_remove(dict_in: Dict, key: str) -> Dict:
     """
     Description
     -----------
@@ -389,14 +361,14 @@ def dict_key_remove(dict_in: dict, key: str) -> dict:
 
 
 def dict_key_value(
-    dict_in: dict,
+    dict_in: Dict,
     key: str,
     force: bool = False,
     max_value: bool = False,
     min_value: bool = False,
     index_value: int = None,
     no_split: bool = False,
-) -> Union[list, str]:
+) -> Union[bool, Dict, float, int, List, numpy.array, object, str]:
     """
     Description
     -----------
@@ -454,7 +426,7 @@ def dict_key_value(
     Returns
     -------
 
-    value: list or str
+    value: bool, dict, float, int, list, numpy.array, object, or str
 
         A list of values collected from the ingested Python dictionary
         and the respective dictionary key if no_split is False; a
@@ -479,7 +451,7 @@ def dict_key_value(
             "values. Please check that only one threshold value is "
             "is to be sought from the list. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise ParserInterfaceError(msg=msg)
 
     if index_value is not None:
         if max_value:
@@ -488,7 +460,7 @@ def dict_key_value(
                 "the specified index) and the maximum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise ParserInterfaceError(msg=msg)
 
         if min_value:
             msg = (
@@ -496,7 +468,7 @@ def dict_key_value(
                 "the specified index) and the minimum list value. "
                 "Please check which criteria to fulfill. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise ParserInterfaceError(msg=msg)
     try:
         value = dict_in[key]
         if no_split:
@@ -520,7 +492,7 @@ def dict_key_value(
                 f"Key {key} could not be found in user provided dictionary. "
                 "Aborting!!!"
             )
-            __error__(msg=msg)
+            raise ParserInterfaceError(msg=msg)
 
         if force:
             value = None
@@ -531,7 +503,7 @@ def dict_key_value(
 # ----
 
 
-def dict_merge(dict1: dict, dict2: dict) -> Generator[dict, dict, dict]:
+def dict_merge(dict1: Dict, dict2: Dict) -> Generator[Dict, Dict, Dict]:
     """
     Description
     -----------
@@ -666,7 +638,7 @@ def enviro_set(envvar: str, value: Union[bool, float, int, str]) -> None:
 # ----
 
 
-def find_commonprefix(strings_list: list) -> str:
+def find_commonprefix(strings_list: List) -> str:
     """
     Description
     -----------
@@ -703,7 +675,7 @@ def find_commonprefix(strings_list: list) -> str:
 # ----
 
 
-def list_get_type(in_list: list, dtype: str) -> list:
+def list_get_type(in_list: List, dtype: str) -> List:
     """
     Description
     -----------
@@ -750,7 +722,7 @@ def list_get_type(in_list: list, dtype: str) -> list:
 # ----
 
 
-def object_append(object_in: object, object_key: str, dict_in: dict) -> object:
+def object_append(object_in: object, object_key: str, dict_in: Dict) -> object:
     """
     Description
     -----------
@@ -905,7 +877,7 @@ def object_define() -> object:
 
 def object_getattr(
     object_in: object, key: str, force: bool = False
-) -> Union[bool, dict, float, int, str, list]:
+) -> Union[bool, Dict, float, int, List, numpy.array, object, str]:
     """
     Description
     -----------
@@ -918,7 +890,7 @@ def object_getattr(
     Parameters
     ----------
 
-    object_in: obj
+    object_in: object
 
         A Python object within which to search for attributes.
 
@@ -938,7 +910,7 @@ def object_getattr(
     Returns
     -------
 
-    value: bool, dict, float, int, str, or list
+    value: bool, dict, float, int, list, numpy.array, object, or str
 
         The result of the respective attribute search.
 
@@ -968,7 +940,7 @@ def object_getattr(
                 f"The object {object_in} does not contain attribute "
                 "{key}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise ParserInterfaceError(msg=msg)
 
     return value
 
@@ -976,7 +948,7 @@ def object_getattr(
 # ----
 
 
-def match_list(in_list: list, match_string: str, exact: bool = False) -> (bool, str):
+def match_list(in_list: List, match_string: str, exact: bool = False) -> (bool, str):
     """
     Description
     -----------
@@ -1117,7 +1089,9 @@ def object_hasattr(object_in: object, key: str) -> bool:
 
 
 def object_setattr(
-    object_in: object, key: str, value: Union[bool, dict, float, int, numpy.array, str]
+    object_in: object,
+    key: str,
+    value: Union[bool, Dict, float, int, List, numpy.array, str],
 ) -> object:
     """
     Description
@@ -1163,7 +1137,7 @@ def object_setattr(
 # ----
 
 
-def object_todict(object_in: object) -> dict:
+def object_todict(object_in: object) -> Dict:
     """
     Description
     -----------
@@ -1198,7 +1172,7 @@ def object_todict(object_in: object) -> dict:
 # ----
 
 
-def singletrue(bool_list: list) -> bool:
+def singletrue(bool_list: List) -> bool:
     """
     Description
     -----------
@@ -1283,7 +1257,7 @@ def str_to_bool(string: str) -> bool:
 # ----
 
 
-def string_parser(in_list: list, remove_comma: bool = False) -> list:
+def string_parser(in_list: List, remove_comma: bool = False) -> List:
     """
     Description
     -----------
@@ -1373,7 +1347,7 @@ def string_parser(in_list: list, remove_comma: bool = False) -> list:
 # ----
 
 
-def true_or_false(argval: Union[bool, dict, float, int, str]) -> Union[bool, None]:
+def true_or_false(argval: Union[bool, Dict, float, int, str]) -> Union[bool, None]:
     """
     Description
     -----------
@@ -1416,7 +1390,7 @@ def true_or_false(argval: Union[bool, dict, float, int, str]) -> Union[bool, Non
 # ----
 
 
-def unique_list(in_list: list) -> list:
+def unique_list(in_list: List) -> List:
     """
     Description
     -----------

@@ -80,6 +80,8 @@ History
 
 # ----
 
+# pylint: disable=consider-using-with
+# pylint: disable=redefined-outer-name
 # pylint: disable=unused-variable
 
 # ----
@@ -89,6 +91,7 @@ import shutil
 import subprocess
 import sys
 import time
+from typing import List
 
 from utils.logger_interface import Logger
 
@@ -110,7 +113,7 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-def _get_stack() -> list:
+def _get_stack() -> List:
     """
     Description
     -----------
@@ -130,6 +133,7 @@ def _get_stack() -> list:
     stack = inspect.stack()
 
     return stack
+
 
 # ----
 
@@ -164,13 +168,9 @@ def app_path(app: str) -> str:
 
     # Query the run-time environment in order to collect the path for
     # the application name specified upon entry.
-    cmd = ['command',
-           '-V',
-           app
-           ]
+    cmd = ["command", "-V", app]
 
-    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Collect the run-time environment path from the query for the
@@ -181,6 +181,7 @@ def app_path(app: str) -> str:
         path = None
 
     return path
+
 
 # ----
 
@@ -307,6 +308,7 @@ def task_exit() -> None:
 
     sys.exit(0)
 
+
 # ----
 
 
@@ -333,8 +335,7 @@ def user() -> str:
     # this function.
     cmd = ["whoami"]
 
-    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE,
-                            stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Collect the POSIX UNIX environment user name from the query.
