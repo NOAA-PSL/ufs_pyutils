@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _get_app_path(app)
 
         This function checks whether the requested application path
@@ -110,16 +105,15 @@ History
 # ----
 
 # pylint: disable=consider-using-with
-# pylint: disable=unused-argument
 # pylint: disable=unused-variable
 
 # ----
 
 import os
 import subprocess
+from typing import List
 
 from tools import system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import GRIBInterfaceError
 
 # ----
@@ -138,28 +132,6 @@ __all__ = [
     "read_file",
     "wgrib2_remap",
 ]
-
-# ----
-
-
-@msg_except_handle(GRIBInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -205,7 +177,7 @@ def _get_app_path(app: str) -> str:
 
     if app_path is None:
         msg = f"The {app} path could not be determined for your " "system. Aborting!!!"
-        __error__(msg=msg)
+        raise GRIBInterfaceError(msg=msg)
 
     return app_path
 
@@ -241,7 +213,8 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
     cnvgrib = _get_app_path(app="cnvgrib")
     cmd = [f"{cnvgrib}", "-g21", in_grib_file, out_grib_file]
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -249,7 +222,7 @@ def cnvgribg21(in_grib_file: str, out_grib_file: str) -> None:
 # ----
 
 
-def get_timestamp(grib_file: str, grib_var: str = None) -> list:
+def get_timestamp(grib_file: str, grib_var: str = None) -> List:
     """
     Description
     -----------
@@ -348,7 +321,8 @@ def grbindex(in_grib_file: str, out_gribidx_file: str, is_grib2: bool = False) -
         grbindex_exe = _get_app_path(app="grbindex")
 
     cmd = [f"{grbindex_exe}", f"{in_grib_file}", f"{out_gribidx_file}"]
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     proc.communicate()
     proc.wait()
 
@@ -432,7 +406,8 @@ def parse_file(
     if is_grib2:
         cmd = [f"{parse_str}", "-grib", out_grib_file]
         cmd = cmd_base + cmd
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         proc.communicate()
         proc.wait()
 
@@ -451,7 +426,7 @@ def parse_file(
 # ----
 
 
-def read_file(grib_file: str, is_4yr: bool = True) -> list:
+def read_file(grib_file: str, is_4yr: bool = True) -> List:
     """
     Description
     -----------
@@ -495,7 +470,8 @@ def read_file(grib_file: str, is_4yr: bool = True) -> list:
         cmd.append("-4yr")
     cmd.append(grib_file)
 
-    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE)
     (wgrib_out, _) = proc.communicate()
     proc.wait()
     wgrib_out = wgrib_out.decode("utf-8")

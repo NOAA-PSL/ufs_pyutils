@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _check_wget_env()
 
         This function checks whether the run-time environment contains
@@ -78,10 +73,10 @@ History
 
 import os
 import subprocess
+from typing import List
 
 from bs4 import BeautifulSoup
 from tools import fileio_interface, system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import WgetInterfaceError
 from utils.logger_interface import Logger
 
@@ -98,28 +93,6 @@ logger = Logger()
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-
-@msg_except_handle(WgetInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -161,7 +134,7 @@ def _check_wget_env() -> str:
             "The wget application executable could not be determined "
             "from the run-time environment. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise WgetInterfaceError(msg=msg)
 
     return wget_exec
 
@@ -227,7 +200,7 @@ def get_webfile(url: str, path: str, ignore_missing: bool = False):
         proc.communicate()
         proc.wait()
 
-    except Exception as error:
+    except Exception as errmsg:
 
         # Proceed accordingly for internet-based file paths that are
         # missing.
@@ -236,10 +209,10 @@ def get_webfile(url: str, path: str, ignore_missing: bool = False):
 
         if not ignore_missing:
             msg = (
-                f"Collecting of internet path {url} failed with error {error}. "
+                f"Collecting of internet path {url} failed with error {errmsg}. "
                 "Aborting!!!"
             )
-            __error__(msg=msg)
+            raise WgetInterfaceError(msg=msg)
 
 
 # ----
@@ -251,7 +224,7 @@ def get_weblist(
     matchstr: str = None,
     remove_webfile: bool = True,
     ext: str = None,
-) -> list:
+) -> List:
     """
     Description
     -----------
@@ -360,11 +333,11 @@ def get_weblist(
             logger.warn(msg=msg)
             fileio_interface.removefiles(filelist)
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Collection of files available at internet path {url} failed "
-            f"with error {error}. Aborting!!!"
+            f"with error {errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise WgetInterfaceError(msg=msg)
 
     return weblist

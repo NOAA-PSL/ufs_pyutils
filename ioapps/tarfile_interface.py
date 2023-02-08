@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     read_tarfile(path, tarball_path, mode=None, filelist=None):
 
         This function parses a specified tarball archive and extracts
@@ -68,15 +63,14 @@ History
 # pylint: disable=consider-using-with
 # pylint: disable=raise-missing-from
 # pylint: disable=too-many-arguments
-# pylint: disable=unused-argument
 
 # ----
 
 import os
 import tarfile
+from typing import Dict, List
 
 from tools import parser_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import TarFileInterfaceError
 from utils.logger_interface import Logger
 
@@ -98,29 +92,9 @@ __email__ = "henry.winterbottom@noaa.gov"
 # ----
 
 
-@msg_except_handle(TarFileInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
+def read_tarfile(
+    path: str, tarball_path: str, mode: str = None, filelist: List = None
+) -> None:
     """
     Description
     -----------
@@ -195,12 +169,12 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
             logger.info(msg=msg)
             tarball.extractall()
 
-        except Exception as error:
+        except Exception as errmsg:
             msg = (
                 f"The extraction of all files from tarball path {tarball_path} "
-                f"failed with error {error}. Aborting!!!"
+                f"failed with error {errmsg}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise TarFileInterfaceError(msg=msg)
 
     # Extract only the files specified within the filelist attribute
     # upon entry; proceed accordingly.
@@ -214,12 +188,12 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
                 logger.info(msg=msg)
                 tarball.extract(tarball_obj)
 
-            except Exception as error:
+            except Exception as errmsg:
                 msg = (
                     f"The extraction of file {filename} from tarball path {tarball_path} "
-                    f"failed with error {error}. Aborting!!!"
+                    f"failed with error {errmsg}. Aborting!!!"
                 )
-                __error__(msg=msg)
+                raise TarFileInterfaceError(msg=msg)
 
     # Close the open tarball archive.
     tarball.close()
@@ -229,13 +203,13 @@ def read_tarfile(path, tarball_path, mode=None, filelist=None) -> None:
 
 
 def write_tarfile(
-    path,
-    tarball_path,
-    filelist=None,
-    filedict=None,
-    ref_local=False,
-    gzip=False,
-    compresslevel=1,
+    path: str,
+    tarball_path: str,
+    filelist: List = None,
+    filedict: Dict = None,
+    ref_local: bool = False,
+    gzip: bool = False,
+    compresslevel: int = 1,
 ) -> None:
     """
     Description
@@ -315,7 +289,7 @@ def write_tarfile(
             "lists (filelist) and file and archive file mapping "
             "names (filedict) simultaneously. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise TarFileInterfaceError(msg=msg)
 
     # Define the tarball archive attributes accordingly.
     if gzip:

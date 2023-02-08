@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _aws_credentials(profile_name=None)
 
         This function establishes the boto3 credentials as a function
@@ -123,16 +118,15 @@ History
 # pylint: disable=too-many-locals
 # pylint: disable=raise-missing-from
 # pylint: disable=redefined-outer-name
-# pylint: disable=unused-argument
 
 # ----
 
 from tempfile import NamedTemporaryFile
+from typing import Dict, List, Tuple
 
 import boto3
 from botocore import UNSIGNED
 from botocore.config import Config
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import Boto3InterfaceError
 from utils.logger_interface import Logger
 
@@ -154,29 +148,7 @@ logger = Logger()
 # ----
 
 
-@msg_except_handle(Boto3InterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def _aws_credentials(profile_name: str = None) -> tuple:
+def _aws_credentials(profile_name: str = None) -> Tuple:
     """
     Description
     -----------
@@ -238,12 +210,12 @@ def _aws_credentials(profile_name: str = None) -> tuple:
 
             (unsigned, session) = (False, boto3.Session(profile_name=profile_name))
 
-        except Exception as error:
+        except Exception as errmsg:
             msg = (
                 f"Establishing the boto3 session for profile name {profile_name} "
-                f"failed with error {error}. Aborting!!!"
+                f"failed with error {errmsg}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise Boto3InterfaceError(msg=msg)
 
     return (unsigned, session)
 
@@ -307,7 +279,7 @@ def _client(
             "using neither UNSIGNED credentials of a valid "
             "~/.aws/credentials profile name. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise Boto3InterfaceError(msg=msg)
 
     if unsigned and session is not None:
         msg = (
@@ -315,7 +287,7 @@ def _client(
             "UNSIGNED credentials are specified and the profile_name "
             "parameter value upon entry is not NoneType. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise Boto3InterfaceError(msg=msg)
 
     # Establish the boto3 resource bucket client object in accordance
     # with the upon entry parameter values.
@@ -332,7 +304,7 @@ def _client(
 # ----
 
 
-def _list(client: object, bucket: str, object_path: str = None) -> list:
+def _list(client: object, bucket: str, object_path: str = None) -> List:
     """
     Description
     -----------
@@ -431,10 +403,10 @@ def _read(client: object, bucket: str, file_name: str, object_name: str) -> None
     try:
         client.download_file(bucket, object_name, file_name)
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Reading from bucket {bucket} object path {object_name} caused "
-            f"the following exception to occur: {error}"
+            f"the following exception to occur: {errmsg}"
         )
         logger.warn(msg=msg)
 
@@ -576,7 +548,7 @@ def _write(client: object, bucket: str, file_name: str, object_name: str) -> Non
 
 def filelist(
     bucket: str, object_path: str = None, profile_name: str = None, resource: str = "s3"
-) -> list:
+) -> List:
     """
     Description
     -----------
@@ -734,7 +706,7 @@ def get(
                 "For into memory retrievals, the parameter variable "
                 "object_path value cannot be NoneType. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise Boto3InterfaceError(msg=msg)
 
         # Define the Python boto3 bucket resource object.
         resource_obj = _resource(
@@ -753,12 +725,12 @@ def get(
             with open(object_memory.name, "wb") as filepath:
                 bucket_object.download_fileobj(filepath)
 
-        except Exception as error:
+        except Exception as errmsg:
             msg = (
                 f"Reading {resource} object path {object_path} into memory failed with "
-                f"error {error}. Aborting!!!"
+                f"error {errmsg}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise Boto3InterfaceError(msg=msg) from errmsg
 
     if not into_mem:
 
@@ -774,7 +746,7 @@ def get(
                 "parameter variable filedict cannot be NoneType upon "
                 "entry. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise Boto3InterfaceError(msg=msg)
 
         # Define the Python boto3 bucket client object.
         client = _client(
@@ -800,12 +772,12 @@ def get(
                     object_name=filedict[key],
                 )
 
-            except Exception as error:
+            except Exception as errmsg:
                 msg = (
                     f"Downloading of object {filedict[key]} from {resource} bucket "
-                    f"{bucket} to {key} failed with error {error}. Aborting!!!"
+                    f"{bucket} to {key} failed with error {errmsg}. Aborting!!!"
                 )
-                __error__(msg=msg)
+                raise Boto3InterfaceError(msg=msg) from errmsg
 
     return object_memory
 
@@ -814,7 +786,7 @@ def get(
 
 
 def put(
-    bucket: str, filedict: dict, profile_name: str = None, resource: str = "s3"
+    bucket: str, filedict: Dict, profile_name: str = None, resource: str = "s3"
 ) -> None:
     """
     Description
@@ -881,9 +853,9 @@ def put(
                 client=client, bucket=bucket, file_name=key, object_name=filedict[key]
             )
 
-        except Exception as error:
+        except Exception as errmsg:
             msg = (
                 f"Uploading of file {key} to {resource} bucket {bucket} object {filedict[key]} "
-                f"failed with error {error}. Aborting!!!"
+                f"failed with error {errmsg}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise Boto3InterfaceError(msg=msg) from errmsg

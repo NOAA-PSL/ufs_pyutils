@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     _get_ncapp_path(ncapp):
 
         This function checks whether the netCDF application request
@@ -127,7 +122,7 @@ Functions
         name (ncvarname); it returns a boolean values indicating
         whether the variable name has been found.
 
-    ncwrite(ncfile, ncdim_obj, ncvar_obj, ncfrmt=None, 
+    ncwrite(ncfile, ncdim_obj, ncvar_obj, ncfrmt=None,
             glbattrs_dict=None):
 
         This function writes a netCDF-formatted file, containing the
@@ -168,17 +163,15 @@ History
 # pylint: disable=too-many-branches
 # pylint: disable=too-many-lines
 # pylint: disable=too-many-locals
-# pylint: disable=unused-argument
 
 # ----
 
-from typing import Union
+from typing import Dict, List, Tuple, Union
 
 import netCDF4
 import numpy
 from execute import subprocess_interface
 from tools import parser_interface, system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import NetCDF4InterfaceError
 from utils.logger_interface import Logger
 
@@ -209,28 +202,6 @@ logger = Logger()
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
-
-# ----
-
-
-@msg_except_handle(NetCDF4InterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
 
 # ----
 
@@ -279,7 +250,7 @@ def _get_ncapp_path(ncapp: str) -> str:
             "libaries/modules are loaded prior to calling this script. "
             "Aborting!!!"
         )
-        __error__(msg=msg)
+        raise NetCDF4InterfaceError(msg=msg)
 
     return ncapp_path
 
@@ -287,7 +258,7 @@ def _get_ncapp_path(ncapp: str) -> str:
 # ----
 
 
-def _read_ncdim_obj(ncdim_obj: object) -> dict:
+def _read_ncdim_obj(ncdim_obj: object) -> Dict:
     """
     Description
     -----------
@@ -330,7 +301,7 @@ def _read_ncdim_obj(ncdim_obj: object) -> dict:
 # ----
 
 
-def _read_ncvar_obj(ncvar_obj: object) -> dict:
+def _read_ncvar_obj(ncvar_obj: object) -> Dict:
     """
     Description
     -----------
@@ -428,7 +399,7 @@ def nccheck(ncfile: str, ncfrmt: str = None) -> bool:
 # ----
 
 
-def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> None:
+def ncconcat(ncfilelist: List, ncfile: str, ncdim: str, ncfrmt: str = None) -> None:
     """
     Description
     -----------
@@ -532,8 +503,7 @@ def ncconcat(ncfilelist: list, ncfile: str, ncdim: str, ncfrmt: str = None) -> N
         # Collect and define the destination netCDF-formatted file
         # attributes.
         for (name, variable) in srcfile.variables.items():
-            dstfile.createVariable(
-                name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
         dstfile.setncatts(srcfile.__dict__)
 
@@ -660,7 +630,7 @@ def nccopy(
                 "The netCDF nccopy application output file formatted "
                 f"type {ncfrmtout} is not supported. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise NetCDF4InterfaceError(msg=msg)
 
         # Create a direct copy of the netCDF-formatted file provided
         # upon entry.
@@ -688,12 +658,10 @@ def nccopy(
         # array dimensions for the destination netCDF-formatted file.
         for (name, dimension) in srcfile.dimensions.items():
             if ncunlimval is None:
-                dimsize = len(
-                    dimension) if not dimension.isunlimited() else None
+                dimsize = len(dimension) if not dimension.isunlimited() else None
 
             if ncunlimval is not None:
-                dimsize = len(
-                    dimension) if not dimension.isunlimited() else ncunlimval
+                dimsize = len(dimension) if not dimension.isunlimited() else ncunlimval
 
             dstfile.createDimension(name, dimsize)
 
@@ -701,16 +669,14 @@ def nccopy(
         # accordingly.
         if ncvarlist is None:
             for (name, variable) in srcfile.variables.items():
-                dstfile.createVariable(
-                    name, variable.datatype, variable.dimensions)
+                dstfile.createVariable(name, variable.datatype, variable.dimensions)
                 dstfile[name][:] = srcfile[name][:]
                 dstfile[name].setncatts(srcfile[name].__dict__)
 
         if ncvarlist is not None:
             for (name, variable) in srcfile.variables.items():
                 if name in ncvarlist:
-                    dstfile.createVariable(
-                        name, variable.datatype, variable.dimensions)
+                    dstfile.createVariable(name, variable.datatype, variable.dimensions)
                     dstfile[name][:] = srcfile[name][:]
                     dstfile[name].setncatts(srcfile[name].__dict__)
 
@@ -796,16 +762,14 @@ def nccopyvar(
         ncfrmtout = "NETCDF4_CLASSIC"
 
     srcfile = netCDF4.Dataset(filename=ncfilein, mode="r", format=ncfrmtin)
-    dstfile = netCDF4.Dataset(
-        filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
+    dstfile = netCDF4.Dataset(filename=ncfileout, mode=ncout_mode, format=ncfrmtout)
 
     # Loop through each variable within the netCDF-formatted file and
     # copy the specified variables to the destination netCDF-formatted
     # file.
     for (name, variable) in srcfile.variables.items():
         if ncvarname == name:
-            dstfile.createVariable(
-                name, variable.datatype, variable.dimensions)
+            dstfile.createVariable(name, variable.datatype, variable.dimensions)
             dstfile[name].setncatts(srcfile[name].__dict__)
             dstfile[name][:] = ncvar
 
@@ -873,7 +837,7 @@ def ncnumvar(ncfile: str, ncfrmt: str = None) -> int:
 
 def ncreadattr(
     ncfile: str, ncattrname: str, ncvarname: str = None, ncfrmt: str = None
-) -> Union[str, float, int, tuple]:
+) -> Union[str, float, int, Tuple]:
     """
     Description
     -----------
@@ -1124,7 +1088,7 @@ def ncreadvar(
                 "axis about which to squeeze the ingested variable "
                 "must be specified. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise NetCDF4InterfaceError(msg=msg)
 
     # Open the netCDF-formatted files.
     if ncfrmt is None:
@@ -1144,7 +1108,7 @@ def ncreadvar(
                 "NoneType upon entry if attempting to read a netCDF "
                 "variable from a netCDF group container. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise NetCDF4InterfaceError(msg=msg)
 
         # Define the netCDF groups contained within the
         # netCDF-formatted file provided upon entry.
@@ -1156,7 +1120,7 @@ def ncreadvar(
                 f"The netCDF group {ncgroupname} could not be determined from the "
                 f"contents of netCDF-formatted file {ncfile}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise NetCDF4InterfaceError(msg=msg)
 
     # Collect the netCDF variable; proceed accordingly.
     if level is None:
@@ -1265,7 +1229,7 @@ def ncvarexist(ncfile: str, ncvarname: str, ncfrmt: str = None) -> bool:
 # ----
 
 
-def ncvarlist(ncfile: str, ncfrmt: str = None) -> list:
+def ncvarlist(ncfile: str, ncfrmt: str = None) -> List:
     """
     Description
     -----------
@@ -1320,8 +1284,12 @@ def ncvarlist(ncfile: str, ncfrmt: str = None) -> list:
 
 
 def ncwrite(
-        ncfile: str, ncdim_obj: object, ncvar_obj: object, ncfrmt: str = None,
-        glbattrs_dict: dict = None) -> None:
+    ncfile: str,
+    ncdim_obj: object,
+    ncvar_obj: object,
+    ncfrmt: str = None,
+    glbattrs_dict: Dict = None,
+) -> None:
     """
     Description
     -----------
@@ -1411,8 +1379,7 @@ def ncwrite(
                         object_in=var, key=attr, value=value
                     )
 
-            vallist = numpy.reshape(
-                list(map(datatype, var_dict["values"])), var.shape)
+            vallist = numpy.reshape(list(map(datatype, var_dict["values"])), var.shape)
             var[:] = numpy.array(vallist, dtype=datatype)
 
         except TypeError:
@@ -1425,9 +1392,11 @@ def ncwrite(
         # Define the global attributes for the netCDF-formatted file.
         for glbattr in glbattrs_dict:
             value = parser_interface.dict_key_value(
-                dict_in=glbattrs_dict, key=glbattr, no_split=True)
+                dict_in=glbattrs_dict, key=glbattr, no_split=True
+            )
             ncfile = parser_interface.object_setattr(
-                object_in=ncfile, key=glbattr, value=value)
+                object_in=ncfile, key=glbattr, value=value
+            )
 
     # Close the open netCDF-formatted file.
     ncfile.close()

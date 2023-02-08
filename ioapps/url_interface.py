@@ -65,15 +65,14 @@ History
 
 # pylint: disable=broad-except
 # pylint: disable=raise-missing-from
-# pylint: disable=unused-argument
 
 # ----
 
 import os
 import urllib
+from typing import List
 
 from bs4 import BeautifulSoup
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import URLInterfaceError
 from utils.logger_interface import Logger
 
@@ -95,29 +94,7 @@ logger = Logger()
 # ----
 
 
-@msg_except_handle(URLInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> list:
+def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> List:
     """
     Description
     -----------
@@ -174,9 +151,11 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
             url_contents = response.read()
         soup = BeautifulSoup(url_contents, "html.parser")
 
-    except Exception as error:
-        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
-        __error__(msg=msg)
+    except Exception as errmsg:
+        msg = (
+            f"Retrieving the URL path {url} failed with error {errmsg}. " "Aborting!!!"
+        )
+        raise URLInterfaceError(msg=msg)
 
     # Compile a list of all URL file paths beneath the respective URL
     # file path provided upon entry; compile a list of the respective
@@ -200,12 +179,12 @@ def get_weblist(url: str, ext: str = None, include_dirname: bool = False) -> lis
                 filename = webfile
             weblist.append(filename)
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Compilation of URL paths beneath URL {url} failed with "
-            f"error {error}. Aborting!!!"
+            f"error {errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise URLInterfaceError(msg=msg)
 
     return weblist
 
@@ -218,7 +197,7 @@ def read_webfile(
     ignore_missing: bool = False,
     split: str = None,
     return_string: bool = False,
-) -> list:
+) -> List:
     """
     Description
     -----------
@@ -286,9 +265,11 @@ def read_webfile(
     try:
         request = urllib.request.Request(url=url)
 
-    except Exception as error:
-        msg = f"Retrieving the URL path {url} failed with error {error}. " "Aborting!!!"
-        __error__(msg=msg)
+    except Exception as errmsg:
+        msg = (
+            f"Retrieving the URL path {url} failed with error {errmsg}. " "Aborting!!!"
+        )
+        raise URLInterfaceError(msg=msg)
 
     # Read the contents of the URL file path; proceed accordingly.
     try:
@@ -322,15 +303,16 @@ def read_webfile(
 
             if not ignore_missing:
                 msg = (
-                    f"Opening URL path {url} failed with error {error}. " "Aborting!!!"
+                    f"Opening URL path {url} failed with error {url_error}. "
+                    "Aborting!!!"
                 )
-                __error__(msg=msg)
+                raise URLInterfaceError(msg=msg)
 
-    except Exception as error:
+    except Exception as errmsg:
         msg = (
             f"Reading the contents of URL path {url} failed with error "
-            f"{error}. Aborting!!!"
+            f"{errmsg}. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise URLInterfaceError(msg=msg)
 
     return contents
