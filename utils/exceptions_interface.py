@@ -138,6 +138,16 @@ Classes
         This is the base-class for exceptions encountered within the
         ioapps/wget_interface module; it is a sub-class of Error.
 
+    XMLInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        confs/xml_interface module; it is a sub-class of Error.
+
+    YAMLInterfaceError()
+
+        This is the base-class for exceptions encountered within the
+        confs/yaml_interface module; it is a sub-class of Error.
+
 Author(s)
 ---------
 
@@ -179,6 +189,7 @@ __all__ = [
     "TimestampsInterfaceError",
     "URLInterfaceError",
     "WgetInterfaceError",
+    "XMLInterfaceError",
     "YAMLInterfaceError"
 ]
 
@@ -462,6 +473,19 @@ class WgetInterfaceError(Error):
 
     This is the base-class for exceptions encountered within the
     ioapps/wget_interface module; it is a sub-class of Error.
+
+    """
+
+# ----
+
+
+class XMLInterfaceError(Error):
+    """
+    Description
+    -----------
+
+    This is the base-class for exceptions encountered within the
+    confs/xml_interface module; it is a sub-class of Error.
 
     """
 
