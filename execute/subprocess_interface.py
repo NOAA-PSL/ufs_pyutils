@@ -32,11 +32,6 @@ Description
 Functions
 ---------
 
-    __error__(msg=None)
-
-        This function is the exception handler for the respective
-        module.
-
     __job_info__(job_type, app=None)
 
         This function defines the launcher and task attributes for the
@@ -75,18 +70,15 @@ History
 # pylint: disable=raise-missing-from
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-branches
-# pylint: disable=unused-argument
 
 # ----
 
-from functools import partial
 import glob
-from operator import is_not
 import re
 import subprocess
+from typing import List, Tuple
 
 from tools import system_interface
-from utils.error_interface import msg_except_handle
 from utils.exceptions_interface import SubprocessInterfaceError
 from utils.logger_interface import Logger
 
@@ -113,29 +105,7 @@ job_types_list = ["app", "python", "slurm"]
 # ----
 
 
-@msg_except_handle(SubprocessInterfaceError)
-def __error__(msg: str = None) -> None:
-    """
-    Description
-    -----------
-
-    This function is the exception handler for the respective module.
-
-    Parameters
-    ----------
-
-    msg: str
-
-        A Python string containing a message to accompany the
-        exception.
-
-    """
-
-
-# ----
-
-
-def __job_info__(job_type: str, app: str = None) -> tuple:
+def __job_info__(job_type: str, app: str = None) -> Tuple:
     """
     Description
     -----------
@@ -192,7 +162,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
     # Check that the job type is supported; proceed accordingly.
     if job_type.lower() not in job_types_list:
         msg = f"The job type {job_type.lower()} is not supported. Aborting!!!"
-        __error__(msg=msg)
+        raise SubprocessInterfaceError(msg=msg)
 
     msg = f"Configuring {job_type} type jobs."
     logger.info(msg=msg)
@@ -218,7 +188,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
                 "Determining the application launcher for SLURM "
                 f"failed with error {error}. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise SubprocessInterfaceError(msg=msg)
 
     # Check that the launcher type has been determined from the run
     # time environment; proceed accordingly.
@@ -228,7 +198,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
                 f"The path for job type {job_type} launcher could not be "
                 "determined for the respective platform. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise SubprocessInterfaceError(msg=msg)
 
     return (launcher, tasks)
 
@@ -236,7 +206,7 @@ def __job_info__(job_type: str, app: str = None) -> tuple:
 # ----
 
 
-def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> int:
+def _launch(cmd: List, infile: str, errlog: str, outlog: str) -> int:
     """
     Description
     -----------
@@ -352,7 +322,7 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> int:
         returncode = proc.returncode
 
     except Exception as msg:
-        __error__(msg=msg)
+        raise SubprocessInterfaceError(msg=msg)
 
     # Close the stdout and stderr files and proceed accordingly.
     stderr.close()
@@ -366,7 +336,7 @@ def _launch(cmd: list, infile: str, errlog: str, outlog: str) -> int:
             f"Executable failed! Please refer to {errlog} for more "
             "information. Aborting!!!"
         )
-        __error__(msg=msg)
+        raise SubprocessInterfaceError(msg=msg)
 
     return returncode
 
@@ -378,7 +348,7 @@ def run(
     exe,
     job_type: str = "slurm",
     ntasks: int = 1,
-    args: list = None,
+    args: List = None,
     infile: str = None,
     errlog: str = None,
     outlog: str = None,
@@ -494,9 +464,10 @@ def run(
     # Define the launcher for the respective job type; proceed
     # accordingly.
     if launcher is None:
-        msg = ('The launcher application cannot be NoneType upon entry.'
-               'Aborting!!!')
-        __error__(msg=msg)
+        msg = ("The launcher application cannot be NoneType upon entry."
+               "Aborting!!!"
+               )
+        raise SubprocessInterfaceError(msg=msg)
 
     if launcher is not None:
         if tasks is None:
@@ -520,7 +491,7 @@ def run(
                 f"required; got {multi_prog_conf} for parameter multi_prog_conf "
                 "upon entry. Aborting!!!"
             )
-            __error__(msg=msg)
+            raise SubprocessInterfaceError(msg=msg)
 
         for item in ["--multi-prog", f"{multi_prog_conf}", f"{exe}"]:
             cmd.append(item)
@@ -531,7 +502,7 @@ def run(
                 cmd.append(f"{item}")
 
     # Remove any NoneType instances from the command line string.
-    cmd = list([item for item in cmd if item is not None])
+    cmd = list(item for item in cmd if item is not None)
 
     # Launch the respective application.
     returncode = _launch(cmd=cmd, infile=infile, errlog=errlog, outlog=outlog)
