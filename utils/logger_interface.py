@@ -39,31 +39,32 @@ Classes
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 02 November 2022
+    Henry R. Winterbottom; 09 February 2022
 
 History
 -------
 
-    2022-11-02: Henry Winterbottom -- Initial implementation.
+    2023-02-09: Henry Winterbottom -- Initial implementation.
 
 """
 
 # ----
 
-# pylint: disable=eval-used
-# pylint: disable=unused-variable
+# pylint: disable=missing-function-docstring
 
 # ----
 
+
 import logging
 import sys
-import types
+from importlib import reload
 
 # ----
 
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
+
 
 # ----
 
@@ -87,129 +88,168 @@ class Logger:
         """
 
         # Define the base-class attributes.
-        self.colors()
+        self.log_format = "%(asctime)s :: %(levelname)s :: %(message)s"
+        self.date_format = "%Y-%m-%d %H:%M:%S"
+        self.stream = sys.stdout
 
-        # Define the logging object attributes.
-        log_format = "%(asctime)s %(message)s"
-        date_format = "%Y-%m-%d %H:%M:%S"
-        self.logger = logging
-        self.logger.basicConfig(
-            stream=sys.stdout,
-            level=logging.INFO,
-            format=log_format,
-            datefmt=date_format,
+        # Define the logger object format string colors; note that all
+        # supported base-class logger level types must be defined
+        # here.
+        self.colors_dict = {
+            "CRITICAL": "\x1b[1;43m",
+            "DEBUG": "\x1b[38;5;46m",
+            "INFO": "\x1b[37;21m",
+            "ERROR": "\x1b[1;41m",
+            "WARNING": "\x1b[38;5;226m",
+            "RESET": "\x1b[0m",
+        }
+
+    def __level__(self, level: str) -> object:
+        """
+        Description
+        -----------
+
+        This method defines the logging level object.
+
+        Parameters
+        ----------
+
+        level: str
+
+            A Python string defining the logger level; case
+            insensitive.
+
+        Returns
+        -------
+
+        level_obj: object
+
+            A Python logging level object.
+
+        """
+
+        # Check that the logger level type is supported.
+        if level.upper() not in self.colors_dict:
+            msg = f"Logger level {level.upper()} not supported. Aborting!!!"
+            self.stream.write(
+                (self.colors_dict["ERROR"] + msg + self.colors_dict["RESET"])
+            )
+            raise KeyError
+
+        # Define the logging level object.
+        level_obj = getattr(logging, f"{level.upper()}")
+
+        return level_obj
+
+    def __format__(self, level: str) -> object:
+        """
+        Description
+        -----------
+
+        This method defines the logger message string format in
+        accordance with the logger level specified upon entry.
+
+        Parameters
+        ----------
+
+        level: str
+
+            A Python string defining the logger level; case
+            insensitive.
+
+        Returns
+        -------
+
+        format_str: str
+
+            A Python string defining the logger message string format.
+
+        """
+
+        format_str = (
+            self.colors_dict[level.upper()]
+            + self.log_format
+            + self.colors_dict["RESET"]
         )
 
-    def colors(self):
+        return format_str
+
+    def __reset__(self) -> None:
         """
         Description
         -----------
 
-        This method defines the base-class object 'colors_obj' which
-        contains the colors available for each type of logger event.
+        This method shutsdown and subsequently reloads the logging
+        module; this is step is necessary in order to reset the
+        attributes of the logger handlers and allow for different
+        logger levels to be instantiated from the same calling
+        class/module.
 
         """
 
-        # Assign the terminal colors for the respective logger message
-        # types.
-        def cyan(text):
-            return "\033[0;36m" + text + "\033[0m"
+        # Shutdown and reload the Python logging library.
+        logging.shutdown()
+        reload(logging)
 
-        def green(text):
-            return "\033[0;32m" + text + "\033[0m"
-
-        def red(text):
-            return "\033[0;31m" + text + "\033[0m"
-
-        def yellow(text):
-            return "\033[0;33m" + text + "\033[0m"
-
-        colors_list = ["cyan", "green", "red", "yellow"]
-
-        self.colors_obj = types.SimpleNamespace()
-        for item in colors_list:
-            setattr(self.colors_obj, item, eval(item))
-
-    def debug(self, msg: str):
+    def __write__(self, level: str, msg: str = None) -> None:
         """
         Description
         -----------
 
-        This method writes a message to the base-class Python logger
-        via the DEBUG level.
+        This method resets the base-class imported logging object,
+        defines the logging level and message string format, and
+        writes the logger message in accordance with the logging level
+        specified upon entry.
 
         Parameters
         ----------
 
-        msg: str
+        level: str
 
-            A Python string containing the Python logger level
-            message.
-
-        """
-
-        # Print the DEBUG level message to the user terminal.
-        self.logger.info(self.colors_obj.yellow(f"DEBUG: {msg}"))
-
-    def error(self, msg: str):
-        """
-        Description
-        -----------
-
-        This method writes a message to the base-class Python logger
-        via the ERROR level.
-
-        Parameters
-        ----------
+            A Python string defining the logger level; case
+            insensitive.
 
         msg: str
 
-            A Python string containing the Python logger level
-            message.
+            A Python string containing a message to accompany the
+            logging level.
 
         """
 
-        # Print the ERROR level message to the user terminal.
-        self.logger.error(self.colors_obj.red(f"ERROR: {msg}"))
+        # Reset the Python logging library.
+        self.__reset__()
 
-    def info(self, msg: str):
-        """
-        Description
-        -----------
+        # Define the attributes of and the logger object.
+        log = logging
+        level_obj = self.__level__(level=level)
+        format_str = self.__format__(level=level)
 
-        This method writes a message to the base-class Python logger
-        via the INFO level.
+        log.basicConfig(
+            stream=self.stream,
+            level=level_obj,
+            datefmt=self.date_format,
+            format=format_str,
+        )
 
-        Parameters
-        ----------
+        # Write the respective logger level message.
+        getattr(log, f"{level}")(msg)
 
-        msg: str
+    # The base-class logger CRITICAL level interface.
+    def critical(self, msg: str) -> None:
+        self.__write__(level="critical", msg=msg)
 
-            A Python string containing the Python logger level
-            message.
+    # The base-class logger DEBUG level interface.
+    def debug(self, msg: str) -> None:
+        self.__write__(level="debug", msg=msg)
 
-        """
+    # The base-class logger ERROR level interface.
+    def error(self, msg: str) -> None:
+        self.__write__(level="error", msg=msg)
 
-        # Print the INFO level message to the user terminal.
-        self.logger.info(self.colors_obj.cyan(f"INFO: {msg}"))
+    # The base-class logger INFO level interface.
+    def info(self, msg: str) -> None:
+        self.__write__(level="info", msg=msg)
 
-    def warn(self, msg: str):
-        """
-        Description
-        -----------
-
-        This method writes a message to the base-class Python logger
-        via the WARN level.
-
-        Parameters
-        ----------
-
-        msg: str
-
-            A Python string containing the Python logger level
-            message.
-
-        """
-
-        # Print the WARNING level message to the user terminal.
-        self.logger.warning(self.colors_obj.green(f"WARNING: {msg}"))
+    # The base-class logger WARNING level interface.
+    def warn(self, msg: str) -> None:
+        self.__write__(level="warning", msg=msg)
