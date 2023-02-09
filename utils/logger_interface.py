@@ -58,7 +58,6 @@ History
 from importlib import reload
 import logging
 import sys
-import types
 
 # ----
 
@@ -93,23 +92,78 @@ class Logger:
         self.stream = sys.stdout
 
     def __get_logfrmt__(self, level: str) -> str:
-        """ """
+        """
+        Description
+        -----------
 
+        This module defines the format for the logger object string;
+        the designated color formats may be found at
+        https://tinyurl.com/python-logger-string-colors.
+
+        Parameters
+        ----------
+
+        level: str
+
+            A Python string specifying the logger type;
+            case-insensitive.
+
+        Returns
+        -------
+
+        logfrmt: str
+
+            A Python string containing the logger object format
+            string.
+
+        """
+
+        # Define the color attributes for the respective logger
+        # levels.
         reset = "\x1b[0m"
-
-        colors_dict = {"CRITICAL": "\x1b[31;1m",
+        colors_dict = {"CRITICAL": "\x1b[1;42m",
                        "DEBUG": "\x1b[38;5;39m",
                        "INFO": "\x1b[37;21m",
-                       "ERROR": "\x1b[38;5;196m",
+                       "ERROR": "\x1b[1;41m",
                        "WARNING": "\x1b[38;5;226m"
                        }
 
+        # Define the logger object format string in accordance with
+        # the logger level specified upon entry.
         logfrmt = colors_dict[level.upper()] + self.log_format + reset
 
         return logfrmt
 
     def __get_logger__(self, level: object, log_format: str) -> object:
-        """ """
+        """
+        Description
+        -----------
+
+        This method defines the logger object; the object is
+        constructed based on the logging level and the format of the
+        logger string, both specified upon entry.
+
+        Parameters
+        ----------
+
+        level: object
+
+            A Python logging level object; available levels may be
+            found at https://tinyurl.com/python-logging-levels.
+
+        log_format: str
+
+            A Python string specifying the logger string format.
+
+        Returns
+        -------
+
+        logger: object
+
+            A Python logger object for the respective logger level and
+            format string provided upon entry.
+
+        """
 
         # Define the logging object accordingly.
         self.__reset__()
@@ -125,10 +179,11 @@ class Logger:
         Description
         -----------
 
-        This method resets/reloads the logging module; this is step is
-        necessary in order to reset the attributes of the logger; this
-        is a hack to resolve deficiencies in the Python logging
-        library with respect to this module.
+        This method shutsdown and subsequently reloads the logging
+        module; this is step is necessary in order to reset the
+        attributes of the logger handlers and allow for different
+        logger levels to be instantiated from the same calling
+        class/module.
 
         """
 
@@ -246,7 +301,7 @@ class Logger:
         -----------
 
         This method writes a message to the base-class Python logger
-        via the INFO level.
+        via the WARN level.
 
         Parameters
         ----------
@@ -264,4 +319,4 @@ class Logger:
             level=logging.WARNING, log_format=f"{log_format}")
 
         # Write the logger message.
-        logger.warn(msg)
+        logger.warning(msg)
