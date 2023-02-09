@@ -39,31 +39,32 @@ Classes
 Author(s)
 ---------
 
-    Henry R. Winterbottom; 02 November 2022
+    Henry R. Winterbottom; 09 February 2022
 
 History
 -------
 
-    2022-11-02: Henry Winterbottom -- Initial implementation.
+    2023-02-09: Henry Winterbottom -- Initial implementation.
 
 """
 
 # ----
 
-# pylint: disable=eval-used
-# pylint: disable=unused-variable
+# pylint: disable=missing-function-docstring
 
 # ----
 
-from importlib import reload
+
 import logging
 import sys
+from importlib import reload
 
 # ----
 
 __author__ = "Henry R. Winterbottom"
 __maintainer__ = "Henry R. Winterbottom"
 __email__ = "henry.winterbottom@noaa.gov"
+
 
 # ----
 
@@ -91,88 +92,87 @@ class Logger:
         self.date_format = "%Y-%m-%d %H:%M:%S"
         self.stream = sys.stdout
 
-    def __get_logfrmt__(self, level: str) -> str:
+        # Define the logger object format string colors; note that all
+        # supported base-class logger level types must be defined
+        # here.
+        self.colors_dict = {
+            "CRITICAL": "\x1b[1;43m",
+            "DEBUG": "\x1b[38;5;46m",
+            "INFO": "\x1b[37;21m",
+            "ERROR": "\x1b[1;41m",
+            "WARNING": "\x1b[38;5;226m",
+            "RESET": "\x1b[0m",
+        }
+
+    def __level__(self, level: str) -> object:
         """
         Description
         -----------
 
-        This module defines the format for the logger object string;
-        the designated color formats may be found at
-        https://tinyurl.com/python-logger-string-colors.
+        This method defines the logging level object.
 
         Parameters
         ----------
 
         level: str
 
-            A Python string specifying the logger type;
-            case-insensitive.
+            A Python string defining the logger level; case
+            insensitive.
 
         Returns
         -------
 
-        logfrmt: str
+        level_obj: object
 
-            A Python string containing the logger object format
-            string.
+            A Python logging level object.
 
         """
 
-        # Define the color attributes for the respective logger
-        # levels.
-        reset = "\x1b[0m"
-        colors_dict = {"CRITICAL": "\x1b[1;42m",
-                       "DEBUG": "\x1b[38;5;39m",
-                       "INFO": "\x1b[37;21m",
-                       "ERROR": "\x1b[1;41m",
-                       "WARNING": "\x1b[38;5;226m"
-                       }
+        # Check that the logger level type is supported.
+        if level.upper() not in self.colors_dict:
+            msg = f"Logger level {level.upper()} not supported. Aborting!!!"
+            self.stream.write(
+                (self.colors_dict["ERROR"] + msg + self.colors_dict["RESET"])
+            )
+            raise KeyError
 
-        # Define the logger object format string in accordance with
-        # the logger level specified upon entry.
-        logfrmt = colors_dict[level.upper()] + self.log_format + reset
+        # Define the logging level object.
+        level_obj = getattr(logging, f"{level.upper()}")
 
-        return logfrmt
+        return level_obj
 
-    def __get_logger__(self, level: object, log_format: str) -> object:
+    def __format__(self, level: str) -> object:
         """
         Description
         -----------
 
-        This method defines the logger object; the object is
-        constructed based on the logging level and the format of the
-        logger string, both specified upon entry.
+        This method defines the logger message string format in
+        accordance with the logger level specified upon entry.
 
         Parameters
         ----------
 
-        level: object
+        level: str
 
-            A Python logging level object; available levels may be
-            found at https://tinyurl.com/python-logging-levels.
-
-        log_format: str
-
-            A Python string specifying the logger string format.
+            A Python string defining the logger level; case
+            insensitive.
 
         Returns
         -------
 
-        logger: object
+        format_str: str
 
-            A Python logger object for the respective logger level and
-            format string provided upon entry.
+            A Python string defining the logger message string format.
 
         """
 
-        # Define the logging object accordingly.
-        self.__reset__()
-        logger = logging
-        logger.basicConfig(
-            stream=sys.stdout, level=level, format=log_format,
-            datefmt=self.date_format)
+        format_str = (
+            self.colors_dict[level.upper()]
+            + self.log_format
+            + self.colors_dict["RESET"]
+        )
 
-        return logger
+        return format_str
 
     def __reset__(self) -> None:
         """
@@ -191,132 +191,65 @@ class Logger:
         logging.shutdown()
         reload(logging)
 
-    def critical(self, msg: str):
+    def __write__(self, level: str, msg: str = None) -> None:
         """
         Description
         -----------
 
-        This method writes a message to the base-class Python logger
-        via the CRITICAL level.
+        This method resets the base-class imported logging object,
+        defines the logging level and message string format, and
+        writes the logger message in accordance with the logging level
+        specified upon entry.
 
         Parameters
         ----------
 
-        msg: str
+        level: str
 
-            A Python string containing the Python logger level
-            message.
-
-        """
-
-        # Define the logger object.
-        log_format = self.__get_logfrmt__(level="critical")
-        logger = self.__get_logger__(
-            level=logging.CRITICAL, log_format=f"{log_format}")
-
-        # Write the logger message.
-        logger.critical(msg)
-
-    def debug(self, msg: str):
-        """
-        Description
-        -----------
-
-        This method writes a message to the base-class Python logger
-        via the DEBUG level.
-
-        Parameters
-        ----------
+            A Python string defining the logger level; case
+            insensitive.
 
         msg: str
 
-            A Python string containing the Python logger level
-            message.
+            A Python string containing a message to accompany the
+            logging level.
 
         """
 
-        # Define the logger object.
-        log_format = self.__get_logfrmt__(level="debug")
-        logger = self.__get_logger__(
-            level=logging.DEBUG, log_format=f"{log_format}")
+        # Reset the Python logging library.
+        self.__reset__()
 
-        # Write the logger message.
-        logger.debug(msg)
+        # Define the attributes of and the logger object.
+        log = logging
+        level_obj = self.__level__(level=level)
+        format_str = self.__format__(level=level)
 
-    def error(self, msg: str):
-        """
-        Description
-        -----------
+        log.basicConfig(
+            stream=self.stream,
+            level=level_obj,
+            datefmt=self.date_format,
+            format=format_str,
+        )
 
-        This method writes a message to the base-class Python logger
-        via the ERROR level.
+        # Write the respective logger level message.
+        getattr(log, f"{level}")(msg)
 
-        Parameters
-        ----------
+    # The base-class logger CRITICAL level interface.
+    def critical(self, msg: str) -> None:
+        self.__write__(level="critical", msg=msg)
 
-        msg: str
+    # The base-class logger DEBUG level interface.
+    def debug(self, msg: str) -> None:
+        self.__write__(level="debug", msg=msg)
 
-            A Python string containing the Python logger level
-            message.
+    # The base-class logger ERROR level interface.
+    def error(self, msg: str) -> None:
+        self.__write__(level="error", msg=msg)
 
-        """
+    # The base-class logger INFO level interface.
+    def info(self, msg: str) -> None:
+        self.__write__(level="info", msg=msg)
 
-        # Define the logger object.
-        log_format = self.__get_logfrmt__(level="error")
-        logger = self.__get_logger__(
-            level=logging.ERROR, log_format=f"{log_format}")
-
-        # Write the logger message.
-        logger.error(msg)
-
-    def info(self, msg: str):
-        """
-        Description
-        -----------
-
-        This method writes a message to the base-class Python logger
-        via the INFO level.
-
-        Parameters
-        ----------
-
-        msg: str
-
-            A Python string containing the Python logger level
-            message.
-
-        """
-
-        # Define the logger object.
-        log_format = self.__get_logfrmt__(level="info")
-        logger = self.__get_logger__(
-            level=logging.INFO, log_format=f"{log_format}")
-
-        # Write the logger message.
-        logger.info(msg)
-
-    def warn(self, msg: str):
-        """
-        Description
-        -----------
-
-        This method writes a message to the base-class Python logger
-        via the WARN level.
-
-        Parameters
-        ----------
-
-        msg: str
-
-            A Python string containing the Python logger level
-            message.
-
-        """
-
-        # Define the logger object.
-        log_format = self.__get_logfrmt__(level="warning")
-        logger = self.__get_logger__(
-            level=logging.WARNING, log_format=f"{log_format}")
-
-        # Write the logger message.
-        logger.warning(msg)
+    # The base-class logger WARNING level interface.
+    def warn(self, msg: str) -> None:
+        self.__write__(level="warning", msg=msg)
