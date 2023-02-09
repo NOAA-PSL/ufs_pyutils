@@ -55,6 +55,7 @@ History
 
 # ----
 
+from importlib import reload
 import logging
 import sys
 import types
@@ -87,48 +88,79 @@ class Logger:
         """
 
         # Define the base-class attributes.
-        self.colors()
+        self.log_format = "%(asctime)s :: %(levelname)s :: %(message)s"
+        self.date_format = "%Y-%m-%d %H:%M:%S"
+        self.stream = sys.stdout
 
-        # Define the logging object attributes.
-        log_format = "%(asctime)s %(message)s"
-        date_format = "%Y-%m-%d %H:%M:%S"
-        self.logger = logging
-        self.logger.basicConfig(
-            stream=sys.stdout,
-            level=logging.INFO,
-            format=log_format,
-            datefmt=date_format,
-        )
+    def __get_logfrmt__(self, level: str) -> str:
+        """ """
 
-    def colors(self):
+        reset = "\x1b[0m"
+
+        colors_dict = {"CRITICAL": "\x1b[31;1m",
+                       "DEBUG": "\x1b[38;5;39m",
+                       "INFO": "\x1b[37;21m",
+                       "ERROR": "\x1b[38;5;196m",
+                       "WARNING": "\x1b[38;5;226m"
+                       }
+
+        logfrmt = colors_dict[level.upper()] + self.log_format + reset
+
+        return logfrmt
+
+    def __get_logger__(self, level: object, log_format: str) -> object:
+        """ """
+
+        # Define the logging object accordingly.
+        self.__reset__()
+        logger = logging
+        logger.basicConfig(
+            stream=sys.stdout, level=level, format=log_format,
+            datefmt=self.date_format)
+
+        return logger
+
+    def __reset__(self) -> None:
         """
         Description
         -----------
 
-        This method defines the base-class object 'colors_obj' which
-        contains the colors available for each type of logger event.
+        This method resets/reloads the logging module; this is step is
+        necessary in order to reset the attributes of the logger; this
+        is a hack to resolve deficiencies in the Python logging
+        library with respect to this module.
 
         """
 
-        # Assign the terminal colors for the respective logger message
-        # types.
-        def cyan(text):
-            return "\033[0;36m" + text + "\033[0m"
+        # Shutdown and reload the Python logging library.
+        logging.shutdown()
+        reload(logging)
 
-        def green(text):
-            return "\033[0;32m" + text + "\033[0m"
+    def critical(self, msg: str):
+        """
+        Description
+        -----------
 
-        def red(text):
-            return "\033[0;31m" + text + "\033[0m"
+        This method writes a message to the base-class Python logger
+        via the CRITICAL level.
 
-        def yellow(text):
-            return "\033[0;33m" + text + "\033[0m"
+        Parameters
+        ----------
 
-        colors_list = ["cyan", "green", "red", "yellow"]
+        msg: str
 
-        self.colors_obj = types.SimpleNamespace()
-        for item in colors_list:
-            setattr(self.colors_obj, item, eval(item))
+            A Python string containing the Python logger level
+            message.
+
+        """
+
+        # Define the logger object.
+        log_format = self.__get_logfrmt__(level="critical")
+        logger = self.__get_logger__(
+            level=logging.CRITICAL, log_format=f"{log_format}")
+
+        # Write the logger message.
+        logger.critical(msg)
 
     def debug(self, msg: str):
         """
@@ -148,8 +180,13 @@ class Logger:
 
         """
 
-        # Print the DEBUG level message to the user terminal.
-        self.logger.info(self.colors_obj.yellow(f"DEBUG: {msg}"))
+        # Define the logger object.
+        log_format = self.__get_logfrmt__(level="debug")
+        logger = self.__get_logger__(
+            level=logging.DEBUG, log_format=f"{log_format}")
+
+        # Write the logger message.
+        logger.debug(msg)
 
     def error(self, msg: str):
         """
@@ -169,8 +206,13 @@ class Logger:
 
         """
 
-        # Print the ERROR level message to the user terminal.
-        self.logger.error(self.colors_obj.red(f"ERROR: {msg}"))
+        # Define the logger object.
+        log_format = self.__get_logfrmt__(level="error")
+        logger = self.__get_logger__(
+            level=logging.ERROR, log_format=f"{log_format}")
+
+        # Write the logger message.
+        logger.error(msg)
 
     def info(self, msg: str):
         """
@@ -190,8 +232,13 @@ class Logger:
 
         """
 
-        # Print the INFO level message to the user terminal.
-        self.logger.info(self.colors_obj.cyan(f"INFO: {msg}"))
+        # Define the logger object.
+        log_format = self.__get_logfrmt__(level="info")
+        logger = self.__get_logger__(
+            level=logging.INFO, log_format=f"{log_format}")
+
+        # Write the logger message.
+        logger.info(msg)
 
     def warn(self, msg: str):
         """
@@ -199,7 +246,7 @@ class Logger:
         -----------
 
         This method writes a message to the base-class Python logger
-        via the WARN level.
+        via the INFO level.
 
         Parameters
         ----------
@@ -211,5 +258,10 @@ class Logger:
 
         """
 
-        # Print the WARNING level message to the user terminal.
-        self.logger.warning(self.colors_obj.green(f"WARNING: {msg}"))
+        # Define the logger object.
+        log_format = self.__get_logfrmt__(level="warning")
+        logger = self.__get_logger__(
+            level=logging.WARNING, log_format=f"{log_format}")
+
+        # Write the logger message.
+        logger.warn(msg)
