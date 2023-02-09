@@ -36,16 +36,6 @@ Functions
 
         This function defines the calling application stack frame.
 
-    get_app_path(app)
-
-        This function collects the path for the specified application;
-        if the path cannot be determined, NoneType is returned.
-
-    sleep(seconds=0)
-
-        This function allows specific calling applications to suspend
-        execution for a specified number of seconds.
-
     app_path(app)
 
         This function invokes the POSIX UNIX command function to retrieve
@@ -55,6 +45,16 @@ Functions
 
         This function changes the ownership credentials for the
         specified file path.
+
+    get_app_path(app)
+
+        This function collects the path for the specified application;
+        if the path cannot be determined, NoneType is returned.
+
+    sleep(seconds=0)
+
+        This function allows specific calling applications to suspend
+        execution for a specified number of seconds.
 
     task_exit()
 
@@ -98,7 +98,7 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ["app_path", "chown", "task_exit", "user"]
+__all__ = ["app_path", "chown", "get_app_path", "sleep", "task_exit", "user"]
 
 # ----
 
