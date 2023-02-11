@@ -61,11 +61,13 @@ History
 
 # pylint: disable=broad-except
 # pylint: disable=too-many-ancestors
+# pylint: disable=too-many-arguments
 
 # ----
 
 import os
 import re
+import sys
 from typing import Dict, List, Union
 
 import yaml
@@ -299,6 +301,83 @@ class YAML:
         # Write the resulting composite Python dictionary to
         # YAML-formatted file to contain the concatenated attributes.
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
+
+    def dict_to_yaml(
+        self,
+        yaml_dict: Dict,
+        default_flow_style: bool = False,
+        indent: int = 4,
+        level: str = None,
+        nspace: int = 0,
+    ) -> None:
+        """
+        Description
+        -----------
+
+        This method writes the contents of the Python diction provided
+        upon entry to a YAML-format in accordance with the keyword
+        arguments specified upon entry.
+
+        Parameters
+        ----------
+
+        yaml_dict: dict
+
+            A Python dictionary containing the attributes to be
+            written to a YAML-format.
+
+        Keywords
+        --------
+
+        default_flow_style: bool, optional
+
+            A Python boolean valued variable; if True upon entry, the
+            contents of the Python dictionary will not be serialized
+            when written to YAML-format; if False upon the entry, the
+            contents of the Python dictionary will be serialized in
+            block style.
+
+        indent: int, optional
+
+            A Python integer specifying the indent with for nest
+            YAML-formatted blocks.
+
+        level: str, optional
+
+            A Python string specifying the logger level to accompany
+            the contents of the YAML-formatted Python dictionary; if
+            NoneType upon entry, the contents will be written to
+            standard out; otherwise the specified (and supported)
+            level of the Logger object (see
+            utils/logger_interface.py).
+
+        nspace: int, optional
+
+            A Python integer specifying the total number of spaces to
+            be used when the Logger object level is used; this is only
+            implemented with the Logger interface is invoked.
+
+        """
+
+        # Dump the contents of the Python dictionary and define a
+        # local object.
+        yaml_dump = yaml.dump(
+            yaml_dict, default_flow_style=default_flow_style, indent=indent
+        )
+
+        # Dump the contents of the Python dictionary to a YAML-format
+        # in accordance with the parameters collected upon entry.
+        if level is None:
+            sys.stdout.write(yaml_dump)
+
+        if level is not None:
+
+            # Dump the contents of the Python dictionary using the
+            # imported Logger object.
+            logger = parser_interface.object_getattr(
+                object_in=Logger(), key=level, force=True
+            )
+            logger(msg=(nspace * "\n" + yaml_dump))
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
