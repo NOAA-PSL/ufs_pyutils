@@ -300,6 +300,15 @@ class YAML:
         # YAML-formatted file to contain the concatenated attributes.
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
+    def dict_to_yaml(self, yaml_dict: Dict, default_flow_style: bool = False,
+                     indent: int = 4) -> None:
+        """ """
+
+        # Dump the contents of the Python dictionary to a YAML-format
+        # in accordance with the parameters collected upon entry.
+        yaml.dump(yaml_dict, default_flow_style=default_flow_style,
+                  indent=indent)
+
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
     ) -> Union[Dict, object]:
@@ -352,7 +361,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
 
         # Open and read the contents of the specified YAML-formatted
@@ -456,7 +466,8 @@ class YAML:
         """
 
         # Define the YAML library loader type.
-        YAMLLoader.add_implicit_resolver("!ENV", YAMLLoader.envvar_matcher, None)
+        YAMLLoader.add_implicit_resolver(
+            "!ENV", YAMLLoader.envvar_matcher, None)
         YAMLLoader.add_constructor("!ENV", YAMLLoader.envvar_constructor)
         YAMLLoader.add_constructor("!INC", YAMLLoader.include_constructor)
 
