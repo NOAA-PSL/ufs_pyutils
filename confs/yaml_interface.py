@@ -303,7 +303,54 @@ class YAML:
 
     def dict_to_yaml(self, yaml_dict: Dict, default_flow_style: bool = False,
                      indent: int = 4, level: str = None, nspace: int = 0) -> None:
-        """ """
+        """
+        Description
+        -----------
+
+        This method writes the contents of the Python diction provided
+        upon entry to a YAML-format in accordance with the keyword
+        arguments specified upon entry.
+
+        Parameters
+        ----------
+
+        yaml_dict: dict
+
+            A Python dictionary containing the attributes to be
+            written to a YAML-format.
+
+        Keywords
+        --------
+
+        default_flow_style: bool, optional
+
+            A Python boolean valued variable; if True upon entry, the
+            contents of the Python dictionary will not be serialized
+            when written to YAML-format; if False upon the entry, the
+            contents of the Python dictionary will be serialized in
+            block style.
+
+        indent: int, optional
+
+            A Python integer specifying the indent with for nest
+            YAML-formatted blocks.
+
+        level: str, optional
+
+            A Python string specifying the logger level to accompany
+            the contents of the YAML-formatted Python dictionary; if
+            NoneType upon entry, the contents will be written to
+            standard out; otherwise the specified (and supported)
+            level of the Logger object (see
+            utils/logger_interface.py).
+
+        nspace: int, optional
+
+            A Python integer specifying the total number of spaces to
+            be used when the Logger object level is used; this is only
+            implemented with the Logger interface is invoked.
+
+        """
 
         # Dump the contents of the Python dictionary and define a
         # local object.
