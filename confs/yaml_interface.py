@@ -316,7 +316,7 @@ class YAML:
             # Dump the contents of the Python dictionary using the
             # imported Logger object.
             logger = parser_interface.object_getattr(
-                object_in=Logger, key=level, force=True, no_split=True)
+                object_in=Logger, key=level, force=True)
             logger(msg="TEST")
 
     def read_concat_yaml(
