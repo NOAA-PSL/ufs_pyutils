@@ -322,7 +322,7 @@ class YAML:
             logger = parser_interface.object_getattr(
                 object_in=Logger(), key=level,
                 force=True)
-            logger(yaml_dump)
+            logger(msg=("\n" + yaml_dump))
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
