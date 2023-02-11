@@ -302,7 +302,7 @@ class YAML:
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def dict_to_yaml(self, yaml_dict: Dict, default_flow_style: bool = False,
-                     indent: int = 4, level: str = None) -> None:
+                     indent: int = 4, level: str = None, nspace: int = 0) -> None:
         """ """
 
         # Dump the contents of the Python dictionary and define a
@@ -322,7 +322,7 @@ class YAML:
             logger = parser_interface.object_getattr(
                 object_in=Logger(), key=level,
                 force=True)
-            logger(msg=("\n" + yaml_dump))
+            logger(msg=(nspace*"\n" + yaml_dump))
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
