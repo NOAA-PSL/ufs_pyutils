@@ -66,6 +66,7 @@ History
 
 import os
 import re
+import sys
 from typing import Dict, List, Union
 
 import yaml
@@ -306,8 +307,8 @@ class YAML:
 
         # Dump the contents of the Python dictionary to a YAML-format
         # in accordance with the parameters collected upon entry.
-        yaml.dump(yaml_dict, default_flow_style=default_flow_style,
-                  indent=indent)
+        sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
+                                   indent=indent))
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
