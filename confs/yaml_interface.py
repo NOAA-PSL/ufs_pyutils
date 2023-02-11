@@ -302,13 +302,22 @@ class YAML:
         self.write_yaml(yaml_file=yaml_file_out, in_dict=yaml_dict_concat)
 
     def dict_to_yaml(self, yaml_dict: Dict, default_flow_style: bool = False,
-                     indent: int = 4) -> None:
+                     indent: int = 4, level: str = None) -> None:
         """ """
 
         # Dump the contents of the Python dictionary to a YAML-format
         # in accordance with the parameters collected upon entry.
-        sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
-                                   indent=indent))
+        if level is None:
+            sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
+                                       indent=indent))
+
+        if level is not None:
+
+            # Dump the contents of the Python dictionary using the
+            # imported Logger object.
+            logger = parser_interface.object_getattr(
+                object_in=Logger, key=level, force=True, no_split=True)
+            logger(msg="TEST")
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
