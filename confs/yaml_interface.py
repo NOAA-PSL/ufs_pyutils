@@ -313,17 +313,16 @@ class YAML:
         # Dump the contents of the Python dictionary to a YAML-format
         # in accordance with the parameters collected upon entry.
         if level is None:
-            pass
-            # sys.stdout.write(yaml_dump)
-            # sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
-            #                           indent=indent))
+            sys.stdout.write(yaml_dump)
 
         if level is not None:
 
             # Dump the contents of the Python dictionary using the
             # imported Logger object.
             logger = parser_interface.object_getattr(
-                 object_in=Logger(), key=level, force=True)
+                object_in=Logger(), key=level,
+                force=True)
+            logger(yaml_dump)
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
@@ -390,7 +389,7 @@ class YAML:
         # determine whether a given file is a YAML-formatted file and
         # whether the respective YAML-formatted file exists; proceed
         # acccordingly.
-        yaml_dict_concat={}
+        yaml_dict_concat = {}
         for attr_key in yaml_full_dict:
 
             # Collect the attribute corresponding to the respective
