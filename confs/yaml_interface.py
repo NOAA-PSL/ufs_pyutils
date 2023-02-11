@@ -305,19 +305,24 @@ class YAML:
                      indent: int = 4, level: str = None) -> None:
         """ """
 
-        # Dump the contents of the Python dictionary to a YAML-format
-        # in accordance with the parameters collected upon entry.
-        if level is None:
-            sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
-                                       indent=indent))
+        # Dump the contents of the Python dictionary and define a
+        # local object.
+        yaml_dump = yaml.dump(yaml_dict, default_flow_style=default_flow_style,
+                              indent=indent)
 
-        if level is not None:
+           # Dump the contents of the Python dictionary to a YAML-format
+           # in accordance with the parameters collected upon entry.
+           if level is None:
+                sys.stdout.write(yaml_dump)
+                # sys.stdout.write(yaml.dump(yaml_dict, default_flow_style=default_flow_style,
+                #                           indent=indent))
 
-            # Dump the contents of the Python dictionary using the
-            # imported Logger object.
-            logger = parser_interface.object_getattr(
-                object_in=Logger(), key=level, force=True)
-            logger(msg="TEST")
+            if level is not None:
+
+                # Dump the contents of the Python dictionary using the
+                # imported Logger object.
+                logger = parser_interface.object_getattr(
+                    object_in=Logger(), key=level, force=True)
 
     def read_concat_yaml(
         self, yaml_file: str, return_obj: bool = False
@@ -378,13 +383,13 @@ class YAML:
         # Open and read the contents of the specified YAML-formatted
         # file path.
         with open(yaml_file, "r", encoding="utf-8") as stream:
-            yaml_full_dict = yaml.load(stream, Loader=YAMLLoader)
+            yaml_full_dict=yaml.load(stream, Loader=YAMLLoader)
 
         # For each attribute within the parsed YAML-formatted file,
         # determine whether a given file is a YAML-formatted file and
         # whether the respective YAML-formatted file exists; proceed
         # acccordingly.
-        yaml_dict_concat = {}
+        yaml_dict_concat={}
         for attr_key in yaml_full_dict:
 
             # Collect the attribute corresponding to the respective
