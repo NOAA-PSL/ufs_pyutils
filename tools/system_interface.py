@@ -51,6 +51,11 @@ Functions
         This function collects the path for the specified application;
         if the path cannot be determined, NoneType is returned.
 
+    get_pid()
+
+        This function returns the current process integer
+        identification.
+
     sleep(seconds=0)
 
         This function allows specific calling applications to suspend
@@ -87,6 +92,7 @@ History
 # ----
 
 import inspect
+import os
 import shutil
 import subprocess
 import sys
@@ -98,7 +104,8 @@ from utils.logger_interface import Logger
 # ----
 
 # Define all available functions.
-__all__ = ["app_path", "chown", "get_app_path", "sleep", "task_exit", "user"]
+__all__ = ["app_path", "chown", "get_app_path", "get_pid",
+           "sleep", "task_exit", "user"]
 
 # ----
 
@@ -170,7 +177,8 @@ def app_path(app: str) -> str:
     # the application name specified upon entry.
     cmd = ["command", "-V", app]
 
-    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Collect the run-time environment path from the query for the
@@ -257,6 +265,31 @@ def get_app_path(app: str) -> str:
 
     return app_path
 
+# ----
+
+
+def get_pid() -> int:
+    """
+    Description
+    -----------
+
+    This function returns the current process integer identification.
+
+    Returns
+    -------
+
+    pid: int
+
+        A Python integer specifying the current process integer
+        identification.
+
+    """
+
+    # Collect the current process integer identifier.
+    pid = os.getpid()
+
+    return pid
+
 
 # ----
 
@@ -335,7 +368,8 @@ def user() -> str:
     # this function.
     cmd = ["whoami"]
 
-    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    proc = subprocess.Popen(cmd, stderr=subprocess.PIPE,
+                            stdout=subprocess.PIPE)
     (out, err) = proc.communicate()
 
     # Collect the POSIX UNIX environment user name from the query.
