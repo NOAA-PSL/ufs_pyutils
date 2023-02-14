@@ -98,7 +98,7 @@ class Logger:
         self.colors_dict = {
             "CRITICAL": "\x1b[1;43m",
             "DEBUG": "\x1b[38;5;46m",
-            "INFO": "\x1b[37;21m",
+            "INFO": "\x1b[2;1m",
             "ERROR": "\x1b[1;41m",
             "WARNING": "\x1b[38;5;226m",
             "RESET": "\x1b[0m",
