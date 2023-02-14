@@ -1,0 +1,83 @@
+# =========================================================================
+
+# YAML: .github/workflows/buildtest.yaml
+
+# Author: Henry R. Winterbottom
+
+# Email: henry.winterbottom@noaa.gov
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the respective public license published by the
+# Free Software Foundation and included with the repository within
+# which this application is contained.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+# =========================================================================
+
+# Description
+# -----------
+
+#    This file contains a Github actions/workflow to build and install
+#    the ufs_pyutils package.  This workflow action is invoked when a
+#    Github pull request is opened, a release is published, and at
+#    0000 UTC every day.
+
+# Author(s)
+# ---------
+
+#    Henry R. Winterbottom; 14 February 2023
+
+# History
+# -------
+
+#    2023-02-14: Henry Winterbottom -- Initial implementation.
+
+#----
+
+# Define the name of the Github actions/workflow.
+name: Build Tests
+
+# Define the Github triggers for which to launch the respective Github
+# action/workflow.
+on:
+  pull_request:
+    types: [opened]
+    
+  release:
+    types: [published]
+
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+
+  # Define the container image.
+  build:
+    runs-on: ubuntu-latest
+    name: Run the ufs_pyutils build-tests.
+        
+    steps:
+
+    # Build the Python environment via Miniconda and install the
+    # necessary packages and dependencies.
+    - name: Build and install Python dependencies
+      run: |
+        wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda3-py39_4.10.3-Linux-x86_64.sh
+        sh Miniconda3-py39_4.10.3-Linux-x86_64.sh -b -p miniconda
+        python -m pip install --upgrade pip
+
+    # Clone the ufs_pyutils repository branch.
+    - name: Checkout ufs_pyutils.
+      uses: actions/checkout@v2
+      with:
+        path: ufs_pyutils
+
+    # Build the ufs_pytils package via the included setup.py script.
+    - name: Build ufs_pyutils
+      run: |
+           cd $GITHUB_WORKSPACE/ufs_pyutils/
+           python setup.py build
+           python setup.py install --user
