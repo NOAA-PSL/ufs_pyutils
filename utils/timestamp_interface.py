@@ -42,6 +42,10 @@ Globals
         Global timestamp format; this is the format from which all
         others should be defined/determined.
 
+    H: str
+
+        A timestamp format, assuming the POSIX convention, of %H.
+
     INFO: str
 
         Information timestamp format; this format is typically used
@@ -51,6 +55,10 @@ Globals
 
         A timestamp format, assuming the POSIX convention, of
         %Y-%m-%dT%H%M%SZ.
+
+    Ymd: str
+
+        A timestamp format, assuming the POSIX convention, of %Y%m%d.
 
     YmdTHM: str
 
@@ -109,8 +117,10 @@ __email__ = "henry.winterbottom@noaa.gov"
 # should be defined/determined.
 GENERAL = "%Y-%m-%d_%H:%M:%S"
 GLOBAL = "%Y%m%d%H%M%S"
+H = "%H"
 INFO = "%H:%M:%S UTC %d %B %Y"
 Y_m_dTHMSZ = "%Y-%m-%dT%H:%M:%SZ"
+Ymd = "%Y%m%d"
 YmdTHM = "%Y%m%dT%H%M"
 YmdTHMS = "%Y%m%dT%H%M%S"
 YmdTHMZ = "%Y%m%dT%H%MZ"
