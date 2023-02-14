@@ -79,5 +79,5 @@ jobs:
     - name: Build ufs_pyutils
       run: |
            cd $GITHUB_WORKSPACE/ufs_pyutils/
-           $GITHUB_WORKSPACE/ufs_pyutils/miniconda/bin/python setup.py build
-           $GITHUB_WORKSPACE/ufs_pyutils/miniconda/bin/python setup.py install
+           python setup.py build
+           python setup.py install
